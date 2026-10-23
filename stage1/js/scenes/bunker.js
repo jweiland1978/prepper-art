@@ -1,13 +1,13 @@
-import Phaser from '../phaser.js';
-import { CONFIG } from '../config.js';
-import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addText } from '../ui.js';
-import { attachAtmosphere, fadeIn } from '../fx.js';
-import { leave, showHud } from '../flow.js';
-import { maybeGaryVisit, memorialCopy } from '../logic.js';
-import { showNotice } from './cards.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { leave, showHud } from '../flow.js?v=3';
+import { maybeGaryVisit, memorialCopy } from '../logic.js?v=3';
+import { showNotice } from './cards.js?v=3';
 
 const COLS = [48, 300, 736, 988];
 const ROWS = [268, 468];

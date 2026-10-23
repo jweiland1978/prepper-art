@@ -1,15 +1,15 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js';
-import { EVENTS, eventById } from './data/events.js';
-import { NIGHT_EVENTS } from './data/night.js';
-import { GREETINGS, JOKES, RUMORS, SIGNOFFS, rumorById } from './data/radio.js';
-import { zombieById, ZOMBIES } from './data/survival.js';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=3';
+import { EVENTS, eventById } from './data/events.js?v=3';
+import { NIGHT_EVENTS } from './data/night.js?v=3';
+import { GREETINGS, JOKES, RUMORS, SIGNOFFS, rumorById } from './data/radio.js?v=3';
+import { zombieById, ZOMBIES } from './data/survival.js?v=3';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js';
+} from './state.js?v=3';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {

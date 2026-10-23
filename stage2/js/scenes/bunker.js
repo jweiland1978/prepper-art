@@ -1,7 +1,7 @@
-import Phaser from '../phaser.js';
-import { CONFIG } from '../config.js';
-import { NEIGHBORS } from '../data/neighbors.js';
-import { MARKERS } from '../data/map.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { NEIGHBORS } from '../data/neighbors.js?v=3';
+import { MARKERS } from '../data/map.js?v=3';
 import {
   cotCount,
   generatorOn,
@@ -18,16 +18,16 @@ import {
   spotStatus,
   wearingCoat,
   workRoom,
-} from '../crew.js';
-import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addText } from '../ui.js';
-import { attachAtmosphere, fadeIn } from '../fx.js';
-import { leave, showHud } from '../flow.js';
-import { maybeGaryVisit, memorialCopy } from '../logic.js';
-import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js';
-import { showNotice } from './cards.js';
+} from '../crew.js?v=3';
+import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { leave, showHud } from '../flow.js?v=3';
+import { maybeGaryVisit, memorialCopy } from '../logic.js?v=3';
+import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js?v=3';
+import { showNotice } from './cards.js?v=3';
 import {
   canDistress,
   distressWord,
@@ -35,7 +35,7 @@ import {
   followDistress,
   openTrade,
   presentLaunch,
-} from './trade.js';
+} from './trade.js?v=3';
 
 const COLS = [48, 300, 736, 988];
 const ROWS = [268, 468];

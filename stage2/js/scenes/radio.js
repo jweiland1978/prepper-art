@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js';
-import { CONFIG, phaseForDay, phaseInfo } from '../config.js';
-import { Game, syncDerived } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addText } from '../ui.js';
-import { attachAtmosphere, fadeIn } from '../fx.js';
-import { leave, showHud } from '../flow.js';
-import { addStudioRadio } from '../widgets.js';
-import { ensureMorning, staticLevel } from '../logic.js';
-import { makeTyper } from './type.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG, phaseForDay, phaseInfo } from '../config.js?v=3';
+import { Game, syncDerived } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { leave, showHud } from '../flow.js?v=3';
+import { addStudioRadio } from '../widgets.js?v=3';
+import { ensureMorning, staticLevel } from '../logic.js?v=3';
+import { makeTyper } from './type.js?v=3';
 
 const BANNERS = new Set([1, 11, 21, 30]);
 
@@ -52,13 +52,14 @@ export class RadioScene extends Phaser.Scene {
       wordWrap: { width: 980 },
       lineSpacing: 6,
     }).setDepth(8);
-    this.hint = addText(this, 640, 620, 'Tap to skip', {
+    this.hint = addText(this, 640, 620, 'Tap to continue', {
       fontFamily: CONFIG.FONTS.body,
       fontSize: '16px',
       color: CONFIG.COLORS.textMuted,
       originX: 0.5,
       originY: 0.5,
     }).setDepth(8);
+    this.tapToContinue = true;
     this.typer = makeTyper(this);
     showHud(this);
     syncDerived(state);

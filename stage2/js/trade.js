@@ -2,10 +2,10 @@
  * Barter, item uses, Gary's respect, rockets, and the coat.
  * Scenes paint. This file only changes state.
  */
-import { CONFIG, phaseForDay } from './config.js';
-import { itemById } from './data/items.js';
-import { RUMORS } from './data/radio.js';
-import { MARKERS } from './data/map.js';
+import { CONFIG, phaseForDay } from './config.js?v=3';
+import { itemById } from './data/items.js?v=3';
+import { RUMORS } from './data/radio.js?v=3';
+import { MARKERS } from './data/map.js?v=3';
 import {
   DISTRESS_LINES,
   GARY_BEER,
@@ -19,7 +19,7 @@ import {
   LIGHT_LINES,
   MAYHEM_LINES,
   STALLS,
-} from './data/traders.js';
+} from './data/traders.js?v=3';
 import {
   addNotice,
   garyRespect,
@@ -29,8 +29,8 @@ import {
   spotStatus,
   tradeUnit,
   wearingCoat,
-} from './crew.js';
-import { changeStat, roomLevel, touchState } from './state.js';
+} from './crew.js?v=3';
+import { changeStat, roomLevel, touchState } from './state.js?v=3';
 
 export const STAT_KEYS = ['food', 'water', 'materials', 'medicine'];
 

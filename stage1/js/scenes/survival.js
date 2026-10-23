@@ -1,11 +1,11 @@
-import Phaser from '../phaser.js';
-import { CONFIG } from '../config.js';
-import { Game, touchState } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addPanel, addText } from '../ui.js';
-import { attachAtmosphere, fadeIn } from '../fx.js';
-import { leave, showHud } from '../flow.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game, touchState } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addPanel, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { leave, showHud } from '../flow.js?v=3';
 import {
   beginSurvivalDay,
   buildScore,
@@ -13,9 +13,9 @@ import {
   survivalGarage,
   survivalRation,
   survivalRepair,
-} from '../logic.js';
-import { zombieById } from '../data/survival.js';
-import { showDanger } from './cards.js';
+} from '../logic.js?v=3';
+import { zombieById } from '../data/survival.js?v=3';
+import { showDanger } from './cards.js?v=3';
 
 function cover(scene, key) {
   if (!scene.textures.exists(key)) return;

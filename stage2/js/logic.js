@@ -1,8 +1,8 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js';
-import { EVENTS, eventById } from './data/events.js';
-import { markerById, phaseProfile } from './data/map.js';
-import { NIGHT_EVENTS } from './data/night.js';
-import { phaseCopy } from './data/phases.js';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=3';
+import { EVENTS, eventById } from './data/events.js?v=3';
+import { markerById, phaseProfile } from './data/map.js?v=3';
+import { NIGHT_EVENTS } from './data/night.js?v=3';
+import { phaseCopy } from './data/phases.js?v=3';
 import {
   BEER_LINES,
   COAT_BRAGS,
@@ -18,8 +18,8 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js';
-import { zombieById, ZOMBIES } from './data/survival.js';
+} from './data/radio.js?v=3';
+import { zombieById, ZOMBIES } from './data/survival.js?v=3';
 import {
   applyCold,
   applyCrewNight,
@@ -41,15 +41,15 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js';
+} from './crew.js?v=3';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=3';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js';
+} from './state.js?v=3';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {

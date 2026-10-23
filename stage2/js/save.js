@@ -1,6 +1,6 @@
-import { CONFIG } from './config.js';
-import { NEIGHBORS } from './data/neighbors.js';
-import { Game } from './state.js';
+import { CONFIG } from './config.js?v=3';
+import { NEIGHBORS } from './data/neighbors.js?v=3';
+import { Game } from './state.js?v=3';
 
 const DEFAULT_SETTINGS = {
   music: 0.7,

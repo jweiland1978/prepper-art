@@ -1,11 +1,11 @@
-import Phaser from '../phaser.js';
-import { CONFIG } from '../config.js';
-import { Game, bus } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addDialog, addPanel, addSlider, addText, addToggle } from '../ui.js';
-import { attachAtmosphere } from '../fx.js';
-import { beginScene, goTo, hideHud } from '../flow.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game, bus } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addDialog, addPanel, addSlider, addText, addToggle } from '../ui.js?v=3';
+import { attachAtmosphere } from '../fx.js?v=3';
+import { beginScene, goTo, hideHud } from '../flow.js?v=3';
 
 const SPEEDS = [
   { label: 'SLOW', value: 0.65 },

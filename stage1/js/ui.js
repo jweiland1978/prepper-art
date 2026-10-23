@@ -1,7 +1,7 @@
-import Phaser from './phaser.js';
-import { CONFIG } from './config.js';
-import { Audio } from './audio.js';
-import { Game } from './state.js';
+import Phaser from './phaser.js?v=3';
+import { CONFIG } from './config.js?v=3';
+import { Audio } from './audio.js?v=3';
+import { Game } from './state.js?v=3';
 
 export function textResolution() {
   const dpr = globalThis.devicePixelRatio || 1;
@@ -299,16 +299,18 @@ export function addDialog(scene, opts) {
 }
 
 /** How long a finished line stays up so it can be read (tap skips). */
-export function readHold(text) {
+export function readHold(text, waitForTap) {
+  // Radio and intro lines stay up until a tap; the long cap only guards a stuck screen.
+  if (waitForTap) return 3600000;
   const sp = Game.settings?.textSpeed || 1;
-  return Math.min(7000, Math.max(1400, (1200 + String(text || '').length * 40) / sp));
+  return Math.min(12000, Math.max(2000, (1500 + String(text || '').length * 60) / sp));
 }
 
 /** Types `full` into `textObj`. `skip()` finishes the line. Calls `onDone` once. */
 export function runTypewriter(scene, textObj, full, onDone, withBlips) {
   let index = 0;
   let finished = false;
-  const speed = Math.max(20, 55 / (Game.settings?.textSpeed || 1));
+  const speed = Math.max(25, 70 / (Game.settings?.textSpeed || 1));
   const finish = () => {
     if (finished) return;
     finished = true;

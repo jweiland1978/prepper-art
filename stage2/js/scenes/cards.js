@@ -1,10 +1,10 @@
-import { CONFIG } from '../config.js';
-import { Audio } from '../audio.js';
-import { clearKnock, markOffered, recruit, recruitView, refuse } from '../crew.js';
-import { actionChance, oddsWord } from '../logic.js';
-import { Save } from '../save.js';
-import { Game, touchState } from '../state.js';
-import { addButton, addPanel, addText } from '../ui.js';
+import { CONFIG } from '../config.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { clearKnock, markOffered, recruit, recruitView, refuse } from '../crew.js?v=3';
+import { actionChance, oddsWord } from '../logic.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Game, touchState } from '../state.js?v=3';
+import { addButton, addPanel, addText } from '../ui.js?v=3';
 
 /**
  * One modal, always with a button. Clicking the dimmer does nothing, so a choice

@@ -1,9 +1,9 @@
-import { CONFIG, phaseForDay } from './config.js';
-import { NEIGHBORS } from './data/neighbors.js';
-import { loseNeighbor } from './crew.js';
-import { Game, changeStat, newRun, syncDerived, touchState } from './state.js';
-import { Save } from './save.js';
-import { addButton, addText } from './ui.js';
+import { CONFIG, phaseForDay } from './config.js?v=3';
+import { NEIGHBORS } from './data/neighbors.js?v=3';
+import { loseNeighbor } from './crew.js?v=3';
+import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=3';
+import { Save } from './save.js?v=3';
+import { addButton, addText } from './ui.js?v=3';
 
 const MORALE_STEPS = [0, 1, 5, 8, 10];
 const MAYHEM_IDS = ['works', 'hedge', 'biscuit', 'bunker', 'spectacular'];

@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js';
-import { CONFIG } from '../config.js';
-import { Game } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addPanel, addText } from '../ui.js';
-import { attachAtmosphere, fadeIn } from '../fx.js';
-import { goTo, hideHud } from '../flow.js';
-import { buildScore, downLine, EARLY_END_LINE } from '../logic.js';
-import { LOSS_HINT, WIN_LINES } from '../data/survival.js';
-import { makeTyper } from './type.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addPanel, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { goTo, hideHud } from '../flow.js?v=3';
+import { buildScore, downLine, EARLY_END_LINE } from '../logic.js?v=3';
+import { LOSS_HINT, WIN_LINES } from '../data/survival.js?v=3';
+import { makeTyper } from './type.js?v=3';
 
 function cover(scene) {
   const key = scene.textures.exists('bg-title') ? 'bg-title' : 'bg-mainstreet';

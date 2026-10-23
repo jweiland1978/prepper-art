@@ -1,12 +1,12 @@
-import Phaser from '../phaser.js';
-import { CONFIG } from '../config.js';
-import { Game, cleanName, newRun } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addText, runTypewriter, readHold } from '../ui.js';
-import { attachAtmosphere } from '../fx.js';
-import { beginScene, goTo } from '../flow.js';
-import { addStudioRadio } from '../widgets.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game, cleanName, newRun } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addText, runTypewriter, readHold } from '../ui.js?v=3';
+import { attachAtmosphere } from '../fx.js?v=3';
+import { beginScene, goTo } from '../flow.js?v=3';
+import { addStudioRadio } from '../widgets.js?v=3';
 
 const OFFICIAL = 'This is an official message for the residents of Lake Orwell. In thirty days, the world will end. Officials are confident it will be caused by—';
 
@@ -52,7 +52,7 @@ export class IntroScene extends Phaser.Scene {
       align: 'center',
       wordWrap: { width: 920 },
     }).setDepth(12);
-    this.hint = addText(this, 640, 680, 'Tap to skip', {
+    this.hint = addText(this, 640, 680, 'Tap to continue', {
       fontFamily: CONFIG.FONTS.body,
       fontSize: '16px',
       color: CONFIG.COLORS.textMuted,
@@ -87,7 +87,7 @@ export class IntroScene extends Phaser.Scene {
       if (i > 0) Audio.staticBurst(0.16);
       await this.say(HOST[i], true);
       if (this.dead) return;
-      await this.wait(readHold(HOST[i]));
+      await this.wait(readHold(HOST[i], true));
     }
     if (this.dead) return;
     this.finish();

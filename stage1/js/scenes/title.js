@@ -1,13 +1,13 @@
-import Phaser from '../phaser.js';
-import { CONFIG } from '../config.js';
-import { Game, bus, newRun, replaceState } from '../state.js';
-import { devBootRun, devGrant, mountDevTools } from '../dev.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addDialog, addText } from '../ui.js';
-import { attachAtmosphere } from '../fx.js';
-import { beginScene, goTo } from '../flow.js';
-import { addCornerDial } from '../widgets.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game, bus, newRun, replaceState } from '../state.js?v=3';
+import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addDialog, addText } from '../ui.js?v=3';
+import { attachAtmosphere } from '../fx.js?v=3';
+import { beginScene, goTo } from '../flow.js?v=3';
+import { addCornerDial } from '../widgets.js?v=3';
 
 const GAMEPLAY = new Set([
   'Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Apocalypse', 'Survival', 'Ending',

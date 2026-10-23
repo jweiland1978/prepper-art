@@ -2,16 +2,16 @@
  * Stash, trade overlay, swap meet, rocket cards, and the Mackinaw moment.
  * The scene list stays as it was. These are overlays.
  */
-import { CONFIG } from '../config.js';
-import { ITEMS, itemById } from '../data/items.js';
-import { COAT_LINES, GARY_COAT } from '../data/traders.js';
-import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js';
-import { applyDeltas, oddsWord, resolveDanger } from '../logic.js';
-import { Save } from '../save.js';
-import { Game, touchState } from '../state.js';
-import { Audio } from '../audio.js';
-import { addButton, addText } from '../ui.js';
-import { offerTip, showDanger, showNotice } from './cards.js';
+import { CONFIG } from '../config.js?v=3';
+import { ITEMS, itemById } from '../data/items.js?v=3';
+import { COAT_LINES, GARY_COAT } from '../data/traders.js?v=3';
+import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js?v=3';
+import { applyDeltas, oddsWord, resolveDanger } from '../logic.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Game, touchState } from '../state.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { offerTip, showDanger, showNotice } from './cards.js?v=3';
 import {
   beginMeet,
   crackBeer,
@@ -29,7 +29,7 @@ import {
   moveGood,
   priceArrow,
   priceOf,
-} from '../trade.js';
+} from '../trade.js?v=3';
 
 const NAMES = { tip: 'A tip', dock: 'Sewer map' };
 

@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js';
-import { CONFIG, phaseForDay } from '../config.js';
-import { Game, roomLevel, syncDerived } from '../state.js';
-import { Save } from '../save.js';
-import { Audio } from '../audio.js';
-import { addButton, addText } from '../ui.js';
-import { attachAtmosphere, fadeIn } from '../fx.js';
-import { endRun, leave, showHud } from '../flow.js';
-import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js';
-import { showDanger, showNotice } from './cards.js';
-import { makeTyper } from './type.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG, phaseForDay } from '../config.js?v=3';
+import { Game, roomLevel, syncDerived } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { endRun, leave, showHud } from '../flow.js?v=3';
+import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js?v=3';
+import { showDanger, showNotice } from './cards.js?v=3';
+import { makeTyper } from './type.js?v=3';
 
 export class NightScene extends Phaser.Scene {
   constructor() {

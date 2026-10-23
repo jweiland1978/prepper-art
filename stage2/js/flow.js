@@ -1,9 +1,9 @@
-import { HUD_SCENES } from './config.js';
-import { Audio } from './audio.js';
-import { fadeIn } from './fx.js';
-import { Save } from './save.js';
-import { Game } from './state.js';
-import { EARLY_END_LINE } from './logic.js';
+import { HUD_SCENES } from './config.js?v=3';
+import { Audio } from './audio.js?v=3';
+import { fadeIn } from './fx.js?v=3';
+import { Save } from './save.js?v=3';
+import { Game } from './state.js?v=3';
+import { EARLY_END_LINE } from './logic.js?v=3';
 
 export function goTo(scene, key, data) {
   if (!scene.sys?.isActive() || scene._leaving) return;

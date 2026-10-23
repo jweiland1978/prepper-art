@@ -1,12 +1,12 @@
-import Phaser from '../phaser.js';
-import { CONFIG, countdownPhrase } from '../config.js';
-import { moraleWord } from '../crew.js';
-import { Game, bus, formatStat } from '../state.js';
-import { Audio } from '../audio.js';
-import { addPanel, addText, tweenNumber } from '../ui.js';
-import { openStash } from './trade.js';
-import { itemBlurb } from '../trade.js';
-import { devGrant, devSkip, mountDevTools } from '../dev.js';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG, countdownPhrase } from '../config.js?v=3';
+import { moraleWord } from '../crew.js?v=3';
+import { Game, bus, formatStat } from '../state.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addPanel, addText, tweenNumber } from '../ui.js?v=3';
+import { openStash } from './trade.js?v=3';
+import { itemBlurb } from '../trade.js?v=3';
+import { devGrant, devSkip, mountDevTools } from '../dev.js?v=3';
 
 const STATS = [
   { key: 'food', x: 548, icon: 'can' },
