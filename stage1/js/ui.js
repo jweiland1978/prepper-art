@@ -298,11 +298,17 @@ export function addDialog(scene, opts) {
   return { close, root };
 }
 
+/** How long a finished line stays up so it can be read (tap skips). */
+export function readHold(text) {
+  const sp = Game.settings?.textSpeed || 1;
+  return Math.min(7000, Math.max(1400, (1200 + String(text || '').length * 40) / sp));
+}
+
 /** Types `full` into `textObj`. `skip()` finishes the line. Calls `onDone` once. */
 export function runTypewriter(scene, textObj, full, onDone, withBlips) {
   let index = 0;
   let finished = false;
-  const speed = Math.max(12, 34 / (Game.settings?.textSpeed || 1));
+  const speed = Math.max(20, 55 / (Game.settings?.textSpeed || 1));
   const finish = () => {
     if (finished) return;
     finished = true;

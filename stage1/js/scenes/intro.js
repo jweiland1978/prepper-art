@@ -3,7 +3,7 @@ import { CONFIG } from '../config.js';
 import { Game, cleanName, newRun } from '../state.js';
 import { Save } from '../save.js';
 import { Audio } from '../audio.js';
-import { addText, runTypewriter } from '../ui.js';
+import { addText, runTypewriter, readHold } from '../ui.js';
 import { attachAtmosphere } from '../fx.js';
 import { beginScene, goTo } from '../flow.js';
 import { addStudioRadio } from '../widgets.js';
@@ -87,7 +87,7 @@ export class IntroScene extends Phaser.Scene {
       if (i > 0) Audio.staticBurst(0.16);
       await this.say(HOST[i], true);
       if (this.dead) return;
-      await this.wait(260);
+      await this.wait(readHold(HOST[i]));
     }
     if (this.dead) return;
     this.finish();

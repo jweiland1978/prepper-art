@@ -1,6 +1,6 @@
 import { CONFIG } from '../config.js';
 import { Audio } from '../audio.js';
-import { addText, runTypewriter } from '../ui.js';
+import { addText, runTypewriter, readHold } from '../ui.js';
 
 /** Shared tap-to-skip typewriter. A button can always be shown if the promise rejects. */
 export function makeTyper(scene) {
@@ -17,8 +17,16 @@ export function makeTyper(scene) {
       textObj.setText('');
       return new Promise((resolve) => {
         api.typer = runTypewriter(scene, textObj, text, () => {
-          api.skipWait = null;
-          resolve();
+          if (api.dead) { api.skipWait = null; resolve(); return; }
+          const hold = scene.time.delayedCall(readHold(text), () => {
+            api.skipWait = null;
+            resolve();
+          });
+          api.skipWait = () => {
+            hold.remove(false);
+            api.skipWait = null;
+            resolve();
+          };
         }, blips);
         api.skipWait = () => api.typer?.skip();
       });
