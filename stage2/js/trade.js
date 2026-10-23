@@ -2,10 +2,10 @@
  * Barter, item uses, Gary's respect, rockets, and the coat.
  * Scenes paint. This file only changes state.
  */
-import { CONFIG, phaseForDay } from './config.js?v=3';
-import { itemById } from './data/items.js?v=3';
-import { RUMORS } from './data/radio.js?v=3';
-import { MARKERS } from './data/map.js?v=3';
+import { CONFIG, phaseForDay } from './config.js?v=4';
+import { itemById } from './data/items.js?v=4';
+import { RUMORS } from './data/radio.js?v=4';
+import { MARKERS } from './data/map.js?v=4';
 import {
   DISTRESS_LINES,
   GARY_BEER,
@@ -19,7 +19,7 @@ import {
   LIGHT_LINES,
   MAYHEM_LINES,
   STALLS,
-} from './data/traders.js?v=3';
+} from './data/traders.js?v=4';
 import {
   addNotice,
   garyRespect,
@@ -29,8 +29,8 @@ import {
   spotStatus,
   tradeUnit,
   wearingCoat,
-} from './crew.js?v=3';
-import { changeStat, roomLevel, touchState } from './state.js?v=3';
+} from './crew.js?v=4';
+import { Game, changeStat, roomLevel, touchState } from './state.js?v=4';
 
 export const STAT_KEYS = ['food', 'water', 'materials', 'medicine'];
 
@@ -49,7 +49,19 @@ export function priceOf(good, day, who, extra = {}) {
   }
   let price = tradeUnit(good, day, who, extra);
   if (good === 'coat' && extra.steep) price = Math.max(price, Math.round(price * 1.75));
-  return price;
+  const flags = Game.state?.flags || {};
+  const side = extra.side || 'give';
+  if ((flags.heistsDone || 0) >= 1 && good === 'beer' && side === 'give' && who === 'gary') {
+    const respect = extra.respect || 0;
+    const rate = respect >= CONFIG.TRADE.garyRespectAt ? CONFIG.TRADE.garyBuyRespect : CONFIG.TRADE.garyBuy;
+    if (rate > 0) price = Math.max(1, Math.round(price / rate));
+  }
+  if ((flags.heistsDone || 0) >= 1 && good === 'beer' && side === 'give' && who === 'larry') {
+    price = Math.max(price * (CONFIG.HEIST.larryBeer || 4), price + 4);
+  }
+  const heat = (flags.heistCaught ? 1 : 0) + (flags.heistHeat || 0);
+  if (heat && side === 'get') price += (CONFIG.HEIST.priceBump || 1) * heat;
+  return Math.max(1, Math.round(price));
 }
 
 export function priceArrow(good, day, who, extra = {}) {
@@ -168,9 +180,12 @@ export function makeTrader(who, state) {
 }
 
 export function refuseGood(trader, good, state) {
+  if (good === 'beer' && (state?.flags?.heistsDone || 0) < 1) {
+    if (trader?.who === 'gary') return GARY_BEER;
+    return 'They look at the silver can and look away. Pine Lake Light is not currency. Not yet.';
+  }
   if (!trader || trader.who !== 'gary') return '';
   if (good === 'tinfoil') return GARY_FOIL;
-  if (good === 'beer' && (state?.day || 1) < 21) return GARY_BEER;
   return '';
 }
 
@@ -376,6 +391,9 @@ export function beginMeet(state) {
     row.goods.forEach((id, index) => {
       stock[id] = 1 + Math.floor(hashDay((state.day || 1) + visit, row.modSalt * 10 + index) * 2);
     });
+    if ((state.flags.heistsDone || 0) >= 1) {
+      stock.beer = Math.max(stock.beer || 0, 1 + Math.floor(hashDay((state.day || 1) + visit, row.modSalt + 6) * 2));
+    }
     return {
       id: row.id,
       who: 'stall',

@@ -1,18 +1,18 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG, phaseForDay } from '../config.js?v=3';
-import { spotStatus, tickRoads } from '../crew.js?v=3';
-import { MARKERS, markerDanger } from '../data/map.js?v=3';
-import { phaseCopy } from '../data/phases.js?v=3';
-import { Game, touchState } from '../state.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addText } from '../ui.js?v=3';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
-import { leave, showHud } from '../flow.js?v=3';
-import { maybeGaryVisit } from '../logic.js?v=3';
-import { fenceLine } from '../trade.js?v=3';
-import { showNotice } from './cards.js?v=3';
-import { openMeet, openTrade } from './trade.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG, phaseForDay } from '../config.js?v=4';
+import { spotStatus, tickRoads } from '../crew.js?v=4';
+import { MARKERS, markerDanger } from '../data/map.js?v=4';
+import { phaseCopy } from '../data/phases.js?v=4';
+import { Game, touchState } from '../state.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addText } from '../ui.js?v=4';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
+import { leave, showHud } from '../flow.js?v=4';
+import { maybeGaryVisit } from '../logic.js?v=4';
+import { fenceLine } from '../trade.js?v=4';
+import { showNotice } from './cards.js?v=4';
+import { openMeet, openTrade } from './trade.js?v=4';
 
 const LOOT_LABEL = {
   food: 'Cans',
@@ -347,8 +347,10 @@ export class MapScene extends Phaser.Scene {
       });
       return;
     }
-    const skulls = markerDanger(marker, phase);
+    let skulls = markerDanger(marker, phase);
+    if (marker.id === 'bait' && state.flags?.heistCaught) skulls = Math.min(3, skulls + 1);
     const expect = marker.expect?.[phase] || marker.expect?.collapse || '';
+    const sheriff = status.code === 'open' && status.line ? `\n\n${status.line}` : '';
     const loot = (marker.loot || []).map((key) => LOOT_LABEL[key] || key).join(', ');
     const noActions = (state.actionsLeft ?? 0) <= 0;
     const crawl = state.flags?.crawl;
@@ -358,7 +360,7 @@ export class MapScene extends Phaser.Scene {
     this.card = showNotice(this, {
       kicker: phase === 'calm' ? 'OPEN' : phase === 'panic' ? 'THIN' : 'SCARCE',
       title: marker.name,
-      body: `${marker.quip}\n\n${expect}\n\nLikely: ${loot || 'whatever is left.'}${crawlNote}`,
+      body: `${marker.quip}\n\n${expect}\n\nLikely: ${loot || 'whatever is left.'}${sheriff}${crawlNote}`,
       decorate: (root) => {
         this.drawSkulls(root, 500, 468, skulls);
         this.drawLoot(root, 760, 468, marker.loot || []);

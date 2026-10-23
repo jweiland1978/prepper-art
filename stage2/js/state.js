@@ -1,5 +1,5 @@
-import { CONFIG, phaseForDay } from './config.js?v=3';
-import { NEIGHBORS } from './data/neighbors.js?v=3';
+import { CONFIG, phaseForDay } from './config.js?v=4';
+import { NEIGHBORS } from './data/neighbors.js?v=4';
 
 export class Emitter {
   constructor() {

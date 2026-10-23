@@ -1,10 +1,10 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG } from '../config.js?v=3';
-import { cleanName } from '../state.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addPaper, addText } from '../ui.js?v=3';
-import { attachAtmosphere } from '../fx.js?v=3';
-import { beginScene, goTo } from '../flow.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG } from '../config.js?v=4';
+import { cleanName } from '../state.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addPaper, addText } from '../ui.js?v=4';
+import { attachAtmosphere } from '../fx.js?v=4';
+import { beginScene, goTo } from '../flow.js?v=4';
 
 const BOXES = [
   'I have read the pamphlet',

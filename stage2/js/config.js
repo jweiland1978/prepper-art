@@ -291,7 +291,54 @@ export const CONFIG = {
     mackinawAfter: 6,
     mackinawLoot: 1 / 3,
     mackinawDanger: 0.05,
-    // TODO Part 2: the Pine Lake Light heist. Do not build it in Part 1. Beer is a stash item until then.
+  },
+
+  // The Bait & Brew job. Beer stays a minor stash item until the first heist.
+  // Every heist number lives here so a pass can be tuned without hunting.
+  HEIST: {
+    fromDay: 3,
+    max: 2,
+    cooldown: 5,
+    // Run 1 pays 6. Run 2 pays double.
+    haul: [6, 12],
+    // Run 2: the meter starts half full. FAST is the wrong step and catches.
+    alertStart: 50,
+    alertMul: 1,
+    run2CatchFast: true,
+    careful: [3, 9],
+    fast: [18, 28],
+    creaky: 10,
+    skip: 0.45,
+    caughtMorale: -1,
+    caughtMoraleRun2: -2,
+    respectPenalty: 2,
+    respectPenaltyRun2: 3,
+    priceBump: 1,
+    larryBeer: 4,
+    // Caught on run 2. Beer percent is inclusive; the take uses Math.ceil.
+    searchChance: 0.88,
+    searchBeerPct: [50, 70],
+    searchLootChance: 0.5,
+    searchLootMax: 1,
+    // Bigger than the run-2 caught hit, stacked on top of it.
+    searchMorale: -3,
+    searchRespect: 4,
+    // Run 2 back door. trapFill 100 fills the meter and catches.
+    trapChance: 0.5,
+    trapFill: 100,
+    // Dougie from the boat launch. Bribe: 1 can, no noise, always works.
+    dougieChance: 0.4,
+    dougieFreezeRisk: 0.55,
+    dougieFreezeNoise: 18,
+    dougieWaitRisk: 0.35,
+    dougieWaitNoise: 12,
+    bribeCost: 1,
+    bribeWorks: true,
+    bribeNoise: 0,
+    // Larry at Rusty's after a heist. Calm prefers a can, then another good.
+    larryCalmBeer: 1,
+    larryRideMorale: -1,
+    larryRideRespect: 1,
   },
 
   ROCKETS: {

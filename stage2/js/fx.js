@@ -1,7 +1,7 @@
-import Phaser from './phaser.js?v=3';
-import { CONFIG } from './config.js?v=3';
-import { Game, bus } from './state.js?v=3';
-import { scratchGrain } from './textures.js?v=3';
+import Phaser from './phaser.js?v=4';
+import { CONFIG } from './config.js?v=4';
+import { Game, bus } from './state.js?v=4';
+import { scratchGrain } from './textures.js?v=4';
 
 export function effectsOn() {
   return !Game.settings?.reduceEffects;

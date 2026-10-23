@@ -1,9 +1,10 @@
-import { CONFIG, phaseForDay } from './config.js?v=3';
-import { NEIGHBORS } from './data/neighbors.js?v=3';
-import { loseNeighbor } from './crew.js?v=3';
-import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=3';
-import { Save } from './save.js?v=3';
-import { addButton, addText } from './ui.js?v=3';
+import { CONFIG, phaseForDay } from './config.js?v=4';
+import { NEIGHBORS } from './data/neighbors.js?v=4';
+import { loseNeighbor } from './crew.js?v=4';
+import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=4';
+import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=4';
+import { Save } from './save.js?v=4';
+import { addButton, addText } from './ui.js?v=4';
 
 const MORALE_STEPS = [0, 1, 5, 8, 10];
 const MAYHEM_IDS = ['works', 'hedge', 'biscuit', 'bunker', 'spectacular'];
@@ -161,6 +162,12 @@ const EXTRAS = [
   ['MAYHEM', 'mayhem'],
   ['LOSS', 'loss'],
   ['COLD', 'cold'],
+  ['HEIST', 'heist'],
+  ['HEIST2', 'heist2'],
+  ['TRAP', 'trap'],
+  ['DOUGIE', 'dougie'],
+  ['LARRY PANIC', 'larry'],
+  ['SEARCH', 'search'],
 ];
 
 function runExtra(kind, state, onSkip) {
@@ -187,7 +194,7 @@ function extraButtons(scene, y, onAct) {
     y + Math.floor(index / 5) * 48,
     item[0],
     () => onAct(item[1]),
-    { w: 140, h: 40, fontSize: '14px', depth: 80 },
+    { w: item[0].length > 10 ? 148 : 140, h: 40, fontSize: item[0].length > 10 ? '12px' : '14px', depth: 80 },
   ));
 }
 
@@ -248,10 +255,32 @@ export function mountDevTools(scene, opts = {}) {
       close();
       opts.onGrant?.();
     }).forEach((node) => panel.add(node));
-    extraButtons(scene, y - 110, (kind) => {
+    extraButtons(scene, y - 216, (kind) => {
       if (kind === 'day21') {
         close();
         opts.onSkip?.(21);
+        return;
+      }
+      if (kind === 'heist') {
+        close();
+        if (Game.state) openHeist(scene, { dev: true });
+        return;
+      }
+      if (kind === 'heist2') {
+        close();
+        if (Game.state) {
+          forceHeistRun2(Game.state);
+          openHeist(scene, { dev: true });
+        }
+        return;
+      }
+      if (kind === 'larry') {
+        close();
+        if (Game.state) presentLarryPanic(scene, { force: true });
+        return;
+      }
+      if (kind === 'trap' || kind === 'dougie' || kind === 'search') {
+        if (Game.state) armHeist(kind);
         return;
       }
       runExtra(kind, Game.state);

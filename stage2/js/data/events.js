@@ -409,16 +409,7 @@ export const EVENTS = [
     bias: ['materials', 'materials'],
   },
 
-  // Stage 2+ TODO: beer heist mechanic, design pending with Jeff.
-  // Disabled on purpose. Nothing in the game should offer this.
-  {
-    id: 'BEER_HEIST_TODO',
-    location: 'tavern',
-    kind: 'find',
-    weight: 0,
-    phases: ['never'],
-    text: '',
-  },
+  // The Bait & Brew job lives in js/heist.js. NightSummary offers it. Not a map event.
 ];
 
 export function eventById(id) {

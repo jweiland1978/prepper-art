@@ -1,8 +1,8 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=3';
-import { EVENTS, eventById } from './data/events.js?v=3';
-import { markerById, phaseProfile } from './data/map.js?v=3';
-import { NIGHT_EVENTS } from './data/night.js?v=3';
-import { phaseCopy } from './data/phases.js?v=3';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=4';
+import { EVENTS, eventById } from './data/events.js?v=4';
+import { markerById, phaseProfile } from './data/map.js?v=4';
+import { NIGHT_EVENTS } from './data/night.js?v=4';
+import { phaseCopy } from './data/phases.js?v=4';
 import {
   BEER_LINES,
   COAT_BRAGS,
@@ -18,8 +18,8 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js?v=3';
-import { zombieById, ZOMBIES } from './data/survival.js?v=3';
+} from './data/radio.js?v=4';
+import { zombieById, ZOMBIES } from './data/survival.js?v=4';
 import {
   applyCold,
   applyCrewNight,
@@ -41,15 +41,16 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js?v=3';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=3';
+} from './crew.js?v=4';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=4';
+import { heistMorning } from './heist.js?v=4';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js?v=3';
+} from './state.js?v=4';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {
@@ -154,6 +155,12 @@ export function ensureMorning(state) {
   const copy = phaseCopy(state.day);
   if (copy?.radio) heard.push(degradeLine(copy.radio, phase));
   if (batteryLine) heard.push(degradeLine(batteryLine, phase));
+  const searchPending = state.flags.heistSearchNote || '';
+  const heistLine = heistMorning(state);
+  if (heistLine) {
+    const exact = !!(searchPending && heistLine === searchPending);
+    heard.push(exact ? heistLine : degradeLine(heistLine, phase));
+  }
   if (state.flags.coatRadio) {
     heard.push(degradeLine('You found the Mackinaw. The town noticed. Try not to let that go to the wool.', phase));
     heard.push(degradeLine(COAT_BRAGS[3], phase));

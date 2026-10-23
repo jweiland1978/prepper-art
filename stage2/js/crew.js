@@ -2,12 +2,12 @@
  * Neighbors, morale wording, cots, phase spots, and the hooks Parts 2 and 3 call.
  * Does not import scenes or logic. Logic may import this.
  */
-import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=3';
-import { MARKERS, markerById, phaseProfile } from './data/map.js?v=3';
-import { neighborById, NEIGHBORS } from './data/neighbors.js?v=3';
-import { rumorById } from './data/radio.js?v=3';
-import { NOTICE_FORMS } from './data/traders.js?v=3';
-import { changeStat, roomLevel, touchState } from './state.js?v=3';
+import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=4';
+import { MARKERS, markerById, phaseProfile } from './data/map.js?v=4';
+import { neighborById, NEIGHBORS } from './data/neighbors.js?v=4';
+import { rumorById } from './data/radio.js?v=4';
+import { NOTICE_FORMS } from './data/traders.js?v=4';
+import { changeStat, roomLevel, touchState } from './state.js?v=4';
 
 export const STASH_KEYS = ['tinfoil', 'battery', 'coffee', 'snacks', 'rockets', 'coat', 'gas', 'cigarettes', 'ammo', 'tp', 'beer'];
 
@@ -313,6 +313,17 @@ export function garyRespect(state) {
   if ((state.flags?.garyFair || 0) >= 3) score += 1;
   if ((state.flags?.moraleHighNights || 0) >= 5) score += 1;
   if (state.flags?.garyScorched) score -= 1;
+  if (state.flags?.heistCaught) {
+    const run = state.flags.heistCaughtRun || 1;
+    const pen = run >= 2 ? (CONFIG.HEIST?.respectPenaltyRun2 || 3) : (CONFIG.HEIST?.respectPenalty || 2);
+    score -= pen;
+  }
+  if (state.flags?.heistSearched) {
+    score -= (CONFIG.HEIST?.searchRespect || 4) * state.flags.heistSearched;
+  }
+  if (state.flags?.heistHeat) {
+    score -= (CONFIG.HEIST?.larryRideRespect || 1) * state.flags.heistHeat;
+  }
   return Math.max(0, Math.min(5, score));
 }
 
@@ -347,6 +358,9 @@ export function spotStatus(state, marker) {
   if (road?.id === marker.id && state.day < road.untilDay) {
     return { code: 'road', line: "Road's out. Pothole finally won.", grey: true };
   }
+  if (marker.id === 'bait' && state?.flags?.heistCaught) {
+    return { code: 'open', line: 'The sheriff patrols the dock. He has a flashlight and a count.', grey: false };
+  }
   return { code: 'open', line: '', grey: false };
 }
 
@@ -375,6 +389,7 @@ export function dangerAdjust(state, action, where) {
   if (where === 'trip' && wearingCoat(state)) extra += CONFIG.ITEMS.mackinawDanger || 0;
   if (action === 'hide' && state.flags?.hideBonus) extra += 0.12;
   if (where === 'trip' && state.flags?.dockReady && state.flags?.trip?.location === 'super') extra += 0.12;
+  if (where === 'trip' && state.flags?.heistCaught && state.flags?.trip?.location === 'bait') extra -= 0.12;
   return extra;
 }
 

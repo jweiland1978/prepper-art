@@ -1,6 +1,6 @@
-import { CONFIG } from './config.js?v=3';
-import { NEIGHBORS } from './data/neighbors.js?v=3';
-import { Game } from './state.js?v=3';
+import { CONFIG } from './config.js?v=4';
+import { NEIGHBORS } from './data/neighbors.js?v=4';
+import { Game } from './state.js?v=4';
 
 const DEFAULT_SETTINGS = {
   music: 0.7,
@@ -240,6 +240,21 @@ export function migrate(data) {
       && (lossIds.includes(solo.id) || solo.id === 'tina');
     if (!soloOk) data.flags.solo = null;
   }
+  data.flags.heistsDone = num(data.flags.heistsDone, 0, 0, 2);
+  data.flags.lastHeistDay = num(data.flags.lastHeistDay, 0, 0, 40);
+  data.flags.heistCaught = !!data.flags.heistCaught;
+  data.flags.heistCaughtRun = num(data.flags.heistCaughtRun, 0, 0, 2);
+  data.flags.heistSearched = num(data.flags.heistSearched, 0, 0, 4);
+  data.flags.heistHeat = num(data.flags.heistHeat, 0, 0, 4);
+  data.flags.heistBragsHeard = num(data.flags.heistBragsHeard, 0, 0, 8);
+  data.flags.heistOffHeard = num(data.flags.heistOffHeard, 0, 0, 8);
+  data.flags.heistTauntsHeard = num(data.flags.heistTauntsHeard, 0, 0, 8);
+  data.flags.heistAsked = num(data.flags.heistAsked, 0, 0, 40);
+  data.flags.heistLarrySeen = num(data.flags.heistLarrySeen, 0, 0, 2);
+  data.flags.heistForceTrap = !!data.flags.heistForceTrap;
+  data.flags.heistForceDougie = !!data.flags.heistForceDougie;
+  data.flags.heistForceSearch = !!data.flags.heistForceSearch;
+  if (typeof data.flags.heistSearchNote !== 'string') data.flags.heistSearchNote = '';
   if (!data.flags.offers || typeof data.flags.offers !== 'object') data.flags.offers = {};
   if (data.flags.road && (typeof data.flags.road.id !== 'string' || !finiteNumber(data.flags.road.untilDay))) {
     data.flags.road = null;
