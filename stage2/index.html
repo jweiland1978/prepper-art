@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#070b12">
+  <title>PREPPER</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #05070c;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+    #game {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+    }
+    #dom-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+    }
+    #dom-layer input {
+      pointer-events: auto;
+      position: fixed;
+      box-sizing: border-box;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid #8a4b2a;
+      color: #1c140e;
+      font-family: "Special Elite", "Courier New", serif;
+      padding: 2px 6px;
+      outline: none;
+      border-radius: 0;
+    }
+    #rotate-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: #070b12;
+      color: #f4efe4;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px;
+    }
+    #rotate-overlay p {
+      margin: 0;
+      max-width: 18em;
+      font-family: "Oswald", sans-serif;
+      font-size: 28px;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+    }
+    #rotate-overlay span {
+      color: #ff8c28;
+    }
+    @media (orientation: portrait) and (max-width: 900px) {
+      #rotate-overlay { display: flex; }
+    }
+  </style>
+</head>
+<body>
+  <div id="game"></div>
+  <div id="dom-layer"></div>
+  <div id="rotate-overlay">
+    <p><span>Rotate your phone.</span> The apocalypse is widescreen.</p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
