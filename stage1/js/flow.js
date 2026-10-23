@@ -10,16 +10,26 @@ export function goTo(scene, key, data) {
   scene._leaving = true;
   scene.events.once('shutdown', () => { scene._leaving = false; });
   Game.hudLock = false;
-  Audio.staticBurst(0.28);
   let left = false;
   const leaveNow = () => {
     if (left) return;
     left = true;
-    scene.scene.start(key, data || {});
+    try {
+      scene.scene.start(key, data || {});
+    } catch (error) {
+      console.error('[PREPPER] Scene change failed.', error);
+      scene.game?.scene?.start(key, data || {});
+    }
   };
-  scene.cameras.main.fadeOut(280, 0, 0, 0);
-  scene.cameras.main.once('camerafadeoutcomplete', leaveNow);
-  scene.time.delayedCall(700, leaveNow);
+  try {
+    scene.cameras.main.fadeOut(280, 0, 0, 0);
+    scene.cameras.main.once('camerafadeoutcomplete', leaveNow);
+    scene.time.delayedCall(700, leaveNow);
+  } catch (error) {
+    console.error('[PREPPER] Fade failed.', error);
+  }
+  window.setTimeout(leaveNow, 1200);
+  try { Audio.staticBurst(0.28); } catch (error) { console.warn('[PREPPER] Audio hiccup.', error); }
 }
 
 /** Saves, remembers where to resume, then changes scene. */

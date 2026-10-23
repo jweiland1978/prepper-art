@@ -160,7 +160,7 @@ export class TitleScene extends Phaser.Scene {
   }
 
   onNewGame() {
-    Audio.unlock();
+    try { Audio.unlock(); } catch (error) { console.warn('[PREPPER] Audio hiccup.', error); }
     if (Game.saveStatus?.ok && !Game.saveStatus.data?.finished) {
       addDialog(this, {
         title: 'START OVER',

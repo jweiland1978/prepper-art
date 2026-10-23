@@ -21,7 +21,15 @@ export function loadSettings() {
     if (!raw) return { ...DEFAULT_SETTINGS };
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return { ...DEFAULT_SETTINGS };
-    return { ...DEFAULT_SETTINGS, ...parsed };
+    const merged = { ...DEFAULT_SETTINGS, ...parsed };
+    const unit = (v, d) => (Number.isFinite(Number(v)) ? Math.min(1, Math.max(0, Number(v))) : d);
+    merged.music = unit(merged.music, DEFAULT_SETTINGS.music);
+    merged.sfx = unit(merged.sfx, DEFAULT_SETTINGS.sfx);
+    merged.textSpeed = Number.isFinite(Number(merged.textSpeed)) && Number(merged.textSpeed) > 0 ? Number(merged.textSpeed) : DEFAULT_SETTINGS.textSpeed;
+    merged.voiceBlips = merged.voiceBlips !== false;
+    merged.reduceEffects = !!merged.reduceEffects;
+    merged.debugCoords = !!merged.debugCoords;
+    return merged;
   } catch (error) {
     warn('Settings could not be read.', error);
     return { ...DEFAULT_SETTINGS };

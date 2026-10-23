@@ -60,8 +60,16 @@ class AudioManager {
   unlock() {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return this;
-    if (!this.ctx) this.build(new AudioCtx());
-    if (this.ctx.state === 'suspended') void this.ctx.resume();
+    try {
+      if (!this.ctx) this.build(new AudioCtx());
+      if (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted') {
+        const resumed = this.ctx.resume();
+        if (resumed?.catch) resumed.catch(() => {});
+      }
+    } catch (error) {
+      console.warn('[PREPPER] Audio unlock failed.', error);
+      if (!this.musicGain) this.ctx = null;
+    }
     if (!this.unlocked) {
       this.unlocked = true;
       bus.emit('audio-unlocked');

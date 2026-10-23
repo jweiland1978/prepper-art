@@ -75,6 +75,28 @@
   <div id="rotate-overlay">
     <p><span>Rotate your phone.</span> The apocalypse is widescreen.</p>
   </div>
+  <div id="err-box" style="display:none;position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#3a0d0d;color:#fff;font:14px/1.35 monospace;padding:8px 10px;border:2px solid #ff8c28;white-space:pre-wrap;max-height:40vh;overflow:auto"></div>
+  <script>
+    (function () {
+      try {
+        if (/[?&]reset=1/.test(location.search)) {
+          Object.keys(localStorage).filter(function (k) { return k.indexOf('prepper') === 0; }).forEach(function (k) { localStorage.removeItem(k); });
+          try { sessionStorage.clear(); } catch (e) {}
+          location.replace(location.pathname);
+        }
+      } catch (e) {}
+      var shown = 0;
+      function show(msg) {
+        var box = document.getElementById('err-box');
+        if (!box || shown > 4) return;
+        shown += 1;
+        box.style.display = 'block';
+        box.textContent += (box.textContent ? '\n' : 'Something broke. Screenshot this for Jeff\'s builder, then reload (or add ?reset=1 to the address).\n') + msg;
+      }
+      window.addEventListener('error', function (e) { show(String(e.message || e) + (e.filename ? ' @ ' + e.filename.split('/').pop() + ':' + e.lineno : '')); });
+      window.addEventListener('unhandledrejection', function (e) { show('Promise: ' + String((e.reason && (e.reason.stack || e.reason.message)) || e.reason).slice(0, 300)); });
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
   <script type="module" src="js/main.js"></script>
 </body>

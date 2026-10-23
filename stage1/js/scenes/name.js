@@ -142,8 +142,12 @@ export class NameScene extends Phaser.Scene {
     this.left = true;
     const name = cleanName(this.inputEl.value);
     this.inputEl.remove();
-    Audio.unlock();
-    Audio.rustle();
+    try {
+      Audio.unlock();
+      Audio.rustle();
+    } catch (error) {
+      console.warn('[PREPPER] Audio hiccup.', error);
+    }
     goTo(this, 'Intro', { name });
   }
 }

@@ -4,8 +4,8 @@ export const CONFIG = {
   HEIGHT: 720,
   HUD_H: 78,
 
-  SAVE_KEY: 'prepper_save_v1',
-  SETTINGS_KEY: 'prepper_settings_v1',
+  SAVE_KEY: 'prepper_s2_save',
+  SETTINGS_KEY: 'prepper_s2_settings',
   SAVE_VERSION: 2,
 
   PREP_DAYS: 30,
