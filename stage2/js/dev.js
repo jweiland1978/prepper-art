@@ -1,10 +1,10 @@
-import { CONFIG, phaseForDay } from './config.js?v=4';
-import { NEIGHBORS } from './data/neighbors.js?v=4';
-import { loseNeighbor } from './crew.js?v=4';
-import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=4';
-import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=4';
-import { Save } from './save.js?v=4';
-import { addButton, addText } from './ui.js?v=4';
+import { CONFIG, phaseForDay } from './config.js?v=5';
+import { NEIGHBORS } from './data/neighbors.js?v=5';
+import { loseNeighbor } from './crew.js?v=5';
+import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=5';
+import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=5';
+import { Save } from './save.js?v=5';
+import { addButton, addText } from './ui.js?v=5';
 
 const MORALE_STEPS = [0, 1, 5, 8, 10];
 const MAYHEM_IDS = ['works', 'hedge', 'biscuit', 'bunker', 'spectacular'];

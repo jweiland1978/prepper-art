@@ -1,13 +1,13 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG } from '../config.js?v=4';
-import { Game, bus, newRun, replaceState } from '../state.js?v=4';
-import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addDialog, addText } from '../ui.js?v=4';
-import { attachAtmosphere } from '../fx.js?v=4';
-import { beginScene, goTo } from '../flow.js?v=4';
-import { addCornerDial } from '../widgets.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG } from '../config.js?v=5';
+import { Game, bus, newRun, replaceState } from '../state.js?v=5';
+import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addDialog, addText } from '../ui.js?v=5';
+import { attachAtmosphere } from '../fx.js?v=5';
+import { beginScene, goTo } from '../flow.js?v=5';
+import { addCornerDial } from '../widgets.js?v=5';
 
 const GAMEPLAY = new Set([
   'Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Apocalypse', 'Survival', 'Ending',
@@ -176,6 +176,9 @@ export class TitleScene extends Phaser.Scene {
   }
 
   onContinue() {
+    // Same as NEW GAME: unlock inside the tap so iOS really resumes the context,
+    // and cut the title hiss now instead of after the fade.
+    try { Audio.unlock(); Audio.stopStatic(); } catch (error) { console.warn('[PREPPER] Audio hiccup.', error); }
     const loaded = Save.peek();
     if (!loaded.ok || loaded.data?.finished) {
       this.offerFreshStart();

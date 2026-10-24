@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG, phaseForDay, phaseInfo } from '../config.js?v=4';
-import { Game, syncDerived } from '../state.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addText } from '../ui.js?v=4';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
-import { leave, showHud } from '../flow.js?v=4';
-import { addStudioRadio } from '../widgets.js?v=4';
-import { ensureMorning, staticLevel } from '../logic.js?v=4';
-import { makeTyper } from './type.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG, phaseForDay, phaseInfo } from '../config.js?v=5';
+import { Game, syncDerived } from '../state.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addText } from '../ui.js?v=5';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=5';
+import { leave, showHud } from '../flow.js?v=5';
+import { addStudioRadio } from '../widgets.js?v=5';
+import { ensureMorning, staticLevel } from '../logic.js?v=5';
+import { makeTyper } from './type.js?v=5';
 
 const BANNERS = new Set([1, 11, 21, 30]);
 
@@ -67,7 +67,9 @@ export class RadioScene extends Phaser.Scene {
     this.script = ensureMorning(state);
     Save.write(state);
     Audio.startMusic('lounge');
-    Audio.startStatic(staticLevel(phaseForDay(state.day), state));
+    // Static is the bed under a live broadcast. A day already heard (the usual
+    // CONTINUE case) just shows the transcript, so no endless hiss.
+    if (state.flags.radioHeard !== state.day) Audio.startStatic(staticLevel(phaseForDay(state.day), state));
     this.events.once('shutdown', () => {
       this.typer.dead = true;
       Audio.stopJingle();
@@ -130,6 +132,7 @@ export class RadioScene extends Phaser.Scene {
     if (this.left || this.actionButton) return;
     if (status === undefined || status > Phaser.Scenes.RUNNING) return;
     this.hint.setText('');
+    Audio.stopStatic(); // broadcast over: the hiss ends with it
     const state = Game.state;
     let label = 'START THE DAY';
     let key = 'Map';

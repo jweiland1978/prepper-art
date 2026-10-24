@@ -3,10 +3,10 @@
  * globalThis.__PREPPER_HEIST: open, openRun2, force, forceTrap, forceDougie,
  * forceSearch, larry, state.
  */
-import { CONFIG } from './config.js?v=4';
-import { Game, changeStat, touchState } from './state.js?v=4';
-import { Save } from './save.js?v=4';
-import { addButton, addPanel, addText } from './ui.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { Game, changeStat, touchState } from './state.js?v=5';
+import { Save } from './save.js?v=5';
+import { addButton, addPanel, addText } from './ui.js?v=5';
 
 const BOARDS = [
   { name: 'The dock', creaky: false },

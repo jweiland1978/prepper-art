@@ -2,12 +2,12 @@
  * Neighbors, morale wording, cots, phase spots, and the hooks Parts 2 and 3 call.
  * Does not import scenes or logic. Logic may import this.
  */
-import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=4';
-import { MARKERS, markerById, phaseProfile } from './data/map.js?v=4';
-import { neighborById, NEIGHBORS } from './data/neighbors.js?v=4';
-import { rumorById } from './data/radio.js?v=4';
-import { NOTICE_FORMS } from './data/traders.js?v=4';
-import { changeStat, roomLevel, touchState } from './state.js?v=4';
+import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=5';
+import { MARKERS, markerById, phaseProfile } from './data/map.js?v=5';
+import { neighborById, NEIGHBORS } from './data/neighbors.js?v=5';
+import { rumorById } from './data/radio.js?v=5';
+import { NOTICE_FORMS } from './data/traders.js?v=5';
+import { changeStat, roomLevel, touchState } from './state.js?v=5';
 
 export const STASH_KEYS = ['tinfoil', 'battery', 'coffee', 'snacks', 'rockets', 'coat', 'gas', 'cigarettes', 'ammo', 'tp', 'beer'];
 

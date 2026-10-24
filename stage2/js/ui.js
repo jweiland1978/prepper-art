@@ -1,7 +1,7 @@
-import Phaser from './phaser.js?v=4';
-import { CONFIG } from './config.js?v=4';
-import { Audio } from './audio.js?v=4';
-import { Game } from './state.js?v=4';
+import Phaser from './phaser.js?v=5';
+import { CONFIG } from './config.js?v=5';
+import { Audio } from './audio.js?v=5';
+import { Game } from './state.js?v=5';
 
 export function textResolution() {
   const dpr = globalThis.devicePixelRatio || 1;

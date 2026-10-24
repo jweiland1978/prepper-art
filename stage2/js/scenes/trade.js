@@ -2,17 +2,17 @@
  * Stash, trade overlay, swap meet, rocket cards, and the Mackinaw moment.
  * The scene list stays as it was. These are overlays.
  */
-import { CONFIG } from '../config.js?v=4';
-import { ITEMS, itemById } from '../data/items.js?v=4';
-import { COAT_LINES, GARY_COAT } from '../data/traders.js?v=4';
-import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js?v=4';
-import { applyDeltas, oddsWord, resolveDanger } from '../logic.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Game, touchState } from '../state.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addText } from '../ui.js?v=4';
-import { offerTip, showDanger, showNotice } from './cards.js?v=4';
-import { larryPanicDue, presentLarryPanic } from '../heist.js?v=4';
+import { CONFIG } from '../config.js?v=5';
+import { ITEMS, itemById } from '../data/items.js?v=5';
+import { COAT_LINES, GARY_COAT } from '../data/traders.js?v=5';
+import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js?v=5';
+import { applyDeltas, oddsWord, resolveDanger } from '../logic.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Game, touchState } from '../state.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addText } from '../ui.js?v=5';
+import { offerTip, showDanger, showNotice } from './cards.js?v=5';
+import { larryPanicDue, presentLarryPanic } from '../heist.js?v=5';
 import {
   beginMeet,
   crackBeer,
@@ -30,7 +30,7 @@ import {
   moveGood,
   priceArrow,
   priceOf,
-} from '../trade.js?v=4';
+} from '../trade.js?v=5';
 
 const NAMES = { tip: 'A tip', dock: 'Sewer map' };
 

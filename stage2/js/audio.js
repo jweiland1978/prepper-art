@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=4';
-import { bus } from './state.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { bus } from './state.js?v=5';
 
 const CHORDS = [
   [110, 130.81, 164.81, 196],
@@ -131,6 +131,10 @@ class AudioManager {
     osc.stop(time + dur + 0.03);
     osc.onended = () => {
       try { osc.disconnect(); amp.disconnect(); } catch (error) { /* already gone */ }
+      // Unhook the shared wobble LFO too, or every wobbled note stays attached forever.
+      if (wobble) {
+        try { this.wobbleDepth.disconnect(osc.detune); } catch (error) { /* already gone */ }
+      }
     };
   }
 
@@ -359,6 +363,7 @@ class AudioManager {
   startStatic(level = 0.04) {
     this.unlock();
     if (!this.ctx) return;
+    // Idempotent: only one static bed can ever exist. A second call just retunes it.
     if (!this.staticSrc) {
       const src = this.ctx.createBufferSource();
       src.buffer = this.noise;
@@ -373,15 +378,20 @@ class AudioManager {
       this.staticGain.connect(this.sfxGain);
       src.start();
       this.staticSrc = src;
+      this.staticFilter = filter;
       this.queueCrackle();
     }
     this.staticGain.gain.value = level;
   }
 
   queueCrackle() {
+    if (this.crackleTimer) window.clearTimeout(this.crackleTimer);
     const pop = () => {
       if (!this.staticSrc || !this.ctx) return;
-      if (Math.random() < 0.7) this.noiseHit(this.ctx.currentTime, 0.02, 0.05 + Math.random() * 0.06, 1800, 0.4);
+      // Don't pile up pops on a suspended (hidden/paused) context; they'd all fire on resume.
+      if (this.ctx.state === 'running' && Math.random() < 0.7) {
+        this.noiseHit(this.ctx.currentTime, 0.02, 0.05 + Math.random() * 0.06, 1800, 0.4);
+      }
       this.crackleTimer = window.setTimeout(pop, 90 + Math.random() * 480);
     };
     pop();
@@ -390,10 +400,40 @@ class AudioManager {
   stopStatic() {
     if (this.crackleTimer) window.clearTimeout(this.crackleTimer);
     this.crackleTimer = null;
-    if (this.staticSrc) {
-      try { this.staticSrc.stop(); } catch (error) { /* already stopped */ }
-      this.staticSrc = null;
-    }
+    const src = this.staticSrc;
+    const filter = this.staticFilter;
+    const gain = this.staticGain;
+    this.staticSrc = null;
+    this.staticFilter = null;
+    this.staticGain = null;
+    // Silence first, then stop and pull every node out of the graph, so the bed
+    // goes quiet even if stop() is deferred (e.g. a suspended iOS context).
+    try {
+      if (gain && this.ctx) {
+        gain.gain.cancelScheduledValues(this.ctx.currentTime);
+        gain.gain.setValueAtTime(0, this.ctx.currentTime);
+      }
+    } catch (error) { /* context gone */ }
+    try { src?.stop(); } catch (error) { /* already stopped */ }
+    [src, filter, gain].forEach((node) => {
+      try { node?.disconnect(); } catch (error) { /* already gone */ }
+    });
+  }
+
+  /** Page hidden, app backgrounded, or rotate overlay up: park all audio. */
+  setHidden(hidden) {
+    if (!this.ctx) return;
+    try {
+      if (hidden) {
+        if (this.ctx.state === 'running') {
+          const p = this.ctx.suspend();
+          if (p?.catch) p.catch(() => {});
+        }
+      } else if (this.unlocked && this.ctx.state !== 'running' && this.ctx.state !== 'closed') {
+        const p = this.ctx.resume();
+        if (p?.catch) p.catch(() => {});
+      }
+    } catch (error) { /* ignore */ }
   }
 
   staticBurst(seconds = 0.35) {
@@ -530,7 +570,7 @@ class AudioManager {
       lp.connect(amp);
       amp.connect(this.sfxGain);
       src.start();
-      this.loops.rain = src;
+      this.loops.rain = { src, nodes: [hp, lp], amp };
       return;
     }
     if (kind === 'snow') {
@@ -546,7 +586,7 @@ class AudioManager {
       hp.connect(amp);
       amp.connect(this.sfxGain);
       src.start();
-      this.loops.snow = src;
+      this.loops.snow = { src, nodes: [hp], amp };
       return;
     }
     if (kind === 'murmur') {
@@ -562,7 +602,7 @@ class AudioManager {
       lp.connect(amp);
       amp.connect(this.sfxGain);
       src.start();
-      this.loops.murmur = src;
+      this.loops.murmur = { src, nodes: [lp], amp };
       return;
     }
     if (kind === 'jukebox') {
@@ -578,7 +618,7 @@ class AudioManager {
       lp.connect(amp);
       amp.connect(this.sfxGain);
       osc.start();
-      this.loops.jukebox = osc;
+      this.loops.jukebox = { src: osc, nodes: [lp], amp };
       return;
     }
     if (kind === 'generator') {
@@ -595,7 +635,7 @@ class AudioManager {
       amp.connect(this.sfxGain);
       osc.start();
       osc2.start();
-      this.loops.generator = { osc, osc2, amp };
+      this.loops.generator = { src: osc, src2: osc2, nodes: [], amp };
       return;
     }
     if (kind === 'sirens') {
@@ -619,23 +659,33 @@ class AudioManager {
         osc.frequency.linearRampToValueAtTime(480, now + 1.5);
         this.sirenTimer = window.setTimeout(sweep, 1500);
       };
-      this.loops.sirens = osc;
+      this.loops.sirens = { src: osc, nodes: [filter], amp };
       sweep();
     }
   }
 
   stopLoop(kind) {
-    const node = this.loops?.[kind];
-    if (!node) return;
-    if (kind === 'sirens' && this.sirenTimer) window.clearTimeout(this.sirenTimer);
-    try {
-      if (node.stop) node.stop();
-      if (node.osc) {
-        node.osc.stop();
-        node.osc2.stop();
-      }
-    } catch (error) { /* already stopped */ }
+    const loop = this.loops?.[kind];
+    if (!loop) return;
     delete this.loops[kind];
+    if (kind === 'sirens' && this.sirenTimer) {
+      window.clearTimeout(this.sirenTimer);
+      this.sirenTimer = null;
+    }
+    // Same order as stopStatic(): silence, stop, then pull every node out of the
+    // graph, so a loop goes quiet even if stop() is deferred on a suspended context.
+    try {
+      if (loop.amp && this.ctx) {
+        loop.amp.gain.cancelScheduledValues(this.ctx.currentTime);
+        loop.amp.gain.setValueAtTime(0, this.ctx.currentTime);
+      }
+    } catch (error) { /* context gone */ }
+    [loop.src, loop.src2].forEach((node) => {
+      try { node?.stop(); } catch (error) { /* already stopped */ }
+    });
+    [loop.src, loop.src2, ...(loop.nodes || []), loop.amp].forEach((node) => {
+      try { node?.disconnect(); } catch (error) { /* already gone */ }
+    });
   }
 
   playWhistle() {
@@ -700,9 +750,13 @@ class AudioManager {
     });
     if (amount > 0.15) this.noiseHit(start, step * 5, amount * 0.06, 1600, 0.45);
     return new Promise((resolve) => {
+      this.sponsorResolve = resolve;
       this.sponsorTimer = window.setTimeout(() => {
         this.sponsorTimer = null;
-        resolve();
+        if (this.sponsorResolve) {
+          this.sponsorResolve = null;
+          resolve();
+        }
       }, (step * SPONSOR_NOTES.length + 0.2) * 1000);
     });
   }
@@ -710,6 +764,12 @@ class AudioManager {
   stopSponsor() {
     if (this.sponsorTimer) window.clearTimeout(this.sponsorTimer);
     this.sponsorTimer = null;
+    // Settle anyone awaiting the jingle, the same way stopJingle() does.
+    if (this.sponsorResolve) {
+      const resolve = this.sponsorResolve;
+      this.sponsorResolve = null;
+      resolve();
+    }
   }
 
   playRocket(mayhem) {

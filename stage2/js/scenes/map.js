@@ -1,18 +1,18 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG, phaseForDay } from '../config.js?v=4';
-import { spotStatus, tickRoads } from '../crew.js?v=4';
-import { MARKERS, markerDanger } from '../data/map.js?v=4';
-import { phaseCopy } from '../data/phases.js?v=4';
-import { Game, touchState } from '../state.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addText } from '../ui.js?v=4';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
-import { leave, showHud } from '../flow.js?v=4';
-import { maybeGaryVisit } from '../logic.js?v=4';
-import { fenceLine } from '../trade.js?v=4';
-import { showNotice } from './cards.js?v=4';
-import { openMeet, openTrade } from './trade.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG, phaseForDay } from '../config.js?v=5';
+import { spotStatus, tickRoads } from '../crew.js?v=5';
+import { MARKERS, markerDanger } from '../data/map.js?v=5';
+import { phaseCopy } from '../data/phases.js?v=5';
+import { Game, touchState } from '../state.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addText } from '../ui.js?v=5';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=5';
+import { leave, showHud } from '../flow.js?v=5';
+import { maybeGaryVisit } from '../logic.js?v=5';
+import { fenceLine } from '../trade.js?v=5';
+import { showNotice } from './cards.js?v=5';
+import { openMeet, openTrade } from './trade.js?v=5';
 
 const LOOT_LABEL = {
   food: 'Cans',
@@ -100,6 +100,8 @@ export class MapScene extends Phaser.Scene {
       Audio.stopRain();
       Audio.stopSnow();
       Audio.stopSirens();
+      Audio.stopJukebox(); // Rusty's meet panel, if the Map closes without LEAVE
+      Audio.stopMurmur();
     });
     const afterCards = () => {
       if ((state.actionsLeft ?? 0) <= 0) this.promptNight();
