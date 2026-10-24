@@ -1,7 +1,7 @@
-import Phaser from './phaser.js?v=3';
-import { CONFIG } from './config.js?v=3';
-import { Audio } from './audio.js?v=3';
-import { Game } from './state.js?v=3';
+import Phaser from './phaser.js?v=4';
+import { CONFIG } from './config.js?v=4';
+import { Audio } from './audio.js?v=4';
+import { Game } from './state.js?v=4';
 
 export function textResolution() {
   const dpr = globalThis.devicePixelRatio || 1;
@@ -98,7 +98,7 @@ export function addButton(scene, x, y, label, onClick, opts = {}) {
   draw(false);
   root.setSize(w, h);
   root.setInteractive({
-    hitArea: new Phaser.Geom.Rectangle(-w / 2, -h / 2, w, h),
+    hitArea: new Phaser.Geom.Rectangle(0, 0, w, h),
     hitAreaCallback: Phaser.Geom.Rectangle.Contains,
     useHandCursor: true,
   });

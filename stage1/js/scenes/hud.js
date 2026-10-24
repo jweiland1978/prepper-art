@@ -1,9 +1,9 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG, countdownPhrase } from '../config.js?v=3';
-import { Game, bus, formatStat } from '../state.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addPanel, addText, tweenNumber } from '../ui.js?v=3';
-import { devGrant, devSkip, mountDevTools } from '../dev.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG, countdownPhrase } from '../config.js?v=4';
+import { Game, bus, formatStat } from '../state.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addPanel, addText, tweenNumber } from '../ui.js?v=4';
+import { devGrant, devSkip, mountDevTools } from '../dev.js?v=4';
 
 const STATS = [
   { key: 'food', x: 548, icon: 'can' },
@@ -265,7 +265,7 @@ function noteButton(scene, x, y, label, onClick) {
   root.add([g, text]);
   root.setSize(140, 36);
   root.setInteractive({
-    hitArea: new Phaser.Geom.Rectangle(-70, -18, 140, 36),
+    hitArea: new Phaser.Geom.Rectangle(0, 0, 140, 36),
     hitAreaCallback: Phaser.Geom.Rectangle.Contains,
     useHandCursor: true,
   });

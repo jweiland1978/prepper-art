@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG, phaseForDay } from '../config.js?v=3';
-import { MARKERS, markerDanger } from '../data/map.js?v=3';
-import { Game, touchState } from '../state.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addText } from '../ui.js?v=3';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
-import { leave, showHud } from '../flow.js?v=3';
-import { maybeGaryVisit } from '../logic.js?v=3';
-import { showNotice } from './cards.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG, phaseForDay } from '../config.js?v=4';
+import { MARKERS, markerDanger } from '../data/map.js?v=4';
+import { Game, touchState } from '../state.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addText } from '../ui.js?v=4';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
+import { leave, showHud } from '../flow.js?v=4';
+import { maybeGaryVisit } from '../logic.js?v=4';
+import { showNotice } from './cards.js?v=4';
 
 const LOOT_LABEL = {
   food: 'Cans',

@@ -1,12 +1,12 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG, phaseForDay } from '../config.js?v=3';
-import { markerById } from '../data/map.js?v=3';
-import { Game } from '../state.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addText } from '../ui.js?v=3';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
-import { endRun, leave, showHud } from '../flow.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG, phaseForDay } from '../config.js?v=4';
+import { markerById } from '../data/map.js?v=4';
+import { Game } from '../state.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addText } from '../ui.js?v=4';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
+import { endRun, leave, showHud } from '../flow.js?v=4';
 import {
   applyDeltas,
   eventLookup,
@@ -15,8 +15,8 @@ import {
   resolveChoice,
   resolveDanger,
   rollLoot,
-} from '../logic.js?v=3';
-import { showDanger, showNotice } from './cards.js?v=3';
+} from '../logic.js?v=4';
+import { showDanger, showNotice } from './cards.js?v=4';
 
 export class ScavengeScene extends Phaser.Scene {
   constructor() {

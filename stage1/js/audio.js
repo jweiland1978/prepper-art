@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=3';
-import { bus } from './state.js?v=3';
+import { CONFIG } from './config.js?v=4';
+import { bus } from './state.js?v=4';
 
 const CHORDS = [
   [110, 130.81, 164.81, 196],
