@@ -1,4 +1,4 @@
-import { CONFIG, phaseForDay } from './config.js?v=5';
+import { CONFIG, phaseForDay } from './config.js?v=6';
 
 export class Emitter {
   constructor() {
