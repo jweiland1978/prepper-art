@@ -1,9 +1,9 @@
-import { HUD_SCENES } from './config.js?v=6';
-import { Audio } from './audio.js?v=6';
-import { fadeIn } from './fx.js?v=6';
-import { Save } from './save.js?v=6';
-import { Game } from './state.js?v=6';
-import { EARLY_END_LINE } from './logic.js?v=6';
+import { HUD_SCENES } from './config.js?v=7';
+import { Audio } from './audio.js?v=7';
+import { fadeIn } from './fx.js?v=7';
+import { Save } from './save.js?v=7';
+import { Game } from './state.js?v=7';
+import { EARLY_END_LINE } from './logic.js?v=7';
 
 export function goTo(scene, key, data) {
   if (!scene.sys?.isActive() || scene._leaving) return;
@@ -29,7 +29,7 @@ export function goTo(scene, key, data) {
     console.error('[PREPPER] Fade failed.', error);
   }
   window.setTimeout(leaveNow, 1200);
-  try { Audio.staticBurst(0.28); } catch (error) { console.warn('[PREPPER] Audio hiccup.', error); }
+  try { Audio.staticBurst(0.12, 0.05); /* quiet screen-change static (was 0.28 s at 0.2) */ } catch (error) { console.warn('[PREPPER] Audio hiccup.', error); }
 }
 
 /** Saves, remembers where to resume, then changes scene. */

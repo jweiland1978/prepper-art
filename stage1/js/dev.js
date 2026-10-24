@@ -1,7 +1,7 @@
-import { CONFIG, phaseForDay } from './config.js?v=4';
-import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=4';
-import { Save } from './save.js?v=4';
-import { addButton, addText } from './ui.js?v=4';
+import { CONFIG, phaseForDay } from './config.js?v=5';
+import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=5';
+import { Save } from './save.js?v=5';
+import { addButton, addText } from './ui.js?v=5';
 
 /** Only the ?dev=1 buttons call these. Caps rise with the grant so the food actually stays. */
 export function devSkip(state, day) {

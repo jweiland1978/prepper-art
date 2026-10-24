@@ -1,6 +1,6 @@
-import Phaser from './phaser.js?v=4';
-import { CONFIG } from './config.js?v=4';
-import { addText } from './ui.js?v=4';
+import Phaser from './phaser.js?v=5';
+import { CONFIG } from './config.js?v=5';
+import { addText } from './ui.js?v=5';
 
 export function dialAngle(mhz) {
   const t = Phaser.Math.Clamp((mhz - 88) / 20, 0, 1);

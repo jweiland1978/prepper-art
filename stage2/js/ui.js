@@ -1,7 +1,7 @@
-import Phaser from './phaser.js?v=6';
-import { CONFIG } from './config.js?v=6';
-import { Audio } from './audio.js?v=6';
-import { Game } from './state.js?v=6';
+import Phaser from './phaser.js?v=7';
+import { CONFIG } from './config.js?v=7';
+import { Audio } from './audio.js?v=7';
+import { Game } from './state.js?v=7';
 
 export function textResolution() {
   const dpr = globalThis.devicePixelRatio || 1;
@@ -194,8 +194,10 @@ export function addSlider(scene, x, y, w, value, onChange) {
   draw(value);
   root.add([track, readout]);
   root.setSize(w + 70, 48);
+  // Container hit tests add displayOrigin (half the size), so shift the box to
+  // cover the whole track (local x -14..w+14, y 0..48), not its top-left corner.
   root.setInteractive({
-    hitArea: new Phaser.Geom.Rectangle(0, 0, w, 48),
+    hitArea: new Phaser.Geom.Rectangle((w + 70) / 2 - 14, 24, w + 28, 48),
     hitAreaCallback: Phaser.Geom.Rectangle.Contains,
     useHandCursor: true,
   });
@@ -247,7 +249,7 @@ export function addToggle(scene, x, y, w, label, value, onChange) {
   root.add([g, text]);
   root.setSize(w, 48);
   root.setInteractive({
-    hitArea: new Phaser.Geom.Rectangle(0, 0, w, 48),
+    hitArea: new Phaser.Geom.Rectangle(w / 2, 24, w, 48), // local 0..w, 0..48 (see addSlider)
     hitAreaCallback: Phaser.Geom.Rectangle.Contains,
     useHandCursor: true,
   });

@@ -1,9 +1,9 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG, countdownPhrase } from '../config.js?v=4';
-import { Game, bus, formatStat } from '../state.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addPanel, addText, tweenNumber } from '../ui.js?v=4';
-import { devGrant, devSkip, mountDevTools } from '../dev.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG, countdownPhrase } from '../config.js?v=5';
+import { Game, bus, formatStat } from '../state.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addPanel, addText, tweenNumber } from '../ui.js?v=5';
+import { devGrant, devSkip, mountDevTools } from '../dev.js?v=5';
 
 const STATS = [
   { key: 'food', x: 548, icon: 'can' },

@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=4';
-import { bus } from './state.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { bus } from './state.js?v=5';
 
 const CHORDS = [
   [110, 130.81, 164.81, 196],
@@ -311,8 +311,8 @@ class AudioManager {
       time, freq: walk, dur: 0.42, type: 'triangle', gain: tense ? 0.16 : 0.13,
       dest: this.bedGain, attack: 0.02, wobble: true,
     });
-    this.noiseHit(time, 0.05, tense ? 0.025 : 0.035, 6200, 0.7, this.bedGain);
-    if (beatInBar % 2 === 1) this.noiseHit(time + 0.28, 0.04, 0.02, 7000, 0.5, this.bedGain);
+    this.noiseHit(time, 0.05, tense ? 0.010 : 0.012, 6200, 0.7, this.bedGain); // softer hi-hat (was 0.025/0.035)
+    if (beatInBar % 2 === 1) this.noiseHit(time + 0.28, 0.04, 0.007, 7000, 0.5, this.bedGain); // was 0.02
     if (beatInBar === 0) {
       CHORDS[chordIndex].forEach((freq, index) => {
         this.tone({
@@ -394,12 +394,12 @@ class AudioManager {
     }
   }
 
-  staticBurst(seconds = 0.35) {
+  staticBurst(seconds = 0.35, volume = 0.2) {
     this.unlock();
     if (!this.ctx) return;
     const t = this.ctx.currentTime;
-    this.noiseHit(t, seconds, 0.2, 2200, 0.4);
-    this.noiseHit(t + 0.04, 0.05, 0.12, 900, 0.5);
+    this.noiseHit(t, seconds, volume, 2200, 0.4);
+    this.noiseHit(t + 0.04, 0.05, volume * 0.6, 900, 0.5);
   }
 
   playJingle(day = 1) {

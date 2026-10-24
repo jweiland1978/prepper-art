@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=4';
-import { Game } from './state.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { Game } from './state.js?v=5';
 
 const DEFAULT_SETTINGS = {
   music: 0.7,

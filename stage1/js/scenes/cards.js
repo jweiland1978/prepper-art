@@ -1,8 +1,8 @@
-import { CONFIG } from '../config.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { Game } from '../state.js?v=4';
-import { actionChance, oddsWord } from '../logic.js?v=4';
-import { addButton, addPanel, addText } from '../ui.js?v=4';
+import { CONFIG } from '../config.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { Game } from '../state.js?v=5';
+import { actionChance, oddsWord } from '../logic.js?v=5';
+import { addButton, addPanel, addText } from '../ui.js?v=5';
 
 /**
  * One modal, always with a button. Clicking the dimmer does nothing, so a choice

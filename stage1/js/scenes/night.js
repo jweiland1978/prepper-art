@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG, phaseForDay } from '../config.js?v=4';
-import { Game, roomLevel, syncDerived } from '../state.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addText } from '../ui.js?v=4';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
-import { endRun, leave, showHud } from '../flow.js?v=4';
-import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js?v=4';
-import { showDanger, showNotice } from './cards.js?v=4';
-import { makeTyper } from './type.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG, phaseForDay } from '../config.js?v=5';
+import { Game, roomLevel, syncDerived } from '../state.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addText } from '../ui.js?v=5';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=5';
+import { endRun, leave, showHud } from '../flow.js?v=5';
+import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js?v=5';
+import { showDanger, showNotice } from './cards.js?v=5';
+import { makeTyper } from './type.js?v=5';
 
 export class NightScene extends Phaser.Scene {
   constructor() {

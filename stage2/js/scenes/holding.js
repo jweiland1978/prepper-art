@@ -1,9 +1,9 @@
-import { CONFIG } from '../config.js?v=6';
-import { Game } from '../state.js?v=6';
-import { Audio } from '../audio.js?v=6';
-import { addButton, addPanel, addText } from '../ui.js?v=6';
-import { attachAtmosphere } from '../fx.js?v=6';
-import { beginScene, goTo, hideHud, showHud } from '../flow.js?v=6';
+import { CONFIG } from '../config.js?v=7';
+import { Game } from '../state.js?v=7';
+import { Audio } from '../audio.js?v=7';
+import { addButton, addPanel, addText } from '../ui.js?v=7';
+import { attachAtmosphere } from '../fx.js?v=7';
+import { beginScene, goTo, hideHud, showHud } from '../flow.js?v=7';
 
 export function holding(scene, opts) {
   beginScene(scene);
