@@ -1,13 +1,13 @@
-import Phaser from '../phaser.js?v=5';
-import { CONFIG } from '../config.js?v=5';
-import { Game, roomLevel, syncDerived } from '../state.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addButton, addPanel, addText } from '../ui.js?v=5';
-import { attachAtmosphere, fadeIn, shake } from '../fx.js?v=5';
-import { hideHud, leave } from '../flow.js?v=5';
-import { fillLine } from '../logic.js?v=5';
-import { APOCALYPSE_LINES } from '../data/survival.js?v=5';
-import { makeTyper } from './type.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { CONFIG } from '../config.js?v=6';
+import { Game, roomLevel, syncDerived } from '../state.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addButton, addPanel, addText } from '../ui.js?v=6';
+import { attachAtmosphere, fadeIn, shake } from '../fx.js?v=6';
+import { hideHud, leave } from '../flow.js?v=6';
+import { fillLine } from '../logic.js?v=6';
+import { APOCALYPSE_LINES } from '../data/survival.js?v=6';
+import { makeTyper } from './type.js?v=6';
 
 function cover(scene, key) {
   if (!scene.textures.exists(key)) return;

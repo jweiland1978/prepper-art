@@ -1,8 +1,8 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=5';
-import { EVENTS, eventById } from './data/events.js?v=5';
-import { markerById, phaseProfile } from './data/map.js?v=5';
-import { NIGHT_EVENTS } from './data/night.js?v=5';
-import { phaseCopy } from './data/phases.js?v=5';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=6';
+import { EVENTS, eventById } from './data/events.js?v=6';
+import { markerById, phaseProfile } from './data/map.js?v=6';
+import { NIGHT_EVENTS } from './data/night.js?v=6';
+import { phaseCopy } from './data/phases.js?v=6';
 import {
   BEER_LINES,
   COAT_BRAGS,
@@ -18,8 +18,8 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js?v=5';
-import { zombieById, ZOMBIES } from './data/survival.js?v=5';
+} from './data/radio.js?v=6';
+import { zombieById, ZOMBIES } from './data/survival.js?v=6';
 import {
   applyCold,
   applyCrewNight,
@@ -41,16 +41,16 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js?v=5';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=5';
-import { heistMorning } from './heist.js?v=5';
+} from './crew.js?v=6';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=6';
+import { heistMorning } from './heist.js?v=6';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js?v=5';
+} from './state.js?v=6';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {

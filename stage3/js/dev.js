@@ -1,13 +1,13 @@
-import { CONFIG, phaseForDay } from './config.js?v=5';
-import { NEIGHBORS } from './data/neighbors.js?v=5';
-import { cotCount, loseNeighbor, recruited } from './crew.js?v=5';
-import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=5';
-import { beginSurvivalDay, buildScore } from './logic.js?v=5';
-import { apocalypseName, apocalypseOf, cycleApocalypse, rumorPlanText } from './rumors.js?v=5';
-import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=5';
-import { Save } from './save.js?v=5';
-import { Audio } from './audio.js?v=5';
-import { addButton, addText } from './ui.js?v=5';
+import { CONFIG, phaseForDay } from './config.js?v=6';
+import { NEIGHBORS } from './data/neighbors.js?v=6';
+import { cotCount, loseNeighbor, recruited } from './crew.js?v=6';
+import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=6';
+import { beginSurvivalDay, buildScore } from './logic.js?v=6';
+import { apocalypseName, apocalypseOf, cycleApocalypse, rumorPlanText } from './rumors.js?v=6';
+import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=6';
+import { Save } from './save.js?v=6';
+import { Audio } from './audio.js?v=6';
+import { addButton, addText } from './ui.js?v=6';
 
 const MORALE_STEPS = [0, 1, 5, 8, 10];
 const MAYHEM_IDS = ['works', 'hedge', 'biscuit', 'bunker', 'spectacular'];

@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=5';
-import { bus } from './state.js?v=5';
+import { CONFIG } from './config.js?v=6';
+import { bus } from './state.js?v=6';
 
 const CHORDS = [
   [110, 130.81, 164.81, 196],
@@ -564,7 +564,7 @@ class AudioManager {
       lp.type = 'lowpass';
       lp.frequency.value = 4200;
       const amp = this.ctx.createGain();
-      amp.gain.value = 0.07;
+      amp.gain.value = 0.03; // quieter map rain (was 0.07)
       src.connect(hp);
       hp.connect(lp);
       lp.connect(amp);

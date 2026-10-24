@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js?v=5';
-import { CONFIG } from '../config.js?v=5';
-import { Game, bus, newRun, replaceState } from '../state.js?v=5';
-import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=5';
-import { claimLegacyRun } from '../meta.js?v=5';
-import { Save } from '../save.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addButton, addDialog, addText } from '../ui.js?v=5';
-import { attachAtmosphere } from '../fx.js?v=5';
-import { beginScene, goTo } from '../flow.js?v=5';
-import { addCornerDial } from '../widgets.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { CONFIG } from '../config.js?v=6';
+import { Game, bus, newRun, replaceState } from '../state.js?v=6';
+import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=6';
+import { claimLegacyRun } from '../meta.js?v=6';
+import { Save } from '../save.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addButton, addDialog, addText } from '../ui.js?v=6';
+import { attachAtmosphere } from '../fx.js?v=6';
+import { beginScene, goTo } from '../flow.js?v=6';
+import { addCornerDial } from '../widgets.js?v=6';
 
 const GAMEPLAY = new Set([
   'Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Apocalypse', 'Survival', 'Ending',
