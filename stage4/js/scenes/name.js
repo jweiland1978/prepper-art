@@ -1,11 +1,11 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG } from '../config.js?v=2';
-import { cleanName } from '../state.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addPaper, addText } from '../ui.js?v=2';
-import { attachAtmosphere } from '../fx.js?v=2';
-import { beginScene, goTo } from '../flow.js?v=2';
-import { ownedPerks } from '../unlocks.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { cleanName } from '../state.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addPaper, addText } from '../ui.js?v=3';
+import { attachAtmosphere } from '../fx.js?v=3';
+import { beginScene, goTo } from '../flow.js?v=3';
+import { ownedPerks } from '../unlocks.js?v=3';
 
 const BOXES = [
   'I have read the pamphlet',

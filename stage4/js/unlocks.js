@@ -1,6 +1,6 @@
-import { CONFIG } from './config.js?v=2';
-import { readMeta, writeMeta } from './meta.js?v=2';
-import { PERKS, PERK_IDS, UNLOCK_TRACK, UNLOCK_INFO, UNLOCK_IDS, perkById } from './data/unlocks.js?v=2';
+import { CONFIG } from './config.js?v=3';
+import { readMeta, writeMeta } from './meta.js?v=3';
+import { PERKS, PERK_IDS, UNLOCK_TRACK, UNLOCK_INFO, UNLOCK_IDS, perkById } from './data/unlocks.js?v=3';
 
 /** Stage 4 Part A: unlocks between runs and the five starting perks. */
 
@@ -28,6 +28,7 @@ export function pendingCards() {
   return meta.unlocks
     .filter((id) => {
       const info = UNLOCK_INFO[id];
+      if (info?.requires?.some((need) => !meta.unlocks.includes(need))) return false;
       return info?.built && info.card && !meta.announced.includes(id);
     })
     .map((id) => ({ id, ...UNLOCK_INFO[id] }));

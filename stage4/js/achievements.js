@@ -5,11 +5,11 @@
  * (after CONFIG.ACH_UNLOCK_AFTER finished runs) an earn is recorded silently: no toast,
  * no ending line. The UNLOCKED card then shows what was already earned.
  */
-import { CONFIG } from './config.js?v=2';
-import { Game, bus } from './state.js?v=2';
-import { readMeta, writeMeta } from './meta.js?v=2';
-import { grantStepFor } from './unlocks.js?v=2';
-import { unlocksForFinished } from './data/unlocks.js?v=2';
+import { CONFIG } from './config.js?v=3';
+import { Game, bus } from './state.js?v=3';
+import { readMeta, writeMeta } from './meta.js?v=3';
+import { grantStepFor } from './unlocks.js?v=3';
+import { unlocksForFinished } from './data/unlocks.js?v=3';
 
 export const ACHIEVEMENTS = [
   { id: 'creamed-corn', name: 'Survived on creamed corn alone', desc: 'No garden. No hope. Just corn.' },
@@ -135,7 +135,7 @@ export function onSurvivalFoodCheck(state) {
 /** Start of a night (prep night report, or a survival morning which follows the night). */
 export function onNightStart(state, crewCount) {
   noteGrow(state);
-  if (crewCount >= CONFIG.CREW.maxNeighbors) earn('full-house', state);
+  if (crewCount >= (CONFIG.CREW.fullHouseAt || 5)) earn('full-house', state);
 }
 
 /** After a notice is filed. noticesEver counts every notice filed this run. */

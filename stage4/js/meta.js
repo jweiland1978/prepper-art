@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=2';
-import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=2';
+import { CONFIG } from './config.js?v=3';
+import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=3';
 
 /**
  * Stage 4 meta store (prepper_s4_meta). Survives DELETE SAVE and new runs.
@@ -14,6 +14,9 @@ import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=2'
  *   unlocks        Part A track ids granted so far (data/unlocks.js), one step per finished run
  *   announced      unlock ids whose card was shown (unbuilt ids wait here until Part B/C)
  *   lastPerk       the perk picked last run (pre-highlighted in the picker)
+ *   tower          Part B tower endings (their own tier, not achievements):
+ *                  { break: n, voice: n, last: 'break'|'voice'|'', lastRun, voiceName, echo: 'break'|'voice'|'', echoRun }
+ *                  echo is the next run's radio change; it is claimed by the next new run (echoRun).
  * Stage 3 meta (prepper_s3_meta) is read once on first load. It is never written or deleted.
  */
 
@@ -38,7 +41,27 @@ export function emptyMeta() {
     announced: [],
     lastPerk: '',
     migratedFrom: '',
+    tower: emptyTower(),
   };
+}
+
+export function emptyTower() {
+  return { break: 0, voice: 0, last: '', lastRun: 0, voiceName: '', echo: '', echoRun: 0 };
+}
+
+const TOWER_CHOICES = ['break', 'voice'];
+
+function repairTower(raw) {
+  const tower = emptyTower();
+  if (!raw || typeof raw !== 'object') return tower;
+  tower.break = int(raw.break, 0, 0, 999);
+  tower.voice = int(raw.voice, 0, 0, 999);
+  tower.last = TOWER_CHOICES.includes(raw.last) ? raw.last : '';
+  tower.lastRun = int(raw.lastRun, 0);
+  tower.voiceName = typeof raw.voiceName === 'string' ? raw.voiceName.slice(0, 24) : '';
+  tower.echo = TOWER_CHOICES.includes(raw.echo) ? raw.echo : '';
+  tower.echoRun = int(raw.echoRun, 0);
+  return tower;
 }
 
 function int(value, fallback, min = 0, max = 99999) {
@@ -90,6 +113,7 @@ export function repairMeta(raw) {
   if (meta.achUnlocked && !meta.unlocks.includes('achievements')) meta.unlocks.push('achievements');
   if (meta.unlocks.includes('achievements')) meta.achUnlocked = true;
   meta.lastPerk = PERK_IDS.includes(raw.lastPerk) ? raw.lastPerk : '';
+  meta.tower = repairTower(raw.tower);
   return meta;
 }
 

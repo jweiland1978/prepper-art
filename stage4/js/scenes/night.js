@@ -1,19 +1,19 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG, phaseForDay } from '../config.js?v=2';
-import { Game, changeStat, syncDerived } from '../state.js?v=2';
-import { generatorOn, isActive, maybeGuardLoss, recruited } from '../crew.js?v=2';
-import { Save } from '../save.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addText } from '../ui.js?v=2';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=2';
-import { endRun, leave, showHud } from '../flow.js?v=2';
-import { nickCrew, rollKnock, settleCrew } from '../crew.js?v=2';
-import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js?v=2';
-import { offerTip, presentRecruit, showDanger, showNotice } from './cards.js?v=2';
-import { crackBeer } from '../trade.js?v=2';
-import { offerHeist } from '../heist.js?v=2';
-import { hatchTrader, openTrade, presentLaunch } from './trade.js?v=2';
-import { makeTyper } from './type.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG, phaseForDay } from '../config.js?v=3';
+import { Game, changeStat, syncDerived } from '../state.js?v=3';
+import { generatorOn, isActive, maybeGuardLoss, recruited } from '../crew.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { endRun, leave, showHud } from '../flow.js?v=3';
+import { nickCrew, rollKnock, settleCrew } from '../crew.js?v=3';
+import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js?v=3';
+import { offerTip, presentRecruit, showDanger, showNotice } from './cards.js?v=3';
+import { crackBeer } from '../trade.js?v=3';
+import { offerHeist } from '../heist.js?v=3';
+import { hatchTrader, openTrade, presentLaunch } from './trade.js?v=3';
+import { makeTyper } from './type.js?v=3';
 
 export class NightScene extends Phaser.Scene {
   constructor() {

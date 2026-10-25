@@ -1,9 +1,9 @@
-import { CONFIG } from '../config.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addPanel, addText, runTypewriter } from '../ui.js?v=2';
-import { ACHIEVEMENTS, clearCardPending } from '../achievements.js?v=2';
-import { readMeta } from '../meta.js?v=2';
-import { pendingCards, markAnnounced } from '../unlocks.js?v=2';
+import { CONFIG } from '../config.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addPanel, addText, runTypewriter } from '../ui.js?v=3';
+import { ACHIEVEMENTS, clearCardPending } from '../achievements.js?v=3';
+import { readMeta } from '../meta.js?v=3';
+import { pendingCards, markAnnounced } from '../unlocks.js?v=3';
 
 /**
  * The "UNLOCKED: Achievements" card. Typewriter at the normal 70 ms per character,

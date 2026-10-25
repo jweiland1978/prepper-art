@@ -1,8 +1,8 @@
-import Phaser from '../phaser.js?v=2';
-import { onRoomBuilt } from '../achievements.js?v=2';
-import { CONFIG } from '../config.js?v=2';
-import { NEIGHBORS } from '../data/neighbors.js?v=2';
-import { MARKERS } from '../data/map.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { onRoomBuilt } from '../achievements.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { NEIGHBORS } from '../data/neighbors.js?v=3';
+import { MARKERS } from '../data/map.js?v=3';
 import {
   cotCount,
   generatorOn,
@@ -19,17 +19,17 @@ import {
   spotStatus,
   wearingCoat,
   workRoom,
-} from '../crew.js?v=2';
-import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=2';
-import { Save } from '../save.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addText } from '../ui.js?v=2';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=2';
-import { leave, showHud } from '../flow.js?v=2';
-import { maybeGaryVisit, memorialCopy } from '../logic.js?v=2';
-import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js?v=2';
-import { showNotice } from './cards.js?v=2';
-import { loyaltyDiscount, noteDig } from '../unlocks.js?v=2';
+} from '../crew.js?v=3';
+import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { leave, showHud } from '../flow.js?v=3';
+import { maybeGaryVisit, memorialCopy } from '../logic.js?v=3';
+import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js?v=3';
+import { showNotice } from './cards.js?v=3';
+import { hasUnlock, loyaltyDiscount, noteDig } from '../unlocks.js?v=3';
 import {
   canDistress,
   distressWord,
@@ -37,7 +37,7 @@ import {
   followDistress,
   openTrade,
   presentLaunch,
-} from './trade.js?v=2';
+} from './trade.js?v=3';
 
 const COLS = [48, 300, 736, 988];
 const ROWS = [268, 468];
@@ -307,6 +307,7 @@ export class BunkerScene extends Phaser.Scene {
     else if (slot.room === 'rec') drawRec(g, rect);
     else if (slot.room === 'faraday') drawFaraday(g, rect);
     else if (slot.room === 'lead') drawLead(g, rect);
+    else if (slot.room === 'hamshack') drawHamShack(g, rect, slot.level, powered);
     if (state.flags?.scorch && state.flags.scorch === slot.room) {
       g.lineStyle(3, 0x2a241c, 0.85);
       g.lineBetween(rect.x + 28, rect.y + 36, rect.x + rect.w - 28, rect.y + 88);
@@ -451,7 +452,7 @@ export class BunkerScene extends Phaser.Scene {
         this.dig(slot);
       }));
     } else if (!slot.room) {
-      Object.values(CONFIG.ROOMS).forEach((room) => {
+      buildableRooms().forEach((room) => {
         const taken = state.slots.some((other) => other.room === room.id);
         const cost = materialCost(state, CONFIG.BUILD_COSTS[0]);
         const note = clipLine([room.blurb, ...(room.levels || []), room.tag].filter(Boolean).join(' · '), 46);
@@ -479,7 +480,8 @@ export class BunkerScene extends Phaser.Scene {
       const col = index % 2;
       const row = Math.floor(index / 2);
       const x = buttons.length === 1 ? 640 : 400 + col * 460;
-      const y = 300 + row * 68;
+      // Part B: a ninth room makes a fifth row; tighten so it clears NOT NOW.
+      const y = buttons.length > 8 ? 262 + row * 66 : 300 + row * 68;
       if (button.room) {
         const icon = this.add.graphics();
         drawRoomIcon(icon, button.room, 0, 0);
@@ -613,8 +615,10 @@ export class BunkerScene extends Phaser.Scene {
         align: 'center', wordWrap: { width: 760 },
       }));
     }
+    // Part B: Gary makes six. Tighter rows so the last clears BACK.
+    const rowGap = mouths.length > 5 ? 62 : 72;
     mouths.forEach((row, index) => {
-      const y = 214 + index * 72;
+      const y = 214 + index * rowGap;
       const body = state.crew[row.id];
       const laid = body.laidUp > 0;
       const health = laid ? 'Laid up' : `${body.health}/${CONFIG.CREW.healthMax}`;
@@ -919,7 +923,7 @@ function slotBlurb(state, slot) {
     return `Digging costs ${cost} plank${cost === 1 ? '' : 's'} and 1 action. A finished room is also a cot.${dale}${lou} ${payReason(state, cost)}`;
   }
   if (!slot.room) {
-    const rooms = Object.values(CONFIG.ROOMS);
+    const rooms = buildableRooms();
     const takenAll = rooms.every((room) => state.slots.some((other) => other.room === room.id));
     if (takenAll) return 'Every room you know how to build is already here. Extra holes can wait.';
     const cost = materialCost(state, CONFIG.BUILD_COSTS[0]);
@@ -1098,6 +1102,64 @@ function drawRoomIcon(g, id, x, y) {
   } else if (id === 'lead') {
     g.fillStyle(0x6a7380, 1);
     g.fillRect(x - 8, y - 8, 16, 16);
+  } else if (id === 'hamshack') {
+    g.fillStyle(0x9aa3b2, 1);
+    g.fillRect(x - 9, y + 1, 18, 8);
+    g.lineStyle(2, 0xe6d3ae, 1);
+    g.lineBetween(x + 5, y + 1, x + 9, y - 11);
+    g.fillStyle(0xe85d4c, 1);
+    g.fillCircle(x + 9, y - 11, 2);
+  }
+}
+
+/** Rooms on the build menu. Part B rooms with an unlock id wait for the unlock track. */
+function buildableRooms() {
+  return Object.values(CONFIG.ROOMS).filter((room) => !room.unlock || hasUnlock(room.unlock));
+}
+
+/** Part B Ham Shack: desk, rig, mic, antenna lead. Level 2 adds a second rig, level 3 the log. */
+function drawHamShack(g, rect, level, powered) {
+  // desk
+  g.fillStyle(0x5a3a22, 1);
+  g.fillRect(rect.x + 24, rect.y + 78, rect.w - 48, 10);
+  g.fillRect(rect.x + 30, rect.y + 88, 6, 22);
+  g.fillRect(rect.x + rect.w - 36, rect.y + 88, 6, 22);
+  // main rig
+  g.fillStyle(0x2c323c, 1);
+  g.fillRoundedRect(rect.x + 40, rect.y + 50, 70, 28, 3);
+  g.fillStyle(powered ? 0xffb35a : 0x6a5a40, 1);
+  g.fillRect(rect.x + 48, rect.y + 56, 26, 8);
+  g.fillStyle(0xd7d0c4, 1);
+  g.fillCircle(rect.x + 90, rect.y + 64, 6);
+  g.fillStyle(0x2c323c, 1);
+  g.fillCircle(rect.x + 90, rect.y + 64, 3);
+  // mic
+  g.lineStyle(3, 0x9aa3b2, 1);
+  g.lineBetween(rect.x + 126, rect.y + 78, rect.x + 126, rect.y + 58);
+  g.fillStyle(0x1a1e24, 1);
+  g.fillRoundedRect(rect.x + 120, rect.y + 46, 12, 16, 5);
+  // antenna lead up through the ceiling
+  g.lineStyle(2, 0xe6d3ae, 0.9);
+  g.lineBetween(rect.x + 60, rect.y + 50, rect.x + 60, rect.y + 12);
+  g.fillStyle(0xe85d4c, powered ? 1 : 0.5);
+  g.fillCircle(rect.x + 60, rect.y + 14, 3);
+  if (level >= 2) {
+    g.fillStyle(0x3a424e, 1);
+    g.fillRoundedRect(rect.x + 146, rect.y + 56, 48, 22, 3);
+    g.fillStyle(powered ? 0x7ee0ff : 0x40606a, 1);
+    g.fillRect(rect.x + 152, rect.y + 62, 18, 6);
+  }
+  if (level >= 3) {
+    // the rumor log: a clipboard with a check and a squiggle
+    g.fillStyle(0xf4efe4, 1);
+    g.fillRect(rect.x + rect.w - 74, rect.y + 24, 34, 44);
+    g.lineStyle(2, 0x3f8f4a, 1);
+    g.lineBetween(rect.x + rect.w - 68, rect.y + 36, rect.x + rect.w - 63, rect.y + 42);
+    g.lineBetween(rect.x + rect.w - 63, rect.y + 42, rect.x + rect.w - 54, rect.y + 30);
+    g.lineStyle(2, 0x6a7380, 1);
+    g.lineBetween(rect.x + rect.w - 68, rect.y + 56, rect.x + rect.w - 62, rect.y + 52);
+    g.lineBetween(rect.x + rect.w - 62, rect.y + 52, rect.x + rect.w - 56, rect.y + 58);
+    g.lineBetween(rect.x + rect.w - 56, rect.y + 58, rect.x + rect.w - 48, rect.y + 52);
   }
 }
 
@@ -1139,6 +1201,13 @@ function drawNeighbor(g, x, y, id, active) {
   } else if (id === 'kevin') {
     g.fillStyle(0x7ee0ff, 0.95);
     g.fillRoundedRect(x + 8, y - 2, 7, 10, 1);
+  } else if (id === 'gary') {
+    // Gary: a feed cap and a water jug. Water first.
+    g.fillStyle(0x3f6b3a, 1);
+    g.fillRect(x - 8, y - 22, 16, 5);
+    g.fillRect(x + 2, y - 19, 9, 3);
+    g.fillStyle(0x7eb0d4, 1);
+    g.fillRoundedRect(x + 8, y - 2, 9, 13, 2);
   }
 }
 

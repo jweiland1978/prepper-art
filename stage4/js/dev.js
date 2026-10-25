@@ -1,14 +1,17 @@
-import { CONFIG, phaseForDay } from './config.js?v=2';
-import { NEIGHBORS } from './data/neighbors.js?v=2';
-import { cotCount, loseNeighbor, recruited } from './crew.js?v=2';
-import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=2';
-import { beginSurvivalDay, buildScore } from './logic.js?v=2';
-import { apocalypseName, apocalypseOf, cycleApocalypse, rumorPlanText } from './rumors.js?v=2';
-import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=2';
-import { Save } from './save.js?v=2';
-import { Audio } from './audio.js?v=2';
-import { addButton, addText } from './ui.js?v=2';
-import { PERK_IDS, perkById } from './data/unlocks.js?v=2';
+import { CONFIG, phaseForDay } from './config.js?v=3';
+import { NEIGHBORS } from './data/neighbors.js?v=3';
+import { cotCount, loseNeighbor, recruited } from './crew.js?v=3';
+import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=3';
+import { beginSurvivalDay, buildScore } from './logic.js?v=3';
+import { apocalypseName, apocalypseOf, cycleApocalypse, rumorPlanText } from './rumors.js?v=3';
+import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=3';
+import { Save } from './save.js?v=3';
+import { Audio } from './audio.js?v=3';
+import { addButton, addText } from './ui.js?v=3';
+import { PERK_IDS, perkById } from './data/unlocks.js?v=3';
+import { hasUnlock } from './unlocks.js?v=3';
+import { readMeta, writeMeta } from './meta.js?v=3';
+import { chooseTowerEnding, TOWER_OPEN_DAY } from './tower.js?v=3';
 
 const MORALE_STEPS = [0, 1, 5, 8, 10];
 const MAYHEM_IDS = ['works', 'hedge', 'biscuit', 'bunker', 'spectacular'];
@@ -102,7 +105,9 @@ export function devRecruit(state) {
   const buried = new Set((state.memorial || []).map((entry) => entry?.id || entry));
   const here = recruited(state).length;
   const free = Math.max(0, Math.min(CONFIG.CREW.maxNeighbors - here, cotCount(state) - here));
-  const waiting = NEIGHBORS.filter((row) => !buried.has(row.id) && !state.crew[row.id]);
+  // Gary only joins at his gate, and only once the track unlocks him.
+  const waiting = NEIGHBORS.filter((row) => !buried.has(row.id) && !state.crew[row.id]
+    && (!row.pinOnly || hasUnlock('gary')));
   if (!waiting.length) return 'Nobody left to recruit.';
   if (free <= 0) {
     if (here >= CONFIG.CREW.maxNeighbors) return 'The bunker is a full house.';
@@ -191,9 +196,67 @@ const EXTRAS = [
   ['WIN NOW', 'win'],
   ['LOSE NOW', 'lose'],
   ['PERK', 'perk'],
+  // Part B
+  ['NEXT CLUE', 'clue'],
+  ['OPEN TOWER', 'tower'],
+  ['TOWER: BREAK', 'tower-break'],
+  ['TOWER: VOICE', 'tower-voice'],
 ];
 
-const GAMEPLAY = ['Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Survival', 'Apocalypse', 'Ending'];
+const GAMEPLAY = ['Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Survival', 'Apocalypse', 'Tower', 'Ending'];
+
+function devGrantUnlocks(ids) {
+  const meta = readMeta();
+  ids.forEach((id) => {
+    if (!meta.unlocks.includes(id)) meta.unlocks.push(id);
+    // Dev grants count as seen, so no card pops mid-test (the tower card is tested on its own).
+    if (!meta.announced.includes(id)) meta.announced.push(id);
+  });
+  writeMeta(meta);
+}
+
+/** Dev NEXT CLUE: grants the next clue and makes today's broadcast play it. Returns a note. */
+export function devNextClue(state) {
+  const next = ['clue:1', 'clue:2', 'clue:3'].find((id) => !hasUnlock(id));
+  if (next) devGrantUnlocks([next]);
+  if (!state) return next ? `Granted ${next}.` : 'All three clues are already in.';
+  state.flags = state.flags || {};
+  state.flags.clueForceDay = state.day;
+  delete state.flags.script;
+  delete state.flags.scriptDay;
+  delete state.flags.radioHeard;
+  stamp(state);
+  return next ? `Granted ${next}. Today's broadcast has it.` : 'All three clues are in. Today replays the last one.';
+}
+
+/** Dev OPEN TOWER: the clue track and the tower, and today is at least Day 20 with actions left. */
+export function devOpenTower(state) {
+  devGrantUnlocks(['clue:1', 'clue:2', 'clue:3', 'tower']);
+  if (!state) return 'Tower owned. Start a run.';
+  if (state.mode !== 'prep' || (state.day || 1) < TOWER_OPEN_DAY || state.day >= CONFIG.PREP_DAYS) {
+    devSkip(state, TOWER_OPEN_DAY);
+  }
+  state.actionsLeft = Math.max(1, state.actionsLeft || 0);
+  delete state.flags.towerStep;
+  delete state.flags.towerChoice;
+  delete state.flags.towerRecorded;
+  stamp(state);
+  return 'Tower open. It is on the map.';
+}
+
+/** Dev TOWER ENDING: straight to the chosen tower ending (recorded in meta like the real one). */
+export function devTowerEnding(state, choice) {
+  devGrantUnlocks(['clue:1', 'clue:2', 'clue:3', 'tower']);
+  if (!state) return null;
+  state.mode = 'prep';
+  state.finished = false;
+  state.flags = state.flags || {};
+  delete state.flags.scorecard;
+  delete state.flags.towerRecorded;
+  chooseTowerEnding(state, choice);
+  buildScore(state);
+  return stamp(state);
+}
 
 function stopLoops() {
   Audio.stopSirens();
@@ -442,6 +505,27 @@ export function mountDevTools(scene, opts = {}) {
         }
         console.log(`[PREPPER] Rumor plan\n${rumorPlanText(state)}`);
         flash(scene, 'Rumor plan printed to the console.');
+        return;
+      }
+      if (kind === 'clue' || kind === 'tower' || kind === 'tower-break' || kind === 'tower-voice') {
+        const state = Game.state;
+        if (!state) {
+          flash(scene, 'No run yet.');
+          return;
+        }
+        close();
+        if (kind === 'clue') {
+          flash(scene, devNextClue(state));
+          jumpGameplay(scene, 'Radio');
+          return;
+        }
+        if (kind === 'tower') {
+          flash(scene, devOpenTower(state));
+          jumpGameplay(scene, 'Map');
+          return;
+        }
+        devTowerEnding(state, kind === 'tower-break' ? 'break' : 'voice');
+        jumpGameplay(scene, 'Ending');
         return;
       }
       if (kind === 'jump30' || kind === 'surv+' || kind === 'win' || kind === 'lose') {

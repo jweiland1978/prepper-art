@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG, phaseForDay, phaseInfo } from '../config.js?v=2';
-import { Game, syncDerived } from '../state.js?v=2';
-import { Save } from '../save.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addText } from '../ui.js?v=2';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=2';
-import { leave, showHud } from '../flow.js?v=2';
-import { addStudioRadio } from '../widgets.js?v=2';
-import { ensureMorning, staticLevel } from '../logic.js?v=2';
-import { makeTyper } from './type.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG, phaseForDay, phaseInfo } from '../config.js?v=3';
+import { Game, syncDerived } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { leave, showHud } from '../flow.js?v=3';
+import { addStudioRadio } from '../widgets.js?v=3';
+import { ensureMorning, staticLevel } from '../logic.js?v=3';
+import { makeTyper } from './type.js?v=3';
 
 const BANNERS = new Set([1, 11, 21, 30]);
 

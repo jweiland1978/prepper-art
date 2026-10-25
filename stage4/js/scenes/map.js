@@ -1,18 +1,21 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG, phaseForDay } from '../config.js?v=2';
-import { spotStatus, tickRoads } from '../crew.js?v=2';
-import { MARKERS, markerDanger } from '../data/map.js?v=2';
-import { phaseCopy } from '../data/phases.js?v=2';
-import { Game, touchState } from '../state.js?v=2';
-import { Save } from '../save.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addText } from '../ui.js?v=2';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=2';
-import { leave, showHud } from '../flow.js?v=2';
-import { maybeGaryVisit } from '../logic.js?v=2';
-import { fenceLine } from '../trade.js?v=2';
-import { showNotice } from './cards.js?v=2';
-import { openMeet, openTrade } from './trade.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG, phaseForDay } from '../config.js?v=3';
+import { isHere, spotStatus, tickRoads } from '../crew.js?v=3';
+import { MARKERS, markerDanger } from '../data/map.js?v=3';
+import { phaseCopy } from '../data/phases.js?v=3';
+import { Game, touchState } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { leave, showHud } from '../flow.js?v=3';
+import { maybeGaryVisit } from '../logic.js?v=3';
+import { fenceLine } from '../trade.js?v=3';
+import { presentRecruit, showNotice } from './cards.js?v=3';
+import { hasUnlock } from '../unlocks.js?v=3';
+import { startClimb, towerOwned } from '../tower.js?v=3';
+import { GARY_PIN, TOWER_PIN } from '../data/tower.js?v=3';
+import { openMeet, openTrade } from './trade.js?v=3';
 
 const LOOT_LABEL = {
   food: 'Cans',
@@ -190,7 +193,7 @@ export class MapScene extends Phaser.Scene {
   drawMarker(marker) {
     const phase = phaseForDay(Game.state.day);
     const status = spotStatus(Game.state, marker);
-    const open = status.code === 'open';
+    const open = status.code === 'open' || status.code === 'tower';
     const home = status.code === 'home';
     const color = status.grey ? 0x6a7380 : open ? CONFIG.COLORS.orange : home ? 0xe6d3ae : 0x8a93a3;
     const pinY = marker.y;
@@ -228,7 +231,7 @@ export class MapScene extends Phaser.Scene {
       g.arc(marker.x, pinY - 2, 3, Math.PI, 0, false);
       g.strokePath();
     }
-    if (!marker.silent) {
+    if (!marker.silent || (marker.id === 'tower' && towerOwned())) {
       const swap = marker.id === 'tavern' && Game.state.day >= 21 && Game.state.day <= 29;
     const label = (home ? 'YOUR HOUSE' : swap ? 'SWAP MEET' : marker.name).toUpperCase();
     const crawl = Game.state.flags?.crawl;
@@ -238,7 +241,9 @@ export class MapScene extends Phaser.Scene {
       warn.fillTriangle(marker.x + 14, pinY - 16, marker.x + 26, pinY - 16, marker.x + 20, pinY - 28);
     }
       const width = Math.min(168, Math.max(84, label.length * 7 + 18));
-      const plate = this.add.container(marker.x, pinY + (marker.labelDy || 28)).setDepth(8);
+      // Part B: the tower sits under the HUD; its plate goes below the tap dot so it reads on an iPad.
+      const plateY = marker.id === 'tower' ? CONFIG.HUD_H + 44 : pinY + (marker.labelDy || 28);
+      const plate = this.add.container(marker.x, plateY).setDepth(8);
       const g = this.add.graphics();
       g.fillStyle(CONFIG.COLORS.navy, 0.9);
       g.fillRoundedRect(-width / 2, -12, width, 22, 4);
@@ -288,18 +293,28 @@ export class MapScene extends Phaser.Scene {
         return;
       }
       const noActions = (state.actionsLeft ?? 0) <= 0;
+      // Part B: once unlocked, Gary can be asked to move in from his own gate. Asking is free.
+      const canAsk = hasUnlock('gary') && !isHere(state, 'gary') && state.mode === 'prep';
+      const buttons = [
+        { label: 'NOT NOW', onClick: () => { this.card = null; } },
+        noActions
+          ? { label: 'HEAD HOME', primary: !canAsk, onClick: () => leave(this, 'NightSummary') }
+          : { label: 'TRADE (1 ACTION)', primary: !canAsk, onClick: () => this.payTrade('gary') },
+      ];
+      if (canAsk) buttons.push({ label: GARY_PIN.ask, primary: true, onClick: () => this.askGary() });
       this.card = showNotice(this, {
-        kicker: 'TRADE',
+        kicker: canAsk ? 'NEIGHBOR' : 'TRADE',
         title: "Gary's Place",
         portrait: 'portrait-gary',
-        body: "The gate is unlatched. He trades water, planks, medicine, gas, batteries, and sometimes ammo. He does not haggle.",
-        buttons: [
-          { label: 'NOT NOW', onClick: () => { this.card = null; } },
-          noActions
-            ? { label: 'HEAD HOME', primary: true, onClick: () => leave(this, 'NightSummary') }
-            : { label: 'TRADE (1 ACTION)', primary: true, onClick: () => this.payTrade('gary') },
-        ],
+        body: canAsk
+          ? GARY_PIN.askBody
+          : "The gate is unlatched. He trades water, planks, medicine, gas, batteries, and sometimes ammo. He does not haggle.",
+        buttons,
       });
+      return;
+    }
+    if (marker.id === 'tower') {
+      this.openTower(marker, status);
       return;
     }
     if (marker.kind === 'home') {
@@ -374,6 +389,65 @@ export class MapScene extends Phaser.Scene {
           : { label: 'GO (1 ACTION)', primary: true, onClick: () => this.travel(marker) },
       ],
     });
+  }
+
+  /** Part B: Gary's recruit card at his gate. */
+  askGary() {
+    this.card = { close: () => {} };
+    presentRecruit(this, 'gary', { source: 'pin' }).then((line) => {
+      if (!this.sys?.isActive()) return;
+      touchState();
+      Save.write(Game.state);
+      this.card = showNotice(this, {
+        kicker: 'GARY',
+        title: "Gary's Place",
+        portrait: 'portrait-gary',
+        body: line || 'Gary nods. That is the whole conversation.',
+        button: 'OK',
+        onClose: () => {
+          this.card = null;
+          if ((Game.state?.actionsLeft ?? 0) <= 0) this.promptNight();
+        },
+      });
+    });
+  }
+
+  /** Part B: the Radio Tower pin. Open from Day 20 once the clue track is done; the climb takes the day. */
+  openTower(marker, status) {
+    const state = Game.state;
+    if (status.code !== 'tower') {
+      this.card = showNotice(this, {
+        kicker: 'LOCKED',
+        title: towerOwned() ? TOWER_PIN.title : 'RADIO TOWER',
+        body: status.line || marker.reason || marker.quip,
+        button: 'NOT NOW',
+        onClose: () => { this.card = null; },
+      });
+      return;
+    }
+    const noActions = (state.actionsLeft ?? 0) <= 0;
+    this.card = showNotice(this, {
+      kicker: TOWER_PIN.kicker,
+      title: TOWER_PIN.title,
+      body: noActions ? TOWER_PIN.noActions : status.line,
+      radio: true,
+      buttons: [
+        { label: 'NOT NOW', onClick: () => { this.card = null; } },
+        noActions
+          ? { label: 'HEAD HOME', primary: true, onClick: () => leave(this, 'NightSummary') }
+          : { label: TOWER_PIN.button, primary: true, fontSize: '18px', onClick: () => this.climbTower() },
+      ],
+      buttonW: 280,
+    });
+  }
+
+  climbTower() {
+    const state = Game.state;
+    this.card = null;
+    if (this.traveling || !startClimb(state)) return;
+    this.traveling = true;
+    touchState();
+    leave(this, 'Tower');
   }
 
   payTrade(who) {

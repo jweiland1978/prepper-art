@@ -1,10 +1,10 @@
-import { CONFIG } from './config.js?v=2';
-import { LARRY_STAMP } from './data/radio.js?v=2';
-import { NEIGHBORS } from './data/neighbors.js?v=2';
-import { apocalypseIds, apocalypseOf } from './rumors.js?v=2';
-import { Game } from './state.js?v=2';
-import { repairRunAch } from './achievements.js?v=2';
-import { repairPerk } from './unlocks.js?v=2';
+import { CONFIG } from './config.js?v=3';
+import { LARRY_STAMP } from './data/radio.js?v=3';
+import { NEIGHBORS } from './data/neighbors.js?v=3';
+import { apocalypseIds, apocalypseOf } from './rumors.js?v=3';
+import { Game } from './state.js?v=3';
+import { repairRunAch } from './achievements.js?v=3';
+import { repairPerk } from './unlocks.js?v=3';
 
 const DEFAULT_SETTINGS = {
   music: 0.7,
@@ -133,6 +133,8 @@ function repairRumors(raw, truth) {
       lie,
       morning: !!entry.morning,
       stamp: entry.stamp && lie ? LARRY_STAMP : '',
+      // Part B Ham Shack tag. CHECKED only ever sits on a true rumor.
+      ham: entry.ham === 'checked' && !lie && kind ? 'checked' : (entry.ham === 'static' || entry.ham === 'checked' ? 'static' : ''),
     });
   });
   return out.slice(0, 80);
@@ -266,7 +268,7 @@ export function migrate(data) {
   }
   const hasWater = data.slots.some((slot) => slot.room === 'water');
   if (hasWater && !finiteNumber(data.flags.waterDay) && data.day <= 10) data.flags.waterDay = data.day;
-  const ended = data.lastScene === 'Ending' || data.ending === 'win' || data.ending === 'loss' || data.ending === 'early';
+  const ended = data.lastScene === 'Ending' || ['win', 'loss', 'early', 'tower-break', 'tower-voice'].includes(data.ending);
   data.finished = !!(data.finished || ended);
   data.ending = data.finished ? (data.ending || 'loss') : (data.ending || null);
   data.flags.noticesEver = num(data.flags.noticesEver, data.notices.length, 0, 999);
@@ -290,7 +292,7 @@ export function migrate(data) {
   if (data.flags.solo) {
     const solo = data.flags.solo;
     const soloOk = solo && typeof solo.location === 'string' && solo.day === data.day
-      && (lossIds.includes(solo.id) || solo.id === 'tina');
+      && (lossIds.includes(solo.id) || solo.id === 'tina' || solo.id === 'gary');
     if (!soloOk) data.flags.solo = null;
   }
   data.flags.heistsDone = num(data.flags.heistsDone, 0, 0, 2);

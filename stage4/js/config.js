@@ -140,6 +140,10 @@ export const CONFIG = {
     rec: {
       all: { ready: 1 },
     },
+    // Part B: better warning on the band, a little less danger at home.
+    hamshack: {
+      all: { threat: 0.02 },
+    },
     generator: {
       zombies: { threat: 0.03 },
       solarflare: { threat: 0.03 },
@@ -235,6 +239,19 @@ export const CONFIG = {
       levels: ['+10% HIDE at home. Medicine keeps.', '+15% HIDE at home.', '+20% HIDE at home.'],
       tag: 'Might matter more than you think.',
     },
+    // Stage 4 Part B. Only on the build menu once the unlock track reaches it (unlock 'hamshack').
+    hamshack: {
+      id: 'hamshack', name: 'Ham Shack', blurb: 'A bigger antenna. Better company. Worse posture.',
+      levels: ['+1 morale every 3 nights.', '+1 morale every 2 nights.', 'Checks one rumor a day: CHECKED or STATIC.'],
+      tag: 'Larry is jealous. He will help anyway.',
+      unlock: 'hamshack',
+    },
+  },
+
+  // Part B Ham Shack numbers. Level 3 tags the morning rumor; a lie is always STATIC.
+  HAM_SHACK: {
+    moraleEvery: [3, 2, 2],
+    tagLevel: 3,
   },
 
   // Stage 2 balance. Parts 2 and 3 read these numbers. Do not scatter copies.
@@ -243,7 +260,9 @@ export const CONFIG = {
     upkeepWater: 1,
     foodDiscount: 0.8,
     foodMin: 1,
-    maxNeighbors: 5,
+    maxNeighbors: 6, // Part B: room for Gary. Full House still needs fullHouseAt.
+    fullHouseAt: 5,
+    garyWater: 1,
     healthMax: 5,
     healthStart: 4,
     laidUpDays: 2,

@@ -1,13 +1,13 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG, phaseForDay } from '../config.js?v=2';
-import { nickCrew, spotStatus, tripExtras } from '../crew.js?v=2';
-import { markerById } from '../data/map.js?v=2';
-import { Game } from '../state.js?v=2';
-import { Save } from '../save.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addText } from '../ui.js?v=2';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=2';
-import { endRun, leave, showHud } from '../flow.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG, phaseForDay } from '../config.js?v=3';
+import { nickCrew, spotStatus, tripExtras } from '../crew.js?v=3';
+import { markerById } from '../data/map.js?v=3';
+import { Game } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addText } from '../ui.js?v=3';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
+import { endRun, leave, showHud } from '../flow.js?v=3';
 import {
   applyDeltas,
   eventLookup,
@@ -16,10 +16,10 @@ import {
   resolveChoice,
   resolveDanger,
   rollLoot,
-} from '../logic.js?v=2';
-import { presentRecruit, showDanger, showNotice } from './cards.js?v=2';
-import { openTrade, presentCoat, presentLaunch } from './trade.js?v=2';
-import { grantCoat, rummageCoatRoll } from '../trade.js?v=2';
+} from '../logic.js?v=3';
+import { presentRecruit, showDanger, showNotice } from './cards.js?v=3';
+import { openTrade, presentCoat, presentLaunch } from './trade.js?v=3';
+import { grantCoat, rummageCoatRoll } from '../trade.js?v=3';
 
 export class ScavengeScene extends Phaser.Scene {
   constructor() {

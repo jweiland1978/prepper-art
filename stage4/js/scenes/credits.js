@@ -1,8 +1,8 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG } from '../config.js?v=2';
-import { addButton, addText } from '../ui.js?v=2';
-import { attachAtmosphere } from '../fx.js?v=2';
-import { beginScene, goTo, hideHud } from '../flow.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere } from '../fx.js?v=3';
+import { beginScene, goTo, hideHud } from '../flow.js?v=3';
 
 export class CreditsScene extends Phaser.Scene {
   constructor() {

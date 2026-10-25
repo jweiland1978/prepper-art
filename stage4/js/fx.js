@@ -1,8 +1,8 @@
-import Phaser from './phaser.js?v=2';
-import { CONFIG } from './config.js?v=2';
-import { Game, bus } from './state.js?v=2';
-import { apocalypseOf, endArtKey } from './rumors.js?v=2';
-import { scratchGrain } from './textures.js?v=2';
+import Phaser from './phaser.js?v=3';
+import { CONFIG } from './config.js?v=3';
+import { Game, bus } from './state.js?v=3';
+import { apocalypseOf, endArtKey } from './rumors.js?v=3';
+import { scratchGrain } from './textures.js?v=3';
 
 export function effectsOn() {
   return !Game.settings?.reduceEffects;

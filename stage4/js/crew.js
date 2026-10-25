@@ -2,14 +2,17 @@
  * Neighbors, morale wording, cots, phase spots, and the hooks Parts 2 and 3 call.
  * Does not import scenes or logic. Logic may import this.
  */
-import { onNoticeFiled, onRecruit } from './achievements.js?v=2';
-import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=2';
-import { MARKERS, markerById, phaseProfile } from './data/map.js?v=2';
-import { neighborById, NEIGHBORS } from './data/neighbors.js?v=2';
-import { LARRY_STAMP_LINES } from './data/radio.js?v=2';
-import { apocalypseOf, maybeStampEntry } from './rumors.js?v=2';
-import { NOTICE_FORMS } from './data/traders.js?v=2';
-import { changeStat, roomLevel, touchState } from './state.js?v=2';
+import { onNoticeFiled, onRecruit } from './achievements.js?v=3';
+import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=3';
+import { MARKERS, markerById, phaseProfile } from './data/map.js?v=3';
+import { neighborById, NEIGHBORS } from './data/neighbors.js?v=3';
+import { LARRY_STAMP_LINES } from './data/radio.js?v=3';
+import { apocalypseOf, maybeStampEntry } from './rumors.js?v=3';
+import { NOTICE_FORMS } from './data/traders.js?v=3';
+import { changeStat, roomLevel, touchState } from './state.js?v=3';
+import { garyTip, PROTECTED_IDS, towerPinState } from './tower.js?v=3';
+import { TOWER_PIN } from './data/tower.js?v=3';
+import { hasUnlock } from './unlocks.js?v=3';
 
 export const STASH_KEYS = ['tinfoil', 'battery', 'coffee', 'snacks', 'rockets', 'coat', 'gas', 'cigarettes', 'ammo', 'tp', 'beer'];
 
@@ -148,6 +151,9 @@ export function recruitBlock(state, id) {
     }
   } else if (id === 'kevin') {
     if (roomLevel(state, 'generator') < 1) return 'Kevin wants a generator. The phone is a brick with feelings until then.';
+  } else if (id === 'gary') {
+    if (!hasUnlock('gary')) return 'Gary says come back when you have earned it.';
+    if (roomLevel(state, 'water') < 1) return 'Gary wants to see a Water Tank. "Water first." He means it as a sentence and a plan.';
   }
   return '';
 }
@@ -221,6 +227,8 @@ export function recruitView(state, id) {
 
 export function canOffer(state, id) {
   if (!neighborById(id)) return false;
+  // Gary is only ever recruited at his own gate (Part B). Never a knock or an event.
+  if (neighborById(id).pinOnly) return false;
   if (isHere(state, id)) return false;
   if (offeredThisPhase(state, id)) return false;
   return true;
@@ -335,8 +343,16 @@ export function spotStatus(state, marker) {
   if (!marker) return { code: 'locked', line: 'Gone.', grey: true };
   if (marker.kind === 'home') return { code: 'home', line: marker.quip || '', grey: false };
   if (marker.kind === 'landmark') return { code: 'landmark', line: marker.reason || marker.quip || '', grey: false };
+  if (marker.id === 'tower') {
+    // Part B: its own code so solo runs, knocks and trips never treat it as a scavenge spot.
+    const tower = towerPinState(state);
+    if (tower === 'open') return { code: 'tower', line: TOWER_PIN.open, grey: false };
+    if (tower === 'closed') return { code: 'locked', line: TOWER_PIN.closed, grey: true };
+    return { code: 'locked', line: marker.reason || marker.quip || '', grey: true };
+  }
   if (marker.id === 'gary') {
-    if (!state?.garyVisited) return { code: 'locked', line: marker.reason || marker.quip || '', grey: true };
+    // Part B: once the track unlocks Gary, his gate is open without waiting for his visit.
+    if (!state?.garyVisited && !hasUnlock('gary')) return { code: 'locked', line: marker.reason || marker.quip || '', grey: true };
     const phase = phaseForDay(state.day);
     if ((phase === 'collapse' || phase === 'end') && garyRespect(state) < 2) {
       return { code: 'locked', line: "The gate is shut. Gary's respect is a kind of key.", grey: true };
@@ -529,7 +545,8 @@ export function memorialEntries(state) {
 }
 
 export function loseNeighbor(state, id, opts = {}) {
-  if (!state || id === 'tina' || id === 'biscuit' || !lossCandidates().includes(id)) return '';
+  // Tina, Biscuit and Gary never die. Even a forced (dev) loss refuses them.
+  if (!state || PROTECTED_IDS.includes(id) || !lossCandidates().includes(id)) return '';
   if (!person(state, id)) return '';
   const key = nightKey(state);
   if (!opts.force && (state.day || 1) < CONFIG.CREW.lossFromDay) return '';
@@ -625,8 +642,10 @@ export function resolveSolo(state, lines) {
   let risk = CONFIG.CREW.soloLoss[phaseKey(state)] ?? 0;
   if (solo.id === 'kevin') risk *= CONFIG.CREW.soloKevinMul;
   if (body.laidUp > 0) risk *= CONFIG.CREW.soloLaidUpMul;
+  const safe = PROTECTED_IDS.includes(solo.id);
+  if (solo.id === 'gary') risk = 0;
   const failed = Math.random() < risk;
-  if (failed && solo.id !== 'tina') {
+  if (failed && !safe) {
     const line = loseNeighbor(state, solo.id);
     if (line && lines) lines.push(line);
     return line;
@@ -634,7 +653,7 @@ export function resolveSolo(state, lines) {
   const bag = scaleBag(locationGoods(state, marker), failed ? haul * 0.5 : haul);
   const got = applyBag(state, bag);
   let line = '';
-  if (failed && solo.id === 'tina') {
+  if (failed && safe) {
     body.health = 1;
     body.laidUp = CONFIG.CREW.laidUpDays;
     body.job = 'rest';
@@ -716,6 +735,25 @@ export function applyCrewNight(state, lines) {
 
   const rec = roomLevel(state, 'rec');
   if (rec > 0) pushMorale(bag, CONFIG.MORALE_RULES.rec[rec - 1] || 1, 'The rec room earned its keep');
+
+  // Part B Ham Shack: company on the band. Level 3 also checks a rumor each morning (logic.js).
+  const ham = roomLevel(state, 'hamshack');
+  if (ham > 0) {
+    const every = CONFIG.HAM_SHACK.moraleEvery[ham - 1] || 3;
+    state.flags.hamNights = (state.flags.hamNights || 0) + 1;
+    if (state.flags.hamNights >= every) {
+      state.flags.hamNights = 0;
+      pushMorale(bag, 1, 'Somebody on the ham shack talked to a trucker two counties over');
+    }
+  }
+
+  // Part B Gary: "Water first." +1 water a night, and a blunt tip most nights.
+  if (isActive(state, 'gary')) {
+    const got = changeStat('water', CONFIG.CREW.garyWater);
+    if (got) lines.push(`Gary fills the jugs before anyone asks. Water +${got}.`);
+    const tip = garyTip(state);
+    if (tip) lines.push(tip);
+  }
 
   const others = recruited(state).filter((row) => row.id !== 'dale').length;
   if (isActive(state, 'dale') && others >= 2) pushMorale(bag, CONFIG.MORALE_RULES.dale, "Dale organized somebody else's mess");
@@ -1030,7 +1068,10 @@ export function drinkCoffee(state) {
   return 'You can see sounds now. Productive.';
 }
 
-/** Part 3 reads the rates. This does not roll a death. Tina and Biscuit are not in the list. */
+/**
+ * Part 3 reads the rates. This does not roll a death. Tina, Biscuit and Gary are not in the
+ * list and never will be (PROTECTED_IDS in tower.js). Losses also wait for lossFromDay (11).
+ */
 export function lossCandidates() {
   return ['larry', 'kowalski', 'dale', 'kevin'];
 }
@@ -1040,6 +1081,7 @@ export function soloOdds(state, id) {
   let loss = CONFIG.CREW.soloLoss[phase] ?? 0;
   if (id === 'kevin') loss *= CONFIG.CREW.soloKevinMul;
   if (id === 'tina') loss = CONFIG.CREW.soloTinaLoss;
+  if (id === 'gary') loss = 0;
   if (person(state, id)?.laidUp > 0) loss *= CONFIG.CREW.soloLaidUpMul;
   const haul = id === 'kevin' ? CONFIG.CREW.soloKevinHaul : CONFIG.CREW.soloHaul;
   return { haul, loss };

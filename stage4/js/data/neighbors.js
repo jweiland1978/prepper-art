@@ -147,6 +147,39 @@ export const NEIGHBORS = [
     ],
     joined: 'Kevin finds the bleakest corner and calls it a set. He is not wrong.',
   },
+  {
+    // Stage 4 Part B: Gary. Recruited only at Gary's Place, once the unlock track reaches him.
+    // Never knocks, never sent by Neighborly, and never dies (protected like Tina and Biscuit).
+    id: 'gary',
+    name: 'Gary',
+    portrait: 'portrait-gary',
+    pinOnly: true,
+    skill: 'Water first. +1 water a night. Tells you what you are doing wrong.',
+    quirk: 'He does not haggle. He does not hug. He does not leave the pump alone.',
+    upkeep: 'Eats 1 food, drinks 1 water a day. Makes more than he drinks.',
+    wants: 'A built Water Tank. He checks it.',
+    pitch: "I watched you dig. You dig like you're mad at the dirt. Show me the water and I'll bring a cot.",
+    workRoom: 'water',
+    idle: [
+      'Water first. Then food. Then opinions. I have the opinions covered.',
+      'That barricade is decorative. I said what I said.',
+      'You stacked the cans label-in. Who raised you.',
+      'The dog is the only one down here with a plan.',
+      'Fill the jugs before the news gets interesting.',
+      'I fixed your valve. You are welcome. Do not touch it.',
+    ],
+    refusals: [
+      'Fine. I have a pump and a porch. I am not lonely, I am prepared.',
+      'Come back when the water tank is a tank and not a wish.',
+      'No hard feelings. A few soft ones. Mostly about your shelving.',
+    ],
+    joined: 'Gary walks the bunker once, tightens two things, and puts his cot by the water. "Fine. I live here now."',
+    late: [
+      'Took the long way. The short way had opinions.',
+      'I am fine. The other guy is also fine. He is just farther away now.',
+    ],
+    voice: 150,
+  },
 ];
 
 export function neighborById(id) {

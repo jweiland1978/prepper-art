@@ -1,10 +1,11 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=2';
-import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=2';
-import { neighborlyMorning } from './crew.js?v=2';
-import { EVENTS, eventById } from './data/events.js?v=2';
-import { markerById, phaseProfile } from './data/map.js?v=2';
-import { NIGHT_EVENTS } from './data/night.js?v=2';
-import { phaseCopy } from './data/phases.js?v=2';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=3';
+import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=3';
+import { neighborlyMorning } from './crew.js?v=3';
+import { clueForMorning, hamTagMorning, ownSignoffLine, strangerGreeting, strangerSignoff } from './tower.js?v=3';
+import { EVENTS, eventById } from './data/events.js?v=3';
+import { markerById, phaseProfile } from './data/map.js?v=3';
+import { NIGHT_EVENTS } from './data/night.js?v=3';
+import { phaseCopy } from './data/phases.js?v=3';
 import {
   BEER_LINES,
   COAT_BRAGS,
@@ -19,13 +20,13 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js?v=2';
+} from './data/radio.js?v=3';
 import {
   hatchById,
   SURVIVAL_COLD,
   survivalDeck,
   survivalOpener,
-} from './data/survival.js?v=2';
+} from './data/survival.js?v=3';
 import {
   applyCold,
   applyCrewNight,
@@ -47,17 +48,17 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js?v=2';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=2';
-import { heistMorning } from './heist.js?v=2';
-import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=2';
+} from './crew.js?v=3';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=3';
+import { heistMorning } from './heist.js?v=3';
+import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=3';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js?v=2';
+} from './state.js?v=3';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {
@@ -173,13 +174,17 @@ export function ensureMorning(state) {
   const batteryLine = morningRadio(state);
   const phase = phaseForDay(state.day);
   const greetings = GREETINGS[phase] || GREETINGS.collapse;
-  const greeting = fillLine(pickOne(greetings), state);
+  // Part B: the run after BREAK THE LOOP has a stranger on the mic.
+  const greeting = strangerGreeting(state) || fillLine(pickOne(greetings), state);
   const rumor = recordMorningRumor(state);
   const jokes = JOKES.filter((joke) => phaseAllows(joke, phase));
   const joke = (pickOne(jokes.length ? jokes : JOKES)).text;
   const heard = [greeting, rumor?.text || '', joke].filter((line) => line).map((line) => degradeLine(line, phase));
   const stamp = stampMorning(state);
   if (stamp) heard.push(degradeLine(stamp, phase));
+  // Part B Ham Shack level 3: one rumor a day gets CHECKED or STATIC. Not degraded; it is the point.
+  const hamLine = hamTagMorning(state, rumor, roomLevel(state, 'hamshack'));
+  if (hamLine) heard.push(hamLine);
   const copy = phaseCopy(state.day);
   if (copy?.radio) heard.push(degradeLine(copy.radio, phase));
   if (batteryLine) heard.push(degradeLine(batteryLine, phase));
@@ -243,6 +248,12 @@ export function ensureMorning(state) {
     heard.unshift(state.flags.wallNote);
     state.flags.wallNote = '';
   }
+  // Part B hidden clue: at most one per broadcast, never degraded, somewhere in the middle.
+  const clue = clueForMorning(state);
+  if (clue) heard.splice(Math.min(heard.length, 2), 0, clue);
+  // Part B: the run after IT WAS FOR ME opens with your own sign-off.
+  const own = ownSignoffLine(state);
+  if (own) heard.unshift(own);
   const script = { phase, lines: heard };
   state.flags.scriptDay = state.day;
   state.flags.script = script;
@@ -257,6 +268,8 @@ export function pickSignoff(state) {
     const line = pickOne(MEMORIAL_SIGNOFFS) || MEMORIAL_SIGNOFFS[0];
     return degradeLine(fillLine(line.replaceAll('{NAMES}', names.join('. ')), state), phase);
   }
+  const stranger = strangerSignoff(state);
+  if (stranger) return stranger;
   if ((phase === 'calm' || phase === 'panic') && Math.random() < 0.6) return SIGNOFFS[0];
   return degradeLine(fillLine(pickOne(SIGNOFFS) || SIGNOFFS[0], state), phase);
 }

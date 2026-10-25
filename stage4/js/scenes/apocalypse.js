@@ -1,16 +1,16 @@
-import Phaser from '../phaser.js?v=2';
-import { onReveal } from '../achievements.js?v=2';
-import { Save } from '../save.js?v=2';
-import { CONFIG } from '../config.js?v=2';
-import { Game, roomLevel, syncDerived } from '../state.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addPanel, addText } from '../ui.js?v=2';
-import { attachAtmosphere, coverEnd, fadeIn, paintApocSky, shake } from '../fx.js?v=2';
-import { hideHud, leave } from '../flow.js?v=2';
-import { fillLine } from '../logic.js?v=2';
-import { apocalypseName, apocalypseOf } from '../rumors.js?v=2';
-import { apocalypseLinesFor, revealNoteFor } from '../data/survival.js?v=2';
-import { makeTyper } from './type.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { onReveal } from '../achievements.js?v=3';
+import { Save } from '../save.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game, roomLevel, syncDerived } from '../state.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addPanel, addText } from '../ui.js?v=3';
+import { attachAtmosphere, coverEnd, fadeIn, paintApocSky, shake } from '../fx.js?v=3';
+import { hideHud, leave } from '../flow.js?v=3';
+import { fillLine } from '../logic.js?v=3';
+import { apocalypseName, apocalypseOf } from '../rumors.js?v=3';
+import { apocalypseLinesFor, revealNoteFor } from '../data/survival.js?v=3';
+import { makeTyper } from './type.js?v=3';
 
 function cueApocAudio(kind) {
   Audio.stopMusic();

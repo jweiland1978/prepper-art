@@ -1,7 +1,8 @@
-import { CONFIG, phaseForDay } from './config.js?v=2';
-import { NEIGHBORS } from './data/neighbors.js?v=2';
-import { nextRunNumber } from './meta.js?v=2';
-import { assignApocalypse, ensureRumorPlan, rollForRun } from './rumors.js?v=2';
+import { CONFIG, phaseForDay } from './config.js?v=3';
+import { NEIGHBORS } from './data/neighbors.js?v=3';
+import { nextRunNumber } from './meta.js?v=3';
+import { assignApocalypse, ensureRumorPlan, rollForRun } from './rumors.js?v=3';
+import { claimTowerEcho } from './tower.js?v=3';
 
 export class Emitter {
   constructor() {
@@ -205,6 +206,8 @@ export function newRun(name) {
   Game.state = state;
   assignApocalypse(state, rollForRun(runNumber));
   ensureRumorPlan(state);
+  // Part B: the run after a tower ending hears about it (stranger host, or your own sign-off).
+  claimTowerEcho(state);
   bus.emit('state', state);
   return state;
 }

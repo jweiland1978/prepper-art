@@ -127,6 +127,27 @@ export const ASSETS = {
     url: `${BASE}bg-end-bigmoon.jpg`,
     kind: 'background',
   },
+  // Stage 4 Part B: the Radio Tower climb, the studio, and the two tower endings.
+  bgRadiotower: {
+    key: 'bg-radiotower',
+    url: `${BASE}bg-radiotower.jpg`,
+    kind: 'background',
+  },
+  bgStudio: {
+    key: 'bg-studio',
+    url: `${BASE}bg-studio.jpg`,
+    kind: 'background',
+  },
+  bgTowerDawn: {
+    key: 'bg-tower-dawn',
+    url: `${BASE}bg-tower-dawn.jpg`,
+    kind: 'background',
+  },
+  bgTowerVoice: {
+    key: 'bg-tower-voice',
+    url: `${BASE}bg-tower-voice.jpg`,
+    kind: 'background',
+  },
 };
 
 export const ASSET_LIST = Object.values(ASSETS);

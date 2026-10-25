@@ -2,8 +2,8 @@
  * Stage 3 secret: which apocalypse this run is, and the rumor plan that hints at it.
  * Read state.apocalypse only through apocalypseOf(). Day 30, survival, and score should too.
  */
-import { CONFIG, phaseForDay } from './config.js?v=2';
-import { LARRY_STAMP, RUMORS, rumorById } from './data/radio.js?v=2';
+import { CONFIG, phaseForDay } from './config.js?v=3';
+import { LARRY_STAMP, RUMORS, rumorById } from './data/radio.js?v=3';
 
 const TRUTH_MARGIN = 3;
 
@@ -60,6 +60,8 @@ export function reconcileStamps(state) {
     entry.lie = lie;
     if (entry.stamp && !lie) entry.stamp = '';
     if (entry.stamp && lie && entry.stamp !== LARRY_STAMP) entry.stamp = LARRY_STAMP;
+    // Part B: the Ham Shack never vouches for a lie, even after a dev re-roll.
+    if (entry.ham === 'checked' && lie) entry.ham = 'static';
   });
 }
 

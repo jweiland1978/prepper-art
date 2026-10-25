@@ -1,18 +1,20 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG } from '../config.js?v=2';
-import { Game } from '../state.js?v=2';
-import { Save } from '../save.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addText } from '../ui.js?v=2';
-import { attachAtmosphere, coverEnd, drawScoreCard, fadeIn, paintApocSky } from '../fx.js?v=2';
-import { goTo, hideHud } from '../flow.js?v=2';
-import { buildScore, downLine, EARLY_END_LINE } from '../logic.js?v=2';
-import { apocalypseOf } from '../rumors.js?v=2';
-import { lossHintFor, winLinesFor } from '../data/survival.js?v=2';
-import { makeTyper } from './type.js?v=2';
-import { achById, onRunEnd } from '../achievements.js?v=2';
-import { readMeta } from '../meta.js?v=2';
-import { hasPendingCards, showPendingCards } from './achcard.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game } from '../state.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addText } from '../ui.js?v=3';
+import { attachAtmosphere, coverEnd, drawScoreCard, fadeIn, paintApocSky } from '../fx.js?v=3';
+import { goTo, hideHud } from '../flow.js?v=3';
+import { buildScore, downLine, EARLY_END_LINE } from '../logic.js?v=3';
+import { apocalypseOf } from '../rumors.js?v=3';
+import { lossHintFor, winLinesFor } from '../data/survival.js?v=3';
+import { makeTyper } from './type.js?v=3';
+import { achById, onRunEnd } from '../achievements.js?v=3';
+import { readMeta } from '../meta.js?v=3';
+import { hasPendingCards, showPendingCards } from './achcard.js?v=3';
+import { isTowerEnding } from '../tower.js?v=3';
+import { ENDINGS } from '../data/tower.js?v=3';
 
 export class EndingScene extends Phaser.Scene {
   constructor() {
@@ -32,10 +34,19 @@ export class EndingScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#070b12');
     hideHud(this);
     const kind = apocalypseOf(state);
-    coverEnd(this, state, { tint: 0x6a5344, fallback: 'bg-title' });
-    this.add.rectangle(640, 360, 1280, 720, 0x140c08, 0.62).setDepth(1);
-    if (state.ending !== 'early') paintApocSky(this, state);
-    attachAtmosphere(this, { ash: state.ending !== 'early' && kind !== 'bigmoon', depth: 6 });
+    // Part B: a tower ending has its own painting and no apocalypse sky. It never happened.
+    this.tower = isTowerEnding(state) ? ENDINGS[state.ending.slice(6)] : null;
+    if (this.tower && this.textures.exists(this.tower.bg)) {
+      const art = this.add.image(640, 360, this.tower.bg).setDepth(0);
+      art.setScale(Math.max(1280 / (art.width || 1280), 720 / (art.height || 720)));
+      this.add.rectangle(640, 360, 1280, 720, 0x070b12, 0.38).setDepth(1);
+      attachAtmosphere(this, { depth: 6 });
+    } else {
+      coverEnd(this, state, { tint: 0x6a5344, fallback: 'bg-title' });
+      this.add.rectangle(640, 360, 1280, 720, 0x140c08, 0.62).setDepth(1);
+      if (state.ending !== 'early') paintApocSky(this, state);
+      attachAtmosphere(this, { ash: state.ending !== 'early' && kind !== 'bigmoon', depth: 6 });
+    }
     state.lastScene = 'Ending';
     if (!state.ending) state.ending = 'loss';
     state.finished = true;
@@ -58,6 +69,16 @@ export class EndingScene extends Phaser.Scene {
       lineSpacing: 8,
     }).setDepth(20);
     this.typer = makeTyper(this);
+    // Part B tower endings: every line waits for a tap, like the radio.
+    this.tapToContinue = !!this.tower;
+    if (this.tower) {
+      this.tapZone = this.add.zone(640, 360, 1280, 720).setOrigin(0.5).setDepth(15).setInteractive();
+      this.tapZone.on('pointerdown', () => this.typer.skip());
+      this.hint = addText(this, 640, 690, 'Tap to continue', {
+        fontFamily: CONFIG.FONTS.body, fontSize: '15px', color: CONFIG.COLORS.textMuted, originX: 0.5, originY: 0.5,
+      }).setDepth(20);
+    }
+    globalThis.__PREPPER_ENDING = { ending: state.ending, tower: !!this.tower, kicker: this.tower?.kicker || '' };
     this.skipButton = addButton(this, 1100, 80, 'SKIP', () => this.showScore(true), {
       w: 140, h: 44, depth: 40,
     });
@@ -65,7 +86,7 @@ export class EndingScene extends Phaser.Scene {
       this.typer.dead = true;
       Audio.stopStatic();
     });
-    this.time.delayedCall(45000, () => this.showScore(true));
+    if (!this.tower) this.time.delayedCall(45000, () => this.showScore(true));
     this.play().catch((error) => {
       console.error('[PREPPER] Ending stopped.', error);
       this.showScore(true);
@@ -75,7 +96,16 @@ export class EndingScene extends Phaser.Scene {
   async play() {
     const state = Game.state;
     const kind = apocalypseOf(state);
-    if (state.ending === 'win') {
+    if (this.tower) {
+      const name = state.name || CONFIG.DEFAULT_NAME;
+      const lines = this.tower.lines.map((line) => line.replaceAll('{name}', name));
+      for (let i = 0; i < lines.length; i += 1) {
+        if (this.shown || this.typer.dead) return;
+        await this.typer.say(this.voice, lines[i], true);
+        if (this.shown || this.typer.dead) return;
+        await this.typer.wait(260);
+      }
+    } else if (state.ending === 'win') {
       const lines = winLinesFor(kind);
       for (let i = 0; i < lines.length; i += 1) {
         if (this.shown || this.typer.dead) return;
@@ -110,12 +140,16 @@ export class EndingScene extends Phaser.Scene {
     if (this.shown || !this.sys?.isActive()) return;
     this.shown = true;
     Audio.stopStatic();
+    this.tapZone?.destroy();
+    this.hint?.destroy();
     this.skipButton?.destroy();
     this.voice?.setText('');
     const card = this.card;
     const root = this.add.container(0, 0).setDepth(24);
     root.add(drawScoreCard(this, 170, 96, 940, 520));
-    const kicker = Game.state.ending === 'win'
+    const kicker = this.tower
+      ? this.tower.kicker
+      : Game.state.ending === 'win'
       ? 'TEN DAYS LATER'
       : Game.state.ending === 'early'
         ? 'BEFORE DAY 30'

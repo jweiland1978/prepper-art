@@ -1,23 +1,23 @@
-import Phaser from '../phaser.js?v=2';
-import { CONFIG } from '../config.js?v=2';
-import { Game, bus, newRun, replaceState } from '../state.js?v=2';
-import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=2';
-import { claimLegacyRun } from '../meta.js?v=2';
-import { Save } from '../save.js?v=2';
-import { Audio } from '../audio.js?v=2';
-import { addButton, addDialog, addText } from '../ui.js?v=2';
-import { attachAtmosphere } from '../fx.js?v=2';
-import { beginScene, goTo } from '../flow.js?v=2';
-import { addCornerDial } from '../widgets.js?v=2';
-import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=2';
-import { readMeta, resetMeta } from '../meta.js?v=2';
-import { devUnlockAll } from '../unlocks.js?v=2';
-import { hasPendingCards, showPendingCards } from './achcard.js?v=2';
+import Phaser from '../phaser.js?v=3';
+import { CONFIG } from '../config.js?v=3';
+import { Game, bus, newRun, replaceState } from '../state.js?v=3';
+import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=3';
+import { claimLegacyRun } from '../meta.js?v=3';
+import { Save } from '../save.js?v=3';
+import { Audio } from '../audio.js?v=3';
+import { addButton, addDialog, addText } from '../ui.js?v=3';
+import { attachAtmosphere } from '../fx.js?v=3';
+import { beginScene, goTo } from '../flow.js?v=3';
+import { addCornerDial } from '../widgets.js?v=3';
+import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=3';
+import { readMeta, resetMeta } from '../meta.js?v=3';
+import { devUnlockAll } from '../unlocks.js?v=3';
+import { hasPendingCards, showPendingCards } from './achcard.js?v=3';
 
-const DEV_RUNS = [1, 2, 3, 4, 6, 7, 8, 9, 10];
+const DEV_RUNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const GAMEPLAY = new Set([
-  'Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Apocalypse', 'Survival', 'Ending',
+  'Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Apocalypse', 'Survival', 'Tower', 'Ending',
 ]);
 
 export class TitleScene extends Phaser.Scene {
