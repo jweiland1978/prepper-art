@@ -10,13 +10,13 @@
  * No spoilers: nothing here reads the current run's apocalypse. Locked pages are "???",
  * and room pages only name apocalypses already seen.
  */
-import { CONFIG } from './config.js?v=4';
-import { readMeta, writeMeta, emptyGuide } from './meta.js?v=4';
-import { NEIGHBORS } from './data/neighbors.js?v=4';
-import { CLUE_LINES } from './data/tower.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { readMeta, writeMeta, emptyGuide } from './meta.js?v=5';
+import { NEIGHBORS } from './data/neighbors.js?v=5';
+import { CLUE_LINES } from './data/tower.js?v=5';
 import {
   APOC_PAGES, BACK_PAGE, BISCUIT_PAGE, GUIDE_TABS, LOCKED_LINES, RADIO_PAGE, ROOM_HELP_WORDS,
-} from './data/guide.js?v=4';
+} from './data/guide.js?v=5';
 
 export const GUIDE_NBR_IDS = ['larry', 'kowalski', 'dale', 'tina', 'kevin', 'gary'];
 export const GUIDE_ROOM_IDS = ['pantry', 'water', 'generator', 'barricade', 'grow', 'rec', 'faraday', 'lead', 'hamshack'];

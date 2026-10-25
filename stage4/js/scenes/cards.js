@@ -1,10 +1,10 @@
-import { CONFIG } from '../config.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { clearKnock, markOffered, recruit, recruitView, refuse } from '../crew.js?v=4';
-import { actionChance, oddsWord } from '../logic.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Game, touchState } from '../state.js?v=4';
-import { addButton, addPanel, addText } from '../ui.js?v=4';
+import { CONFIG } from '../config.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { clearKnock, markOffered, recruit, recruitView, refuse } from '../crew.js?v=5';
+import { actionChance, fightStreakBonus, oddsWord } from '../logic.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Game, touchState } from '../state.js?v=5';
+import { addButton, addPanel, addText } from '../ui.js?v=5';
 
 /**
  * One modal, always with a button. Clicking the dimmer does nothing, so a choice
@@ -84,7 +84,10 @@ export function showNotice(scene, opts = {}) {
       button.onClick?.();
     }, {
       w: bw,
-      h: button.subtitle ? 64 : 54,
+      h: button.h || (button.subtitle ? 64 : 54),
+      subtitleSize: button.subtitleSize,
+      subtitleY: button.subtitleY,
+      subtitleFont: button.subtitleFont,
       primary: !!button.primary,
       subtitle: button.subtitle || '',
       fontSize: button.fontSize || (buttons.length >= 5 ? '18px' : '22px'),
@@ -99,12 +102,23 @@ export function showDanger(scene, opts) {
   const state = Game.state;
   const weapon = CONFIG.WEAPONS[state?.weapon] || CONFIG.WEAPONS.bare_hands;
   const actions = ['fight', 'hide', 'bargain', 'run'];
-  const buttons = actions.map((action, index) => ({
-    label: action.toUpperCase(),
-    subtitle: state ? oddsWord(actionChance(action, state)) : 'Coin flip',
-    primary: index === 0,
-    onClick: () => opts.onPick?.(action),
-  }));
+  // Oct 25 balance: show the word and the percent ("Coin flip · 54%"), big enough to read on a phone.
+  const buttons = actions.map((action, index) => {
+    const chance = state ? actionChance(action, state) : 0.5;
+    return {
+      label: action.toUpperCase(),
+      subtitle: `${oddsWord(chance)} · ${Math.round(chance * 100)}%`,
+      subtitleSize: '17px',
+      subtitleY: 16,
+      subtitleFont: CONFIG.FONTS.heading,
+      h: 74,
+      primary: index === 0,
+      onClick: () => opts.onPick?.(action),
+    };
+  });
+  const due = state && fightStreakBonus(state) > 0
+    ? `\n\nYou're due. FIGHT +${Math.round(fightStreakBonus(state) * 100)}% until you win one.`
+    : '';
   const rockets = state?.stash?.rockets || 0;
   if (rockets >= 1) {
     buttons.push({
@@ -117,7 +131,7 @@ export function showDanger(scene, opts) {
   return showNotice(scene, {
     kicker: 'DANGER',
     title: opts.face || 'Trouble',
-    body: `${opts.text || ''}\n\nHolding: ${weapon.name}. ${weapon.blurb}`,
+    body: `${opts.text || ''}\n\nHolding: ${weapon.name}. ${weapon.blurb}${due}`,
     depth: opts.depth ?? 46,
     buttons,
   });

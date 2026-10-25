@@ -1,13 +1,13 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG, phaseForDay } from '../config.js?v=4';
-import { nickCrew, spotStatus, tripExtras } from '../crew.js?v=4';
-import { markerById } from '../data/map.js?v=4';
-import { Game } from '../state.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addText } from '../ui.js?v=4';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
-import { endRun, leave, showHud } from '../flow.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG, phaseForDay } from '../config.js?v=5';
+import { nickCrew, spotStatus, tripExtras } from '../crew.js?v=5';
+import { markerById } from '../data/map.js?v=5';
+import { Game } from '../state.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addText } from '../ui.js?v=5';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=5';
+import { endRun, leave, showHud } from '../flow.js?v=5';
 import {
   applyDeltas,
   eventLookup,
@@ -16,10 +16,10 @@ import {
   resolveChoice,
   resolveDanger,
   rollLoot,
-} from '../logic.js?v=4';
-import { presentRecruit, showDanger, showNotice } from './cards.js?v=4';
-import { openTrade, presentCoat, presentLaunch } from './trade.js?v=4';
-import { grantCoat, rummageCoatRoll } from '../trade.js?v=4';
+} from '../logic.js?v=5';
+import { presentRecruit, showDanger, showNotice } from './cards.js?v=5';
+import { openTrade, presentCoat, presentLaunch } from './trade.js?v=5';
+import { grantCoat, rummageCoatRoll } from '../trade.js?v=5';
 
 export class ScavengeScene extends Phaser.Scene {
   constructor() {
@@ -366,7 +366,10 @@ export class ScavengeScene extends Phaser.Scene {
           }
           const outcome = resolveDanger(action, state, event.bias);
           const nick = !outcome.ok ? nickCrew(state, 1) : '';
-          const text = nick ? `${outcome.text}\n\n${nick}` : outcome.text;
+          const won = action === 'fight' && outcome.ok;
+          if (won) this.trip.fightWon = true;
+          const said = won ? `YOU WON.\n\n${outcome.text}` : outcome.text;
+          const text = nick ? `${said}\n\n${nick}` : said;
           this.commit(text, outcome.deltas);
         },
       });
@@ -422,7 +425,7 @@ export class ScavengeScene extends Phaser.Scene {
     const down = (Game.state?.stats.health ?? 1) <= 0;
     showNotice(this, {
       kicker: this.marker?.name?.toUpperCase() || 'TRIP',
-      title: down ? 'THAT DID IT' : 'HEAD BACK',
+      title: down ? 'THAT DID IT' : (this.trip?.fightWon ? 'YOU WON' : 'HEAD BACK'),
       body: text,
       button: down ? "THAT'S THE RUN" : 'HEAD BACK',
       onClose: () => {

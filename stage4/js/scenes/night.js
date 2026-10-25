@@ -1,19 +1,19 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG, phaseForDay } from '../config.js?v=4';
-import { Game, changeStat, syncDerived } from '../state.js?v=4';
-import { generatorOn, isActive, maybeGuardLoss, recruited } from '../crew.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addText } from '../ui.js?v=4';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
-import { endRun, leave, showHud } from '../flow.js?v=4';
-import { nickCrew, rollKnock, settleCrew } from '../crew.js?v=4';
-import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js?v=4';
-import { offerTip, presentRecruit, showDanger, showNotice } from './cards.js?v=4';
-import { crackBeer } from '../trade.js?v=4';
-import { offerHeist } from '../heist.js?v=4';
-import { hatchTrader, openTrade, presentLaunch } from './trade.js?v=4';
-import { makeTyper } from './type.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG, phaseForDay } from '../config.js?v=5';
+import { Game, changeStat, syncDerived } from '../state.js?v=5';
+import { generatorOn, isActive, maybeGuardLoss, recruited } from '../crew.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addText } from '../ui.js?v=5';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=5';
+import { endRun, leave, showHud } from '../flow.js?v=5';
+import { nickCrew, rollKnock, settleCrew } from '../crew.js?v=5';
+import { applyDeltas, buildNightReport, resolveDanger } from '../logic.js?v=5';
+import { offerTip, presentRecruit, showDanger, showNotice } from './cards.js?v=5';
+import { crackBeer } from '../trade.js?v=5';
+import { offerHeist } from '../heist.js?v=5';
+import { hatchTrader, openTrade, presentLaunch } from './trade.js?v=5';
+import { makeTyper } from './type.js?v=5';
 
 export class NightScene extends Phaser.Scene {
   constructor() {
@@ -258,7 +258,7 @@ export class NightScene extends Phaser.Scene {
             Save.write(state);
             showNotice(this, {
               kicker: 'NIGHT',
-              title: outcome.ok ? 'IT WORKED' : 'IT DID NOT',
+              title: outcome.ok ? (action === 'fight' ? 'YOU WON' : 'IT WORKED') : 'IT DID NOT',
               body: report.dangerResult,
               button: 'CONTINUE',
               onClose: resolve,

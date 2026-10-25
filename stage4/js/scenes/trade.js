@@ -2,17 +2,17 @@
  * Stash, trade overlay, swap meet, rocket cards, and the Mackinaw moment.
  * The scene list stays as it was. These are overlays.
  */
-import { CONFIG } from '../config.js?v=4';
-import { ITEMS, itemById } from '../data/items.js?v=4';
-import { COAT_LINES, GARY_COAT } from '../data/traders.js?v=4';
-import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js?v=4';
-import { applyDeltas, oddsWord, resolveDanger } from '../logic.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Game, touchState } from '../state.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addText } from '../ui.js?v=4';
-import { offerTip, showDanger, showNotice } from './cards.js?v=4';
-import { larryPanicDue, presentLarryPanic } from '../heist.js?v=4';
+import { CONFIG } from '../config.js?v=5';
+import { ITEMS, STAT_GOODS, itemById } from '../data/items.js?v=5';
+import { COAT_LINES, GARY_COAT } from '../data/traders.js?v=5';
+import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js?v=5';
+import { applyDeltas, oddsWord, resolveDanger } from '../logic.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Game, touchState } from '../state.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addText } from '../ui.js?v=5';
+import { offerTip, showDanger, showNotice } from './cards.js?v=5';
+import { larryPanicDue, presentLarryPanic } from '../heist.js?v=5';
 import {
   beginMeet,
   crackBeer,
@@ -27,10 +27,12 @@ import {
   itemBlurb,
   makeTrader,
   maybeGaryCoat,
+  medicineTargets,
   moveGood,
   priceArrow,
   priceOf,
-} from '../trade.js?v=4';
+  useMedicine,
+} from '../trade.js?v=5';
 
 const NAMES = { tip: 'A tip', dock: 'Sewer map' };
 
@@ -339,7 +341,10 @@ export function openStash(scene, onClose) {
     close();
     openStash(scene, onClose);
   };
-  ITEMS.forEach((item, index) => {
+  // Medicine is a stat (like food and water), so it lives in state.stats, not state.stash.
+  // It still belongs in the bag: show it as the 12th slot so the player can see and use it.
+  const slots = [...ITEMS, ...STAT_GOODS.filter((row) => row.id === 'medicine')];
+  slots.forEach((item, index) => {
     const col = index % 6;
     const row = Math.floor(index / 6);
     const x = 200 + col * 170;
@@ -408,6 +413,12 @@ function openItemCard(scene, id, refresh) {
         showNotice(scene, { kicker: 'PINE LAKE LIGHT', title: 'Silver can', body: result.line, depth: 70, button: 'OK', onClose: () => refresh?.() });
       },
     });
+  } else if (id === 'medicine' && count > 0) {
+    buttons.push({
+      label: 'USE',
+      primary: true,
+      onClick: () => openMedicinePicker(scene, refresh),
+    });
   } else if (id === 'coat' && count > 0) {
     const worn = state.flags.coatWorn !== false;
     buttons.push({
@@ -421,7 +432,9 @@ function openItemCard(scene, id, refresh) {
       },
     });
   }
-  const useNote = id === 'gas'
+  const useNote = id === 'medicine'
+    ? `\n\nHeals you +${CONFIG.ITEMS.medicineHealth || 3} health, or a neighbor +${CONFIG.ITEMS.medicineCrew || 2} (and gets a laid-up neighbor back on their feet). Tina doubles it.`
+    : id === 'gas'
     ? '\n\nFeeds the generator for 3 nights when it sputters. No can, no power that night.'
     : id === 'battery'
       ? '\n\nKeeps the morning broadcast clear when the generator is out. Larry also has opinions.'
@@ -435,6 +448,49 @@ function openItemCard(scene, id, refresh) {
     body: `${item.description}\n\nYou have ${count}.${useNote}`,
     depth: 60,
     buttons,
+  });
+}
+
+function openMedicinePicker(scene, refresh) {
+  const state = Game.state;
+  const targets = medicineTargets(state);
+  const hurt = targets.filter((row) => row.hurt);
+  const done = (line, title = 'Medicine') => {
+    Save.write(state);
+    touchState();
+    showNotice(scene, { kicker: 'MEDICINE', title, body: line, depth: 70, button: 'OK', onClose: () => refresh?.() });
+  };
+  if (!hurt.length) {
+    done('Everybody is as held together as the day allows. Save the bottle.', 'Nobody needs it');
+    return;
+  }
+  let notice = null;
+  const decorate = (root) => {
+    const cols = Math.min(3, hurt.length);
+    const bw = 290;
+    const bh = 64;
+    const gap = 16;
+    hurt.forEach((row, index) => {
+      const col = index % cols;
+      const line = Math.floor(index / cols);
+      const rowCount = Math.min(cols, hurt.length - line * cols);
+      const startX = 640 - (rowCount * bw + (rowCount - 1) * gap) / 2 + bw / 2;
+      const sub = row.laidUp ? 'Laid up' : `Health ${Math.round(row.health)}/${row.max}`;
+      const node = addButton(scene, startX + col * (bw + gap), 320 + line * (bh + gap), row.id === 'you' ? 'YOU' : row.name.toUpperCase(), () => {
+        notice?.close();
+        const result = useMedicine(state, row.id);
+        done(result.line, row.id === 'you' ? 'You' : row.name);
+      }, { w: bw, h: bh, subtitle: sub, primary: row.id === 'you', fontSize: '22px' });
+      root.add(node);
+    });
+  };
+  notice = showNotice(scene, {
+    kicker: 'MEDICINE',
+    title: 'Who gets it?',
+    body: `You have ${state.stats?.medicine || 0}. One bottle per tap.`,
+    depth: 65,
+    decorate,
+    buttons: [{ label: 'BACK', onClick: () => refresh?.() }],
   });
 }
 

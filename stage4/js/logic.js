@@ -1,11 +1,11 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=4';
-import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=4';
-import { neighborlyMorning } from './crew.js?v=4';
-import { clueForMorning, hamTagMorning, ownSignoffLine, strangerGreeting, strangerSignoff } from './tower.js?v=4';
-import { EVENTS, eventById } from './data/events.js?v=4';
-import { markerById, phaseProfile } from './data/map.js?v=4';
-import { NIGHT_EVENTS } from './data/night.js?v=4';
-import { phaseCopy } from './data/phases.js?v=4';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=5';
+import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=5';
+import { neighborlyMorning } from './crew.js?v=5';
+import { clueForMorning, hamTagMorning, ownSignoffLine, strangerGreeting, strangerSignoff } from './tower.js?v=5';
+import { EVENTS, eventById } from './data/events.js?v=5';
+import { markerById, phaseProfile } from './data/map.js?v=5';
+import { NIGHT_EVENTS } from './data/night.js?v=5';
+import { phaseCopy } from './data/phases.js?v=5';
 import {
   BEER_LINES,
   COAT_BRAGS,
@@ -20,13 +20,13 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js?v=4';
+} from './data/radio.js?v=5';
 import {
   hatchById,
   SURVIVAL_COLD,
   survivalDeck,
   survivalOpener,
-} from './data/survival.js?v=4';
+} from './data/survival.js?v=5';
 import {
   applyCold,
   applyCrewNight,
@@ -48,17 +48,17 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js?v=4';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=4';
-import { heistMorning } from './heist.js?v=4';
-import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=4';
+} from './crew.js?v=5';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=5';
+import { heistMorning } from './heist.js?v=5';
+import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=5';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js?v=4';
+} from './state.js?v=5';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {
@@ -281,8 +281,10 @@ export function rollLoot(bias, phase, state) {
   const count = min + Math.floor(Math.random() * (max - min + 1));
   const bag = bias?.length ? bias : ['materials'];
   const deltas = {};
+  // Oct 25 balance: start at a random spot in the list, so the last item (often water) is not starved.
+  const offset = Math.floor(Math.random() * bag.length);
   for (let i = 0; i < count; i += 1) {
-    let key = bag[i % bag.length];
+    let key = bag[(i + offset) % bag.length];
     if (!STAT_KEYS.includes(key) || key === 'health' || key === 'morale') key = 'materials';
     deltas[key] = (deltas[key] || 0) + 1;
   }
@@ -344,6 +346,12 @@ export function applyDeltas(state, deltas) {
   STAT_KEYS.forEach((key) => {
     if (!deltas[key]) return;
     const got = changeStat(key, deltas[key]);
+    if (key === 'water' && deltas[key] > 0 && got < deltas[key]) {
+      // Oct 25 balance: say so when the jugs are full instead of dropping the water silently.
+      const fix = roomLevel(state, 'water') > 0 ? 'upgrade the Water Tank' : 'build a Water Tank';
+      parts.push(`Water +${Math.round(got)} (jugs full, ${fix})`);
+      return;
+    }
     if (!got) return;
     const shown = Math.abs(got - Math.round(got)) > 0.05 ? got.toFixed(1) : String(Math.round(got));
     parts.push(`${STAT_LABELS[key]} ${got > 0 ? '+' : ''}${shown}`);
@@ -386,7 +394,7 @@ export function actionChance(action, state, opts = {}) {
     const brace = state.flags?.brace || 0;
     // opts.noBiscuit: the same odds without Biscuit's HIDE/RUN bonus (Good Boy test).
     const hiding = state.flags?.biscuitHiding === `s${day}` || !!opts.noBiscuit;
-    if (action === 'fight') chance += boards * tune.barricadeFight + brace * 0.04;
+    if (action === 'fight') chance += boards * tune.barricadeFight + brace * 0.04 + fightStreakBonus(state);
     if (action === 'hide') chance += boards * tune.barricadeHide + brace * 0.04 + (hiding ? 0 : tune.biscuitHide);
     if (action === 'run' && !hiding) chance += tune.biscuitRun;
     if (action === 'bargain') {
@@ -403,8 +411,10 @@ export function actionChance(action, state, opts = {}) {
     return Math.max(0.06, Math.min(0.93, chance));
   }
   const danger = phaseInfo(state.day).danger || 0;
-  const base = { fight: 0.5, hide: 0.56, bargain: 0.42, run: 0.84 }[action] ?? 0.4;
-  let chance = base - danger * 0.35 + (weapon[action] || 0);
+  const tune = CONFIG.COMBAT;
+  const base = tune.base[action] ?? 0.4;
+  let chance = base - danger * tune.dangerMul + (weapon[action] || 0);
+  if (action === 'fight') chance += fightStreakBonus(state);
   const boards = roomLevel(state, 'barricade');
   if (action === 'fight') chance += boards * 0.03;
   if (action === 'hide') chance += boards * 0.05;
@@ -415,13 +425,25 @@ export function actionChance(action, state, opts = {}) {
   if (state.stats.health <= 3 && (action === 'fight' || action === 'run')) chance -= 0.08;
   const where = state.flags?.dangerWhere || 'trip';
   chance += dangerAdjust(state, action, where);
-  return Math.max(0.08, Math.min(0.93, chance));
+  return Math.max(tune.min, Math.min(tune.max, chance));
+}
+
+/** Oct 25 balance: after N fight losses in a row, FIGHT gets a bonus until the next fight win. */
+export function fightStreakBonus(state) {
+  const tune = CONFIG.COMBAT;
+  return (state?.flags?.fightLosses || 0) >= tune.streakAfter ? tune.streakBonus : 0;
+}
+
+export function noteFight(state, action, ok) {
+  if (action !== 'fight' || !state?.flags) return;
+  state.flags.fightLosses = ok ? 0 : (state.flags.fightLosses || 0) + 1;
 }
 
 export function resolveDanger(action, state, bias) {
   const phase = phaseForDay(state.day);
   const chance = actionChance(action, state);
   const ok = Math.random() < chance;
+  noteFight(state, action, ok);
   const deltas = {};
   let text = '';
   if (action === 'fight' && ok) {
@@ -689,6 +711,12 @@ function applyNightEvent(state, event, lines, earlyLine = '') {
   return {};
 }
 
+/** Oct 25 balance: a built Water Tank adds a little water every night (after drinking). */
+function tankNight(state) {
+  if (roomLevel(state, 'water') < 1) return 0;
+  return changeStat('water', CONFIG.WATER?.tankNight || 0);
+}
+
 export function buildNightReport(state) {
   if (state.flags.upkeepDay === state.day && state.flags.nightReport) return state.flags.nightReport;
   onNightStart(state, recruited(state).length);
@@ -700,6 +728,7 @@ export function buildNightReport(state) {
   const foodDelta = changeStat('food', -up.food);
   const waterDelta = changeStat('water', -up.water);
   if (up.healthLoss) changeStat('health', -up.healthLoss);
+  const tankWater = tankNight(state);
   const lines = [countdownPhrase(state.day)];
   lines.push(foodBefore <= 0
     ? 'The pantry files a complaint. You eat a memory of beans.'
@@ -707,6 +736,7 @@ export function buildNightReport(state) {
   lines.push(waterBefore <= 0
     ? 'The jug is a souvenir. You drink a thought and call it hydration.'
     : `Water ${waterDelta}.`);
+  if (tankWater) lines.push(`The Water Tank catches the night. Water +${tankWater}.`);
   lines.push(biscuitCans
     ? "Biscuit eats a whole can. Last night's half finally counted. He is fine."
     : 'Biscuit eats half a can. The rest stays on the books. He is fine.');
@@ -803,10 +833,12 @@ export function beginSurvivalDay(state) {
   changeStat('food', -up.food);
   changeStat('water', -up.water);
   if (up.healthLoss) changeStat('health', -up.healthLoss);
+  const tankWater = tankNight(state);
   const kind = apocalypseOf(state);
   const lines = [survivalOpener(kind, day, CONFIG.SURVIVAL_DAYS)];
   lines.push(foodBefore <= 0 ? 'No food. You eat a memory of beans.' : 'You eat from the shelf.');
   lines.push(waterBefore <= 0 ? 'No water. You drink a thought and call it hydration.' : 'You drink. It tastes like a hose. Correct.');
+  if (tankWater) lines.push(`The Water Tank catches the night. Water +${tankWater}.`);
   lines.push(biscuitCans
     ? 'Biscuit eats a whole can. Last half finally counted. He is fine.'
     : 'Biscuit eats half a can. He is fine.');
@@ -842,14 +874,15 @@ export function resolveZombie(action, state) {
   if (state.flags) delete state.flags.devHatchRoll;
   const chance = actionChance(action, state);
   const ok = roll < chance;
+  noteFight(state, action, ok);
   onHatchRoll(state, action, roll, chance, actionChance(action, state, { noBiscuit: true }));
   const deltas = {};
   let text = '';
   if (action === 'fight' && ok) {
     deltas.morale = 1;
-    text = weapon.id === 'bare_hands'
+    text = 'YOU WON. ' + (weapon.id === 'bare_hands'
       ? 'You bonk the problem with your actual hands. It stumbles off, offended, and keeps walking.'
-      : `The ${weapon.name.toLowerCase()} makes the argument. It leaves, still walking, less convinced.`;
+      : `The ${weapon.name.toLowerCase()} makes the argument. It leaves, still walking, less convinced.`);
   } else if (action === 'fight') {
     deltas.health = -2;
     deltas.morale = -1;

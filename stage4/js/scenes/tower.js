@@ -1,16 +1,16 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG } from '../config.js?v=4';
-import { Game } from '../state.js?v=4';
-import { Save } from '../save.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addText } from '../ui.js?v=4';
-import { attachAtmosphere, fadeIn, shake } from '../fx.js?v=4';
-import { hideHud, leave } from '../flow.js?v=4';
-import { readMeta } from '../meta.js?v=4';
-import { chooseTowerEnding } from '../tower.js?v=4';
-import { markTower } from '../guide.js?v=4';
-import { CHOICES, CLIMB_AGAIN, CLIMB_LINES, MONOLOGUE, STUDIO_LINES } from '../data/tower.js?v=4';
-import { makeTyper } from './type.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG } from '../config.js?v=5';
+import { Game } from '../state.js?v=5';
+import { Save } from '../save.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addText } from '../ui.js?v=5';
+import { attachAtmosphere, fadeIn, shake } from '../fx.js?v=5';
+import { hideHud, leave } from '../flow.js?v=5';
+import { readMeta } from '../meta.js?v=5';
+import { chooseTowerEnding } from '../tower.js?v=5';
+import { markTower } from '../guide.js?v=5';
+import { CHOICES, CLIMB_AGAIN, CLIMB_LINES, MONOLOGUE, STUDIO_LINES } from '../data/tower.js?v=5';
+import { makeTyper } from './type.js?v=5';
 
 /**
  * Stage 4 Part B: the Radio Tower. Climb card, then the studio, then the voice, then the choice.

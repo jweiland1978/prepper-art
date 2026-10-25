@@ -1,4 +1,4 @@
-import { ASSET_LIST } from './assets.js?v=4';
+import { ASSET_LIST } from './assets.js?v=5';
 
 function canvas(width, height) {
   const element = document.createElement('canvas');

@@ -2,11 +2,11 @@
  * Barter, item uses, Gary's respect, rockets, and the coat.
  * Scenes paint. This file only changes state.
  */
-import { CONFIG, phaseForDay } from './config.js?v=4';
-import { onMackinawFound } from './achievements.js?v=4';
-import { itemById } from './data/items.js?v=4';
-import { pickSideRumor, rememberRumor } from './rumors.js?v=4';
-import { MARKERS } from './data/map.js?v=4';
+import { CONFIG, phaseForDay } from './config.js?v=5';
+import { onMackinawFound } from './achievements.js?v=5';
+import { itemById } from './data/items.js?v=5';
+import { pickSideRumor, rememberRumor } from './rumors.js?v=5';
+import { MARKERS } from './data/map.js?v=5';
 import {
   DISTRESS_LINES,
   GARY_BEER,
@@ -20,18 +20,20 @@ import {
   LIGHT_LINES,
   MAYHEM_LINES,
   STALLS,
-} from './data/traders.js?v=4';
+} from './data/traders.js?v=5';
 import {
   addNotice,
   garyRespect,
   generatorOn,
   hashDay,
+  isActive,
   isHere,
+  recruited,
   spotStatus,
   tradeUnit,
   wearingCoat,
-} from './crew.js?v=4';
-import { Game, changeStat, roomLevel, touchState } from './state.js?v=4';
+} from './crew.js?v=5';
+import { Game, changeStat, roomLevel, touchState } from './state.js?v=5';
 
 export const STAT_KEYS = ['food', 'water', 'materials', 'medicine'];
 
@@ -665,6 +667,57 @@ export function eatSnack(state) {
   const got = changeStat('health', CONFIG.ITEMS.snacksHealth || 1);
   touchState();
   return { ok: !!got, line: got ? 'A snack cake. Health +1. The wrapper stays.' : 'The cake had nowhere to go.' };
+}
+
+/** Who a bottle of medicine can help right now. 'you' first, then hurt or laid-up neighbors. */
+export function medicineTargets(state) {
+  if (!state) return [];
+  const out = [];
+  const hp = state.stats?.health || 0;
+  out.push({ id: 'you', name: 'You', health: hp, max: CONFIG.HEALTH_MAX, laidUp: false, hurt: hp < CONFIG.HEALTH_MAX });
+  recruited(state).forEach((row) => {
+    const body = state.crew?.[row.id];
+    if (!body) return;
+    const laidUp = (body.laidUp || 0) > 0;
+    const health = body.health || 0;
+    out.push({ id: row.id, name: row.name, health, max: CONFIG.CREW.healthMax, laidUp, hurt: laidUp || health < CONFIG.CREW.healthMax });
+  });
+  return out;
+}
+
+/** Spend 1 medicine on you or a neighbor. Tina (on her feet) makes it heal twice as much. */
+export function useMedicine(state, targetId) {
+  if (!state) return { ok: false, line: '' };
+  if ((state.stats?.medicine || 0) < 1) return { ok: false, line: 'No medicine. The cabinet is just a cabinet.' };
+  const tina = isActive(state, 'tina');
+  const mul = tina ? 2 : 1;
+  const tinaNote = tina ? ' Tina picked the dose. It works twice as hard.' : '';
+  if (targetId === 'you') {
+    if ((state.stats?.health || 0) >= CONFIG.HEALTH_MAX && !state.flags?.sick) {
+      return { ok: false, line: 'You are already as held together as the day allows. Save the bottle.' };
+    }
+    changeStat('medicine', -1);
+    const got = changeStat('health', (CONFIG.ITEMS.medicineHealth || 3) * mul);
+    if (state.flags?.sick) state.flags.sick = false;
+    touchState();
+    return { ok: true, line: `You take the medicine. Health +${got}. Now ${state.stats.health}/${CONFIG.HEALTH_MAX}.${tinaNote}` };
+  }
+  const row = recruited(state).find((r) => r.id === targetId);
+  const body = row && state.crew?.[row.id];
+  if (!body) return { ok: false, line: 'Nobody by that name is down here.' };
+  const max = CONFIG.CREW.healthMax;
+  const laidUp = (body.laidUp || 0) > 0;
+  if (!laidUp && (body.health || 0) >= max) return { ok: false, line: `${row.name} is fine. ${row.name} would like that noted.` };
+  changeStat('medicine', -1);
+  const amount = (CONFIG.ITEMS.medicineCrew || 2) * mul;
+  if (laidUp) {
+    body.laidUp = 0;
+    body.zeroNights = 0;
+  }
+  body.health = Math.max(0, Math.min(max, (body.health || 0) + amount));
+  touchState();
+  const up = laidUp ? ' Back on their feet. The cot is free to be a cot.' : '';
+  return { ok: true, line: `${row.name} takes the medicine. Health ${body.health}/${max}.${up}${tinaNote}` };
 }
 
 export function itemBlurb(id) {

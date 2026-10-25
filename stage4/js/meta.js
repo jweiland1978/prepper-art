@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=4';
-import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=5';
 
 /**
  * Stage 4 meta store (prepper_s4_meta). Survives DELETE SAVE and new runs.

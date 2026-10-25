@@ -4,13 +4,13 @@
  * Tower endings are their own tier: they live in meta.tower, never in achievements.
  * No scene imports here. Logic, crew, map and the tower scene call in.
  */
-import { CONFIG } from './config.js?v=4';
-import { readMeta, writeMeta } from './meta.js?v=4';
-import { hasUnlock } from './unlocks.js?v=4';
-import { markClue } from './guide.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { readMeta, writeMeta } from './meta.js?v=5';
+import { hasUnlock } from './unlocks.js?v=5';
+import { markClue } from './guide.js?v=5';
 import {
   CLUE_DAYS, CLUE_LINES, GARY_TIPS, HAM_LINES, OWN_SIGNOFF, STRANGER_GREETINGS, STRANGER_SIGNOFF,
-} from './data/tower.js?v=4';
+} from './data/tower.js?v=5';
 
 export const TOWER_OPEN_DAY = 20;
 export const PROTECTED_IDS = ['tina', 'biscuit', 'gary'];

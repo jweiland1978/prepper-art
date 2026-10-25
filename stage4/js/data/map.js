@@ -42,13 +42,13 @@ export const MARKERS = [
     loot: ['food', 'food', 'water'],
     danger: { calm: 1, panic: 2, collapse: 3 },
     arc: {
-      calm: { lootMul: 1.6, danger: 1, rolls: 2, weights: { food: 5, water: 3, snacks: 2, tp: 4 } },
-      panic: { lootMul: 0.75, danger: 3, rolls: 1, crowd: true, weights: { food: 2, water: 1, snacks: 1, tp: 1 } },
+      calm: { lootMul: 1.6, danger: 1, rolls: 2, weights: { food: 5, water: 4, snacks: 2, tp: 4 } },
+      panic: { lootMul: 0.75, danger: 3, rolls: 1, crowd: true, weights: { food: 2, water: 2, snacks: 1, tp: 1 } },
       collapse: {
         lootMul: 0.4, danger: 3, rolls: 1, crowd: true,
         boardedFrom: 25,
         boardedLine: "Boarded up. Somebody wrote 'NO' on it. Just 'NO.'",
-        weights: { food: 1 },
+        weights: { food: 1, water: 1 },
       },
     },
     expect: {
@@ -63,11 +63,11 @@ export const MARKERS = [
     loot: ['medicine', 'medicine', 'water'],
     danger: { calm: 1, panic: 2, collapse: 2 },
     arc: {
-      calm: { lootMul: 1, danger: 1, rolls: 1, weights: { medicine: 4, coffee: 2, water: 1 } },
-      panic: { lootMul: 0.45, danger: 2, rolls: 1, weights: { medicine: 1, coffee: 1 } },
+      calm: { lootMul: 1, danger: 1, rolls: 1, weights: { medicine: 4, coffee: 2, water: 2 } },
+      panic: { lootMul: 0.45, danger: 2, rolls: 1, weights: { medicine: 1, coffee: 1, water: 1 } },
       collapse: {
         lootMul: 0.35, danger: 2, rolls: 1,
-        weights: { coffee: 1 },
+        weights: { coffee: 1, water: 1 },
         jackpot: 0.18, jackpotItem: 'medicine', jackpotCount: 3,
       },
     },
@@ -125,7 +125,7 @@ export const MARKERS = [
     reason: 'Rummage sale starts next week. Optimistic.',
     tint: 0xffe2b0,
     flicker: 'fluorescent',
-    loot: ['materials', 'tinfoil', 'morale'],
+    loot: ['materials', 'tinfoil', 'water'],
     danger: { calm: 1, panic: 1, collapse: 1 },
     arc: {
       calm: { lootMul: 0.8, danger: 1, rolls: 1, weights: { tinfoil: 3, materials: 2, snacks: 1 } },

@@ -1,8 +1,8 @@
-import { CONFIG, phaseForDay } from './config.js?v=4';
-import { NEIGHBORS } from './data/neighbors.js?v=4';
-import { nextRunNumber } from './meta.js?v=4';
-import { assignApocalypse, ensureRumorPlan, rollForRun } from './rumors.js?v=4';
-import { claimTowerEcho } from './tower.js?v=4';
+import { CONFIG, phaseForDay } from './config.js?v=5';
+import { NEIGHBORS } from './data/neighbors.js?v=5';
+import { nextRunNumber } from './meta.js?v=5';
+import { assignApocalypse, ensureRumorPlan, rollForRun } from './rumors.js?v=5';
+import { claimTowerEcho } from './tower.js?v=5';
 
 export class Emitter {
   constructor() {

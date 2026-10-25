@@ -315,6 +315,13 @@ export const EVENTS = [
     text: 'Dale is measuring the stand for a violation the season has not earned. He would rather measure a bunker.',
   },
   {
+    // Oct 25 balance: a small, steady water find away from the stores.
+    id: 'church-barrel', location: 'church', kind: 'find', weight: 2,
+    phases: ['calm', 'panic', 'collapse'],
+    text: 'A rain barrel by the side door, lid on, mostly full. A sign says FOR THE GARDEN. The garden has stopped asking.',
+    bias: ['water', 'water', 'materials'],
+  },
+  {
     id: 'church-rummage', location: 'church', kind: 'find', weight: 3,
     phases: ['calm', 'panic', 'collapse'],
     text: 'Everything is a quarter. Nobody is here to take the quarter. You leave one anyway, out of habit.',

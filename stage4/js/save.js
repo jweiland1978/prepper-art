@@ -1,10 +1,10 @@
-import { CONFIG } from './config.js?v=4';
-import { LARRY_STAMP } from './data/radio.js?v=4';
-import { NEIGHBORS } from './data/neighbors.js?v=4';
-import { apocalypseIds, apocalypseOf } from './rumors.js?v=4';
-import { Game } from './state.js?v=4';
-import { repairRunAch } from './achievements.js?v=4';
-import { repairPerk } from './unlocks.js?v=4';
+import { CONFIG } from './config.js?v=5';
+import { LARRY_STAMP } from './data/radio.js?v=5';
+import { NEIGHBORS } from './data/neighbors.js?v=5';
+import { apocalypseIds, apocalypseOf } from './rumors.js?v=5';
+import { Game } from './state.js?v=5';
+import { repairRunAch } from './achievements.js?v=5';
+import { repairPerk } from './unlocks.js?v=5';
 
 const DEFAULT_SETTINGS = {
   music: 0.7,

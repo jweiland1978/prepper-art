@@ -1,7 +1,7 @@
-import Phaser from './phaser.js?v=4';
-import { CONFIG } from './config.js?v=4';
-import { Audio } from './audio.js?v=4';
-import { Game } from './state.js?v=4';
+import Phaser from './phaser.js?v=5';
+import { CONFIG } from './config.js?v=5';
+import { Audio } from './audio.js?v=5';
+import { Game } from './state.js?v=5';
 
 /** Part C: effects counters for tests (squash, pop). fx.js adds shake, flip, fade. */
 export function fxLog(kind, ran) {
@@ -118,9 +118,9 @@ export function addButton(scene, x, y, label, onClick, opts = {}) {
   const parts = [g, text];
   let subtitle = null;
   if (opts.subtitle) {
-    subtitle = addText(scene, 0, 14, opts.subtitle, {
-      fontFamily: CONFIG.FONTS.body,
-      fontSize: '14px',
+    subtitle = addText(scene, 0, opts.subtitleY ?? 14, opts.subtitle, {
+      fontFamily: opts.subtitleFont || CONFIG.FONTS.body,
+      fontSize: opts.subtitleSize || '14px',
       color: primary ? '#3a2418' : CONFIG.COLORS.textMuted,
       originX: 0.5,
       originY: 0.5,

@@ -1,11 +1,11 @@
-import Phaser from '../phaser.js?v=4';
-import { CONFIG } from '../config.js?v=4';
-import { readMeta } from '../meta.js?v=4';
-import { ownedPerks } from '../unlocks.js?v=4';
-import { Audio } from '../audio.js?v=4';
-import { addButton, addPaper, addText } from '../ui.js?v=4';
-import { attachAtmosphere } from '../fx.js?v=4';
-import { beginScene, goTo } from '../flow.js?v=4';
+import Phaser from '../phaser.js?v=5';
+import { CONFIG } from '../config.js?v=5';
+import { readMeta } from '../meta.js?v=5';
+import { ownedPerks } from '../unlocks.js?v=5';
+import { Audio } from '../audio.js?v=5';
+import { addButton, addPaper, addText } from '../ui.js?v=5';
+import { attachAtmosphere } from '../fx.js?v=5';
+import { beginScene, goTo } from '../flow.js?v=5';
 
 /**
  * Stage 4 Part A: pick one starting perk (or none) before the run begins.

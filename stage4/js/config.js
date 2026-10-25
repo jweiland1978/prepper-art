@@ -158,7 +158,7 @@ export const CONFIG = {
   // Survival odds. actionChance applies these when mode is 'survival'.
   SURVIVAL: {
     zombieStart: 0.28,
-    zombiePerDay: 0.045,
+    zombiePerDay: 0.03, // Oct 25 balance: was 0.045
     barricadeFight: 0.10,
     barricadeHide: 0.07,
     biscuitHide: 0.08,
@@ -369,6 +369,18 @@ export const CONFIG = {
     },
   },
 
+  // Oct 25 balance pass (Jeff approved). Trip/night danger odds; survival keeps its own block above.
+  COMBAT: {
+    base: { fight: 0.58, hide: 0.56, bargain: 0.42, run: 0.84 }, // fight was 0.50
+    dangerMul: 0.35,
+    min: 0.08,
+    max: 0.93,
+    streakAfter: 3, // fight losses in a row before the bonus kicks in
+    streakBonus: 0.10, // +10% on FIGHT until the next fight win
+  },
+  WATER: {
+    tankNight: 1, // a built Water Tank (level 1+) adds this much water every night
+  },
   ITEMS: {
     tentRockets: [2, 5],
     tentDays: [1, 20],
@@ -376,6 +388,8 @@ export const CONFIG = {
     julyRockets: 6,
     coffeeAction: 1,
     snacksHealth: 1,
+    medicineHealth: 3, // you: +3 health per bottle (Tina doubles it)
+    medicineCrew: 2, // a neighbor: +2 health per bottle (Tina doubles it)
     gasNights: 3,
     beerMorale: 1,
     spoil: { calm: 0, panic: 0.05, collapse: 0.12, end: 0 },
