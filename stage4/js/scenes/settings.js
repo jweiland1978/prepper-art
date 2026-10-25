@@ -1,11 +1,12 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { Game, bus } from '../state.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addButton, addDialog, addPanel, addSlider, addText, addToggle } from '../ui.js?v=1';
-import { attachAtmosphere } from '../fx.js?v=1';
-import { beginScene, goTo, hideHud } from '../flow.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { Game, bus } from '../state.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addButton, addDialog, addPanel, addSlider, addText, addToggle } from '../ui.js?v=2';
+import { attachAtmosphere } from '../fx.js?v=2';
+import { beginScene, goTo, hideHud } from '../flow.js?v=2';
+import { resetMeta } from '../meta.js?v=2';
 
 const SPEEDS = [
   { label: 'SLOW', value: 0.65 },
@@ -77,10 +78,13 @@ export class SettingsScene extends Phaser.Scene {
       updateSettings({ debugCoords: on });
     }).setDepth(12);
 
-    addButton(this, 460, 630, 'DELETE SAVE', () => this.confirmDelete(), {
-      w: 240, h: 52, primary: false, depth: 14,
+    addButton(this, 370, 630, 'DELETE SAVE', () => this.confirmDelete(), {
+      w: 230, h: 52, primary: false, depth: 14,
     });
-    addButton(this, 760, 630, 'DONE', () => goTo(this, this.from), {
+    addButton(this, 640, 630, 'RESET PROGRESS', () => this.confirmReset(), {
+      w: 270, h: 52, primary: false, depth: 14,
+    });
+    addButton(this, 910, 630, 'DONE', () => goTo(this, this.from), {
       w: 200, h: 52, primary: true, depth: 14,
     });
   }
@@ -95,5 +99,44 @@ export class SettingsScene extends Phaser.Scene {
         { label: 'DELETE IT', primary: true, onClick: () => Save.deleteSave() },
       ],
     });
+  }
+
+  /**
+   * Stage 4 Part A: two-step confirm. Clears prepper_s4_meta only (run count, finished runs,
+   * unlocks, perks, achievements). The current run's save and these settings stay.
+   */
+  confirmReset() {
+    globalThis.__PREPPER_RESET = { step: 1 };
+    addDialog(this, {
+      title: 'RESET PROGRESS?',
+      radio: true,
+      body: 'This forgets every finished run: unlocks, perks and achievements. Your current save stays.',
+      buttons: [
+        { label: 'NEVER MIND', onClick: () => { globalThis.__PREPPER_RESET = { step: 0, cancelled: 1 }; } },
+        { label: 'RESET...', primary: true, onClick: () => this.confirmResetTwice() },
+      ],
+    });
+  }
+
+  confirmResetTwice() {
+    globalThis.__PREPPER_RESET = { step: 2 };
+    addDialog(this, {
+      title: 'REALLY?',
+      radio: true,
+      body: "Last chance. Biscuit will remember you. The game won't. This can't be undone.",
+      buttons: [
+        { label: 'KEEP PROGRESS', primary: true, onClick: () => { globalThis.__PREPPER_RESET = { step: 0, cancelled: 2 }; } },
+        { label: 'YES, RESET IT', onClick: () => this.doReset() },
+      ],
+    });
+  }
+
+  doReset() {
+    resetMeta();
+    globalThis.__PREPPER_RESET = { step: 0, done: true };
+    const t = addText(this, 640, 580, 'Progress reset. Fresh start.', {
+      fontFamily: CONFIG.FONTS.heading, fontSize: '20px', color: CONFIG.COLORS.orangeCss, originX: 0.5, originY: 0.5,
+    }).setDepth(30);
+    this.tweens.add({ targets: t, alpha: 0, delay: 2600, duration: 400, onComplete: () => t.destroy() });
   }
 }

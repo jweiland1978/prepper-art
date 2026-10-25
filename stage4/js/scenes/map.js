@@ -1,18 +1,18 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG, phaseForDay } from '../config.js?v=1';
-import { spotStatus, tickRoads } from '../crew.js?v=1';
-import { MARKERS, markerDanger } from '../data/map.js?v=1';
-import { phaseCopy } from '../data/phases.js?v=1';
-import { Game, touchState } from '../state.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addButton, addText } from '../ui.js?v=1';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=1';
-import { leave, showHud } from '../flow.js?v=1';
-import { maybeGaryVisit } from '../logic.js?v=1';
-import { fenceLine } from '../trade.js?v=1';
-import { showNotice } from './cards.js?v=1';
-import { openMeet, openTrade } from './trade.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG, phaseForDay } from '../config.js?v=2';
+import { spotStatus, tickRoads } from '../crew.js?v=2';
+import { MARKERS, markerDanger } from '../data/map.js?v=2';
+import { phaseCopy } from '../data/phases.js?v=2';
+import { Game, touchState } from '../state.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addButton, addText } from '../ui.js?v=2';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=2';
+import { leave, showHud } from '../flow.js?v=2';
+import { maybeGaryVisit } from '../logic.js?v=2';
+import { fenceLine } from '../trade.js?v=2';
+import { showNotice } from './cards.js?v=2';
+import { openMeet, openTrade } from './trade.js?v=2';
 
 const LOOT_LABEL = {
   food: 'Cans',

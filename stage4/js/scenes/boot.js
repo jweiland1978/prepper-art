@@ -1,11 +1,11 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { ASSET_LIST } from '../assets.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Game } from '../state.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addText } from '../ui.js?v=1';
-import { buildProceduralTextures, ensureArt, makeLogo } from '../textures.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { ASSET_LIST } from '../assets.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Game } from '../state.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addText } from '../ui.js?v=2';
+import { buildProceduralTextures, ensureArt, makeLogo } from '../textures.js?v=2';
 
 function waitForFonts() {
   if (!document.fonts?.load) return Promise.resolve();

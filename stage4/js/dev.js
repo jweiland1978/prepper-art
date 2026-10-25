@@ -1,13 +1,14 @@
-import { CONFIG, phaseForDay } from './config.js?v=1';
-import { NEIGHBORS } from './data/neighbors.js?v=1';
-import { cotCount, loseNeighbor, recruited } from './crew.js?v=1';
-import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=1';
-import { beginSurvivalDay, buildScore } from './logic.js?v=1';
-import { apocalypseName, apocalypseOf, cycleApocalypse, rumorPlanText } from './rumors.js?v=1';
-import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=1';
-import { Save } from './save.js?v=1';
-import { Audio } from './audio.js?v=1';
-import { addButton, addText } from './ui.js?v=1';
+import { CONFIG, phaseForDay } from './config.js?v=2';
+import { NEIGHBORS } from './data/neighbors.js?v=2';
+import { cotCount, loseNeighbor, recruited } from './crew.js?v=2';
+import { armHeist, forceHeistRun2, openHeist, presentLarryPanic } from './heist.js?v=2';
+import { beginSurvivalDay, buildScore } from './logic.js?v=2';
+import { apocalypseName, apocalypseOf, cycleApocalypse, rumorPlanText } from './rumors.js?v=2';
+import { Game, changeStat, newRun, syncDerived, touchState } from './state.js?v=2';
+import { Save } from './save.js?v=2';
+import { Audio } from './audio.js?v=2';
+import { addButton, addText } from './ui.js?v=2';
+import { PERK_IDS, perkById } from './data/unlocks.js?v=2';
 
 const MORALE_STEPS = [0, 1, 5, 8, 10];
 const MAYHEM_IDS = ['works', 'hedge', 'biscuit', 'bunker', 'spectacular'];
@@ -189,6 +190,7 @@ const EXTRAS = [
   ['SURVIVAL DAY +1', 'surv+'],
   ['WIN NOW', 'win'],
   ['LOSE NOW', 'lose'],
+  ['PERK', 'perk'],
 ];
 
 const GAMEPLAY = ['Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Survival', 'Apocalypse', 'Ending'];
@@ -310,6 +312,7 @@ function runExtra(kind, state, onSkip) {
   else if (kind === 'mayhem') devMayhem(state);
   else if (kind === 'loss') return devLoss(state) || 'Nobody to lose.';
   else if (kind === 'cold') devCold(state);
+  else if (kind === 'perk') return devCyclePerk(state);
   return '';
 }
 
@@ -478,4 +481,18 @@ export function mountDevTools(scene, opts = {}) {
 export function devBootRun(day) {
   const state = newRun('Neighbor');
   return devSkip(state, day);
+}
+
+/** Dev PERK: cycles this run's perk (no perk -> each perk), resetting its one-shot flags. No stat change. */
+export function devCyclePerk(state) {
+  const order = ['', ...PERK_IDS];
+  const next = order[(order.indexOf(state.perk || '') + 1) % order.length];
+  state.perk = next;
+  state.flags = state.flags || {};
+  ['loyaltyUsed', 'noseWarned', 'noseDay', 'noseNext', 'neighborlyDone', 'neighborlyDay', 'neighborlyWaitSaid'].forEach((key) => {
+    delete state.flags[key];
+  });
+  touchState();
+  Save.write(state);
+  return `Perk: ${perkById(next)?.name || 'none'}`;
 }

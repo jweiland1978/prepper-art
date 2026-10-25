@@ -1,27 +1,28 @@
-import Phaser from './phaser.js?v=1';
-import { CONFIG } from './config.js?v=1';
-import { Game } from './state.js?v=1';
-import { Save } from './save.js?v=1';
-import { Audio } from './audio.js?v=1';
-import { BootScene } from './scenes/boot.js?v=1';
-import { TitleScene } from './scenes/title.js?v=1';
-import { NameScene } from './scenes/name.js?v=1';
-import { IntroScene } from './scenes/intro.js?v=1';
-import { SettingsScene } from './scenes/settings.js?v=1';
-import { CreditsScene } from './scenes/credits.js?v=1';
-import { HudScene } from './scenes/hud.js?v=1';
-import { RadioScene } from './scenes/radio.js?v=1';
-import { MapScene } from './scenes/map.js?v=1';
-import { ScavengeScene } from './scenes/scavenge.js?v=1';
-import { BunkerScene } from './scenes/bunker.js?v=1';
-import { NightScene } from './scenes/night.js?v=1';
-import { ApocalypseScene } from './scenes/apocalypse.js?v=1';
-import { SurvivalScene } from './scenes/survival.js?v=1';
-import { EndingScene } from './scenes/ending.js?v=1';
-import { AchievementsScene } from './scenes/achwall.js?v=1';
-import { ToastScene } from './scenes/toast.js?v=1';
-import './achdev.js?v=1';
-import './heist.js?v=1';
+import Phaser from './phaser.js?v=2';
+import { CONFIG } from './config.js?v=2';
+import { Game } from './state.js?v=2';
+import { Save } from './save.js?v=2';
+import { Audio } from './audio.js?v=2';
+import { BootScene } from './scenes/boot.js?v=2';
+import { TitleScene } from './scenes/title.js?v=2';
+import { NameScene } from './scenes/name.js?v=2';
+import { IntroScene } from './scenes/intro.js?v=2';
+import { PerkScene } from './scenes/perk.js?v=2';
+import { SettingsScene } from './scenes/settings.js?v=2';
+import { CreditsScene } from './scenes/credits.js?v=2';
+import { HudScene } from './scenes/hud.js?v=2';
+import { RadioScene } from './scenes/radio.js?v=2';
+import { MapScene } from './scenes/map.js?v=2';
+import { ScavengeScene } from './scenes/scavenge.js?v=2';
+import { BunkerScene } from './scenes/bunker.js?v=2';
+import { NightScene } from './scenes/night.js?v=2';
+import { ApocalypseScene } from './scenes/apocalypse.js?v=2';
+import { SurvivalScene } from './scenes/survival.js?v=2';
+import { EndingScene } from './scenes/ending.js?v=2';
+import { AchievementsScene } from './scenes/achwall.js?v=2';
+import { ToastScene } from './scenes/toast.js?v=2';
+import './achdev.js?v=2';
+import './heist.js?v=2';
 
 Save.boot();
 Audio.applySettings(Game.settings);
@@ -62,6 +63,7 @@ globalThis.__PREPPER_GAME = new Phaser.Game({
     BootScene,
     TitleScene,
     NameScene,
+    PerkScene,
     IntroScene,
     SettingsScene,
     CreditsScene,

@@ -1,9 +1,10 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=1';
-import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=1';
-import { EVENTS, eventById } from './data/events.js?v=1';
-import { markerById, phaseProfile } from './data/map.js?v=1';
-import { NIGHT_EVENTS } from './data/night.js?v=1';
-import { phaseCopy } from './data/phases.js?v=1';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=2';
+import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=2';
+import { neighborlyMorning } from './crew.js?v=2';
+import { EVENTS, eventById } from './data/events.js?v=2';
+import { markerById, phaseProfile } from './data/map.js?v=2';
+import { NIGHT_EVENTS } from './data/night.js?v=2';
+import { phaseCopy } from './data/phases.js?v=2';
 import {
   BEER_LINES,
   COAT_BRAGS,
@@ -18,13 +19,13 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js?v=1';
+} from './data/radio.js?v=2';
 import {
   hatchById,
   SURVIVAL_COLD,
   survivalDeck,
   survivalOpener,
-} from './data/survival.js?v=1';
+} from './data/survival.js?v=2';
 import {
   applyCold,
   applyCrewNight,
@@ -46,17 +47,17 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js?v=1';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=1';
-import { heistMorning } from './heist.js?v=1';
-import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=1';
+} from './crew.js?v=2';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=2';
+import { heistMorning } from './heist.js?v=2';
+import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=2';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js?v=1';
+} from './state.js?v=2';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {
@@ -229,6 +230,14 @@ export function ensureMorning(state) {
   if (Math.random() < 0.3) heard.push(degradeLine(pickOne(COAT_BRAGS.slice(0, 3)), phase));
   if (recruited(state).length && Math.random() < 0.35) {
     heard.push(degradeLine(pickOne(NEIGHBOR_LINES), phase));
+  }
+  if (fresh) {
+    const neighborly = neighborlyMorning(state);
+    if (neighborly) heard.unshift(neighborly);
+  }
+  if (state.flags.perkNote) {
+    heard.unshift(state.flags.perkNote);
+    state.flags.perkNote = '';
   }
   if (state.flags.wallNote) {
     heard.unshift(state.flags.wallNote);
@@ -536,6 +545,12 @@ function pickNight(state) {
     state.flags.forceNight = '';
     if (named) return named;
   }
+  if (state.flags?.noseNext) {
+    // Biscuit's Nose rolled tonight's event yesterday. Same pool, same odds, just earlier.
+    const named = NIGHT_EVENTS.find((event) => event.id === state.flags.noseNext);
+    state.flags.noseNext = '';
+    if (named && (named.kind === 'danger' || named.kind === 'alarm' || nightEligible(state, named, phaseForDay(state.day)))) return named;
+  }
   const forced = forcedNightId(state);
   if (forced) {
     const named = NIGHT_EVENTS.find((event) => event.id === forced);
@@ -549,6 +564,37 @@ function pickNight(state) {
   if (pool.length) return weightedPick(pool, phase);
   const generic = NIGHT_EVENTS.filter((event) => !event.apoc && phaseAllows(event, phase));
   return weightedPick(generic.length ? generic : NIGHT_EVENTS.filter((event) => !event.apoc), phase);
+}
+
+const isDangerEvent = (event) => !!event && (event.kind === 'danger' || event.kind === 'alarm');
+
+/**
+ * Biscuit's Nose (Stage 4 perk): until his first warning, each prep night pre-rolls the
+ * next night's event. If it is a danger, Biscuit warns tonight, a day early, and that
+ * danger is locked in for tomorrow (it gets his HIDE/RUN warning bonus, see crew.dangerAdjust).
+ * Non-danger rolls are also kept for tomorrow so the odds stay exactly the same.
+ */
+function noseLookahead(state, tonight, lines) {
+  const flags = state.flags;
+  if (flags.noseDay && flags.noseDay === state.day && isDangerEvent(tonight)) {
+    lines.push("Biscuit called this one yesterday. He's already by the hatch, red bandana straight, ears up.");
+  }
+  if (state.perk !== 'nose' || flags.noseWarned || state.mode === 'survival') return;
+  if (state.day >= CONFIG.PREP_DAYS || flags.forceNight) return;
+  const today = state.day;
+  let next = null;
+  try {
+    state.day = today + 1;
+    next = pickNight(state);
+  } finally {
+    state.day = today;
+  }
+  if (!next) return;
+  flags.noseNext = next.id;
+  if (!isDangerEvent(next)) return;
+  flags.noseWarned = today;
+  flags.noseDay = today + 1;
+  lines.push("Biscuit's Nose: Biscuit sniffs the hatch seam, growls once, and won't lie down. Something is coming tomorrow night. You've got a day.");
 }
 
 function applyNightEvent(state, event, lines, earlyLine = '') {
@@ -659,6 +705,7 @@ export function buildNightReport(state) {
   if (up.mouths) lines.push(`${up.mouths} neighbor${up.mouths === 1 ? '' : 's'} ate. The shelf noticed.`);
   noteEmptyStores(state, foodBefore, waterBefore, lines);
   const event = pickNight(state);
+  noseLookahead(state, event, lines);
   const earlyLine = event?.id === 'sputter' ? resolveSputter(state) : '';
   applyCrewNight(state, lines);
   const outcome = applyNightEvent(state, event, lines, earlyLine) || {};

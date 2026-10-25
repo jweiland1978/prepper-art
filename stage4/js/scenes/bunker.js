@@ -1,8 +1,8 @@
-import Phaser from '../phaser.js?v=1';
-import { onRoomBuilt } from '../achievements.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { NEIGHBORS } from '../data/neighbors.js?v=1';
-import { MARKERS } from '../data/map.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { onRoomBuilt } from '../achievements.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { NEIGHBORS } from '../data/neighbors.js?v=2';
+import { MARKERS } from '../data/map.js?v=2';
 import {
   cotCount,
   generatorOn,
@@ -19,16 +19,17 @@ import {
   spotStatus,
   wearingCoat,
   workRoom,
-} from '../crew.js?v=1';
-import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addButton, addText } from '../ui.js?v=1';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=1';
-import { leave, showHud } from '../flow.js?v=1';
-import { maybeGaryVisit, memorialCopy } from '../logic.js?v=1';
-import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js?v=1';
-import { showNotice } from './cards.js?v=1';
+} from '../crew.js?v=2';
+import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addButton, addText } from '../ui.js?v=2';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=2';
+import { leave, showHud } from '../flow.js?v=2';
+import { maybeGaryVisit, memorialCopy } from '../logic.js?v=2';
+import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js?v=2';
+import { showNotice } from './cards.js?v=2';
+import { loyaltyDiscount, noteDig } from '../unlocks.js?v=2';
 import {
   canDistress,
   distressWord,
@@ -36,7 +37,7 @@ import {
   followDistress,
   openTrade,
   presentLaunch,
-} from './trade.js?v=1';
+} from './trade.js?v=2';
 
 const COLS = [48, 300, 736, 988];
 const ROWS = [268, 468];
@@ -444,7 +445,7 @@ export class BunkerScene extends Phaser.Scene {
     this.modal = { close };
     const buttons = [];
     if (!slot.dug) {
-      const cost = materialCost(state, CONFIG.DIG_COST);
+      const cost = digCost(state);
       buttons.push(this.actionButton(state, `DIG (${cost} PLANKS)`, canPay(state, cost), () => {
         close();
         this.dig(slot);
@@ -510,11 +511,12 @@ export class BunkerScene extends Phaser.Scene {
 
   dig(slot) {
     const state = Game.state;
-    const cost = materialCost(state, CONFIG.DIG_COST);
+    const cost = digCost(state);
     if (this.busy || slot.dug) return;
     if (!canPay(state, cost)) return;
     this.busy = true;
     changeStat('materials', -cost);
+    noteDig(state);
     state.actionsLeft -= 1;
     touchState();
     Audio.dig();
@@ -912,8 +914,9 @@ function slotLabel(state, slot) {
 function slotBlurb(state, slot) {
   const dale = isActive(state, 'dale') ? ' Dale has already taken his plank off the price.' : '';
   if (!slot.dug) {
-    const cost = materialCost(state, CONFIG.DIG_COST);
-    return `Digging costs ${cost} planks and 1 action. A finished room is also a cot.${dale} ${payReason(state, cost)}`;
+    const cost = digCost(state);
+    const lou = loyaltyDiscount(state) ? " Big Lou's Loyalty Card takes a plank off this first dig." : '';
+    return `Digging costs ${cost} plank${cost === 1 ? '' : 's'} and 1 action. A finished room is also a cot.${dale}${lou} ${payReason(state, cost)}`;
   }
   if (!slot.room) {
     const rooms = Object.values(CONFIG.ROOMS);
@@ -1161,4 +1164,9 @@ function dirtBurst(scene, rect) {
   }).setDepth(30);
   burst.explode(16);
   scene.time.delayedCall(560, () => burst.destroy());
+}
+
+/** Dig cost after Dale and (once per run) Big Lou's Loyalty Card. */
+function digCost(state) {
+  return Math.max(0, materialCost(state, CONFIG.DIG_COST) - loyaltyDiscount(state));
 }

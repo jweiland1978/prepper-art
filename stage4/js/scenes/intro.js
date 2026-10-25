@@ -1,12 +1,13 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { Game, cleanName, newRun } from '../state.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addText, runTypewriter, readHold } from '../ui.js?v=1';
-import { attachAtmosphere } from '../fx.js?v=1';
-import { beginScene, goTo } from '../flow.js?v=1';
-import { addStudioRadio } from '../widgets.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { Game, changeStat, cleanName, newRun } from '../state.js?v=2';
+import { applyStartPerk } from '../unlocks.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addText, runTypewriter, readHold } from '../ui.js?v=2';
+import { attachAtmosphere } from '../fx.js?v=2';
+import { beginScene, goTo } from '../flow.js?v=2';
+import { addStudioRadio } from '../widgets.js?v=2';
 
 const OFFICIAL = 'This is an official message for the residents of Lake Orwell. In thirty days, the world will end. Officials are confident it will be caused by—';
 
@@ -29,7 +30,8 @@ export class IntroScene extends Phaser.Scene {
       this.typer?.cancel();
       Audio.stopJingle();
     });
-    newRun(cleanName(data?.name));
+    const state = newRun(cleanName(data?.name));
+    applyStartPerk(state || Game.state, data?.perk || '', changeStat);
     beginScene(this);
     this.cameras.main.setBackgroundColor('#05060a');
     attachAtmosphere(this, { depth: 6 });

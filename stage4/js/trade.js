@@ -2,11 +2,11 @@
  * Barter, item uses, Gary's respect, rockets, and the coat.
  * Scenes paint. This file only changes state.
  */
-import { CONFIG, phaseForDay } from './config.js?v=1';
-import { onMackinawFound } from './achievements.js?v=1';
-import { itemById } from './data/items.js?v=1';
-import { pickSideRumor, rememberRumor } from './rumors.js?v=1';
-import { MARKERS } from './data/map.js?v=1';
+import { CONFIG, phaseForDay } from './config.js?v=2';
+import { onMackinawFound } from './achievements.js?v=2';
+import { itemById } from './data/items.js?v=2';
+import { pickSideRumor, rememberRumor } from './rumors.js?v=2';
+import { MARKERS } from './data/map.js?v=2';
 import {
   DISTRESS_LINES,
   GARY_BEER,
@@ -20,7 +20,7 @@ import {
   LIGHT_LINES,
   MAYHEM_LINES,
   STALLS,
-} from './data/traders.js?v=1';
+} from './data/traders.js?v=2';
 import {
   addNotice,
   garyRespect,
@@ -30,8 +30,8 @@ import {
   spotStatus,
   tradeUnit,
   wearingCoat,
-} from './crew.js?v=1';
-import { Game, changeStat, roomLevel, touchState } from './state.js?v=1';
+} from './crew.js?v=2';
+import { Game, changeStat, roomLevel, touchState } from './state.js?v=2';
 
 export const STAT_KEYS = ['food', 'water', 'materials', 'medicine'];
 

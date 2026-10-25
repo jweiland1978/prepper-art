@@ -17,6 +17,8 @@ export const CONFIG = {
   ACH_UNLOCK_AFTER: 2,
   // How long an achievement toast stays up (tap it to dismiss sooner).
   ACH_TOAST_MS: 9000,
+  // Stage 4 Part A starting perks (plan section 10 item 8).
+  PERKS: { cansFood: 4, hoseWater: 4, loyaltyDiscount: 1, neighborlyDay: 3 },
 
   PREP_DAYS: 30,
   SURVIVAL_DAYS: 10,

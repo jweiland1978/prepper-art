@@ -1,7 +1,7 @@
-import Phaser from './phaser.js?v=1';
-import { CONFIG } from './config.js?v=1';
-import { Audio } from './audio.js?v=1';
-import { Game } from './state.js?v=1';
+import Phaser from './phaser.js?v=2';
+import { CONFIG } from './config.js?v=2';
+import { Audio } from './audio.js?v=2';
+import { Game } from './state.js?v=2';
 
 export function textResolution() {
   const dpr = globalThis.devicePixelRatio || 1;
@@ -103,18 +103,21 @@ export function addButton(scene, x, y, label, onClick, opts = {}) {
     useHandCursor: true,
   });
   root.on('pointerover', () => draw(true));
+  // Press feedback scales the visuals only. Scaling the container also shrank its hit area,
+  // so a tap near the edge lost its finger-up and did nothing (Stage 4 Part A fix).
+  const press = (k) => parts.forEach((part) => part.setScale(k));
   root.on('pointerout', () => {
-    root.setScale(1);
+    press(1);
     draw(false);
   });
   root.on('pointerdown', () => {
     if (opts.swallowTap) scene.swallowTap = true;
-    root.setScale(0.96);
+    press(0.96);
     Audio.unlock();
     Audio.click();
   });
   root.on('pointerup', () => {
-    root.setScale(1);
+    press(1);
     onClick();
   });
   if (opts.depth != null) root.setDepth(opts.depth);
@@ -266,6 +269,8 @@ export function addToggle(scene, x, y, w, label, value, onChange) {
 export function addDialog(scene, opts) {
   const root = scene.add.container(0, 0).setDepth(2200);
   const blocker = scene.add.rectangle(640, 360, 1280, 720, 0x000000, 0.62).setInteractive();
+  // Solid backing so the screen underneath doesn't show through the dialog text.
+  const backing = scene.add.rectangle(640, 350, 676, 336, 0x0b0f18, 1);
   const panel = addPanel(scene, 300, 180, 680, 340);
   const title = addText(scene, 640, 230, opts.title || '', {
     fontFamily: CONFIG.FONTS.display,
@@ -283,7 +288,7 @@ export function addDialog(scene, opts) {
     align: 'center',
     wordWrap: { width: 580 },
   });
-  root.add([blocker, panel, title, body]);
+  root.add([blocker, backing, panel, title, body]);
   const buttons = opts.buttons || [];
   const bw = 250;
   const gap = 24;

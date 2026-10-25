@@ -2,8 +2,8 @@
  * Stage 3 secret: which apocalypse this run is, and the rumor plan that hints at it.
  * Read state.apocalypse only through apocalypseOf(). Day 30, survival, and score should too.
  */
-import { CONFIG, phaseForDay } from './config.js?v=1';
-import { LARRY_STAMP, RUMORS, rumorById } from './data/radio.js?v=1';
+import { CONFIG, phaseForDay } from './config.js?v=2';
+import { LARRY_STAMP, RUMORS, rumorById } from './data/radio.js?v=2';
 
 const TRUTH_MARGIN = 3;
 

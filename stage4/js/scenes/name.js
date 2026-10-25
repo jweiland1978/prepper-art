@@ -1,10 +1,11 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { cleanName } from '../state.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addButton, addPaper, addText } from '../ui.js?v=1';
-import { attachAtmosphere } from '../fx.js?v=1';
-import { beginScene, goTo } from '../flow.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { cleanName } from '../state.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addButton, addPaper, addText } from '../ui.js?v=2';
+import { attachAtmosphere } from '../fx.js?v=2';
+import { beginScene, goTo } from '../flow.js?v=2';
+import { ownedPerks } from '../unlocks.js?v=2';
 
 const BOXES = [
   'I have read the pamphlet',
@@ -148,6 +149,8 @@ export class NameScene extends Phaser.Scene {
     } catch (error) {
       console.warn('[PREPPER] Audio hiccup.', error);
     }
-    goTo(this, 'Intro', { name });
+    // Stage 4 Part A: the perk picker comes first once any perk is unlocked.
+    if (ownedPerks().length) goTo(this, 'Perk', { name });
+    else goTo(this, 'Intro', { name });
   }
 }

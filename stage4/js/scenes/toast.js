@@ -1,8 +1,8 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { bus } from '../state.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addText } from '../ui.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { bus } from '../state.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addText } from '../ui.js?v=2';
 
 /**
  * Always-on overlay for achievement toasts. Non-blocking: only the toast itself takes

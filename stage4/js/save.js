@@ -1,9 +1,10 @@
-import { CONFIG } from './config.js?v=1';
-import { LARRY_STAMP } from './data/radio.js?v=1';
-import { NEIGHBORS } from './data/neighbors.js?v=1';
-import { apocalypseIds, apocalypseOf } from './rumors.js?v=1';
-import { Game } from './state.js?v=1';
-import { repairRunAch } from './achievements.js?v=1';
+import { CONFIG } from './config.js?v=2';
+import { LARRY_STAMP } from './data/radio.js?v=2';
+import { NEIGHBORS } from './data/neighbors.js?v=2';
+import { apocalypseIds, apocalypseOf } from './rumors.js?v=2';
+import { Game } from './state.js?v=2';
+import { repairRunAch } from './achievements.js?v=2';
+import { repairPerk } from './unlocks.js?v=2';
 
 const DEFAULT_SETTINGS = {
   music: 0.7,
@@ -327,6 +328,7 @@ export function migrate(data) {
   }
   // Stage 4: per-run achievement counters. A Stage 3 save gets fresh ones.
   data.ach = repairRunAch(version < 4 ? null : data.ach, data);
+  data.perk = repairPerk(data.perk);
   return data;
 }
 

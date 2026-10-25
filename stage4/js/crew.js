@@ -2,14 +2,14 @@
  * Neighbors, morale wording, cots, phase spots, and the hooks Parts 2 and 3 call.
  * Does not import scenes or logic. Logic may import this.
  */
-import { onNoticeFiled, onRecruit } from './achievements.js?v=1';
-import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=1';
-import { MARKERS, markerById, phaseProfile } from './data/map.js?v=1';
-import { neighborById, NEIGHBORS } from './data/neighbors.js?v=1';
-import { LARRY_STAMP_LINES } from './data/radio.js?v=1';
-import { apocalypseOf, maybeStampEntry } from './rumors.js?v=1';
-import { NOTICE_FORMS } from './data/traders.js?v=1';
-import { changeStat, roomLevel, touchState } from './state.js?v=1';
+import { onNoticeFiled, onRecruit } from './achievements.js?v=2';
+import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=2';
+import { MARKERS, markerById, phaseProfile } from './data/map.js?v=2';
+import { neighborById, NEIGHBORS } from './data/neighbors.js?v=2';
+import { LARRY_STAMP_LINES } from './data/radio.js?v=2';
+import { apocalypseOf, maybeStampEntry } from './rumors.js?v=2';
+import { NOTICE_FORMS } from './data/traders.js?v=2';
+import { changeStat, roomLevel, touchState } from './state.js?v=2';
 
 export const STASH_KEYS = ['tinfoil', 'battery', 'coffee', 'snacks', 'rockets', 'coat', 'gas', 'cigarettes', 'ammo', 'tp', 'beer'];
 
@@ -392,6 +392,11 @@ export function dangerAdjust(state, action, where) {
   if ((state.stats?.morale || 0) >= CONFIG.MORALE_RULES.highAt) extra += CONFIG.MORALE_RULES.highOdds;
   if (where === 'trip' && wearingCoat(state)) extra += CONFIG.ITEMS.mackinawDanger || 0;
   if (action === 'hide' && state.flags?.hideBonus) extra += 0.12;
+  // Biscuit's Nose: the danger he warned about a day early gets his usual warning bonus.
+  if (where === 'night' && state.flags?.noseDay && state.flags.noseDay === state.day) {
+    if (action === 'hide') extra += CONFIG.SURVIVAL.biscuitHide || 0;
+    if (action === 'run') extra += CONFIG.SURVIVAL.biscuitRun || 0;
+  }
   if (where === 'trip' && state.flags?.dockReady && state.flags?.trip?.location === 'super') extra += 0.12;
   if (where === 'trip' && state.flags?.heistCaught && state.flags?.trip?.location === 'bait') extra -= 0.12;
   return extra;
@@ -1038,4 +1043,44 @@ export function soloOdds(state, id) {
   if (person(state, id)?.laidUp > 0) loss *= CONFIG.CREW.soloLaidUpMul;
   const haul = id === 'kevin' ? CONFIG.CREW.soloKevinHaul : CONFIG.CREW.soloHaul;
   return { haul, loss };
+}
+
+/**
+ * Neighborly (Stage 4 perk): from Day 3, one random neighbor moves in for free if a cot is
+ * free. Never Gary, never someone already here, buried, or who walked out this run.
+ * No cot yet: they check back each morning. Returns a radio line or ''.
+ */
+export function neighborlyMorning(state) {
+  const flags = state?.flags;
+  if (!flags || state.perk !== 'neighborly' || flags.neighborlyDone || state.mode === 'survival') return '';
+  if ((state.day || 1) < CONFIG.PERKS.neighborlyDay || state.day > CONFIG.PREP_DAYS) return '';
+  if (flags.neighborlyDay === state.day) return '';
+  flags.neighborlyDay = state.day;
+  const buried = (state.memorial || []).map((entry) => (typeof entry === 'string' ? entry.toLowerCase() : entry?.id));
+  const pool = NEIGHBORS.filter((row) => row.id !== 'gary'
+    && !isHere(state, row.id)
+    && !buried.includes(row.id)
+    && !flags.left?.[row.id]);
+  if (!pool.length) {
+    flags.neighborlyDone = 'none';
+    return '';
+  }
+  const full = recruited(state).length >= CONFIG.CREW.maxNeighbors;
+  if (full || cotCount(state) <= recruited(state).length) {
+    if (flags.neighborlyWaitSaid) return '';
+    flags.neighborlyWaitSaid = true;
+    return "Neighborly: somebody came by the hatch with a sleeping bag. No free cot, so they'll check back each morning. A finished room is a cot.";
+  }
+  const row = pool[Math.floor(Math.random() * pool.length)];
+  state.crew = state.crew || {};
+  state.crew[row.id] = {
+    health: CONFIG.CREW.healthStart,
+    job: 'rest',
+    laidUp: 0,
+    zeroNights: 0,
+  };
+  flags.neighborlyDone = row.id;
+  onRecruit(state, row.id);
+  touchState();
+  return `Neighborly: ${row.name} shows up at the hatch with a sleeping bag and a casserole dish and takes the free cot. ${row.joined || ''}`.trim();
 }

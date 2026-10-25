@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG, countdownPhrase } from '../config.js?v=1';
-import { moraleWord } from '../crew.js?v=1';
-import { apocalypseName, canGuess, notebookEntries, setGuess } from '../rumors.js?v=1';
-import { Game, bus, formatStat } from '../state.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addPanel, addText, tweenNumber } from '../ui.js?v=1';
-import { openStash } from './trade.js?v=1';
-import { itemBlurb } from '../trade.js?v=1';
-import { devGrant, devSkip, mountDevTools } from '../dev.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG, countdownPhrase } from '../config.js?v=2';
+import { moraleWord } from '../crew.js?v=2';
+import { apocalypseName, canGuess, notebookEntries, setGuess } from '../rumors.js?v=2';
+import { Game, bus, formatStat } from '../state.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addPanel, addText, tweenNumber } from '../ui.js?v=2';
+import { openStash } from './trade.js?v=2';
+import { itemBlurb } from '../trade.js?v=2';
+import { devGrant, devSkip, mountDevTools } from '../dev.js?v=2';
 
 const STATS = [
   { key: 'food', x: 548, icon: 'can' },

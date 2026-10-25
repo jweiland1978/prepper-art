@@ -1,7 +1,7 @@
-import { CONFIG, phaseForDay } from './config.js?v=1';
-import { NEIGHBORS } from './data/neighbors.js?v=1';
-import { nextRunNumber } from './meta.js?v=1';
-import { assignApocalypse, ensureRumorPlan, rollForRun } from './rumors.js?v=1';
+import { CONFIG, phaseForDay } from './config.js?v=2';
+import { NEIGHBORS } from './data/neighbors.js?v=2';
+import { nextRunNumber } from './meta.js?v=2';
+import { assignApocalypse, ensureRumorPlan, rollForRun } from './rumors.js?v=2';
 
 export class Emitter {
   constructor() {
@@ -94,6 +94,7 @@ export function createState(name) {
     lastScene: 'Radio',
     // Stage 4: per-run achievement counters (shape: emptyRunAch() in js/achievements.js).
     ach: { earned: [], growEver: false, survChecks: 0, foodMax: 0, granted: false, endResult: null },
+    perk: '',
   };
 }
 

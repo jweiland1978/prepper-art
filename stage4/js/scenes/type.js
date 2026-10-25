@@ -1,6 +1,6 @@
-import { CONFIG } from '../config.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addText, runTypewriter, readHold } from '../ui.js?v=1';
+import { CONFIG } from '../config.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addText, runTypewriter, readHold } from '../ui.js?v=2';
 
 /** Shared tap-to-skip typewriter. A button can always be shown if the promise rejects. */
 export function makeTyper(scene) {

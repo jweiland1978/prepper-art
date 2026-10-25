@@ -5,9 +5,11 @@
  * (after CONFIG.ACH_UNLOCK_AFTER finished runs) an earn is recorded silently: no toast,
  * no ending line. The UNLOCKED card then shows what was already earned.
  */
-import { CONFIG } from './config.js?v=1';
-import { Game, bus } from './state.js?v=1';
-import { readMeta, writeMeta } from './meta.js?v=1';
+import { CONFIG } from './config.js?v=2';
+import { Game, bus } from './state.js?v=2';
+import { readMeta, writeMeta } from './meta.js?v=2';
+import { grantStepFor } from './unlocks.js?v=2';
+import { unlocksForFinished } from './data/unlocks.js?v=2';
 
 export const ACHIEVEMENTS = [
   { id: 'creamed-corn', name: 'Survived on creamed corn alone', desc: 'No garden. No hope. Just corn.' },
@@ -222,7 +224,9 @@ export function onRunEnd(state, kind) {
   meta.finishedRuns += 1;
   if (run) meta.grantedRuns = [...meta.grantedRuns, run].slice(-60);
   let unlockedNow = false;
-  if (!meta.achUnlocked && meta.finishedRuns >= CONFIG.ACH_UNLOCK_AFTER) {
+  // Part A: each finished run grants the next step of the unlock track (step 2 is achievements).
+  const granted = grantStepFor(meta, meta.finishedRuns);
+  if (!meta.achUnlocked && meta.unlocks.includes('achievements')) {
     meta.achUnlocked = true;
     meta.achCardPending = true;
     unlockedNow = true;
@@ -231,6 +235,7 @@ export function onRunEnd(state, kind) {
   const result = {
     wasUnlocked,
     unlockedNow,
+    granted,
     earned: [...(ach?.earned || [])],
     all: ACHIEVEMENTS.filter((row) => meta.achs[row.id]).map((row) => row.id),
   };
@@ -263,8 +268,12 @@ export function devSetRun(n) {
   meta.runCount = next - 1;
   meta.finishedRuns = next - 1;
   meta.grantedRuns = meta.grantedRuns.filter((run) => run < next);
-  if (meta.finishedRuns >= CONFIG.ACH_UNLOCK_AFTER) {
+  // Part A: the track matches the finished runs; cards for those steps count as seen.
+  meta.unlocks = unlocksForFinished(meta.finishedRuns);
+  meta.announced = [...meta.unlocks];
+  if (meta.unlocks.includes('achievements')) {
     meta.achUnlocked = true;
+    meta.achCardPending = false;
   } else {
     meta.achUnlocked = false;
     meta.achCardPending = false;

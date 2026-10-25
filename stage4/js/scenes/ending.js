@@ -1,18 +1,18 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { Game } from '../state.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addButton, addText } from '../ui.js?v=1';
-import { attachAtmosphere, coverEnd, drawScoreCard, fadeIn, paintApocSky } from '../fx.js?v=1';
-import { goTo, hideHud } from '../flow.js?v=1';
-import { buildScore, downLine, EARLY_END_LINE } from '../logic.js?v=1';
-import { apocalypseOf } from '../rumors.js?v=1';
-import { lossHintFor, winLinesFor } from '../data/survival.js?v=1';
-import { makeTyper } from './type.js?v=1';
-import { achById, onRunEnd } from '../achievements.js?v=1';
-import { readMeta } from '../meta.js?v=1';
-import { showAchUnlockCard } from './achcard.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { Game } from '../state.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addButton, addText } from '../ui.js?v=2';
+import { attachAtmosphere, coverEnd, drawScoreCard, fadeIn, paintApocSky } from '../fx.js?v=2';
+import { goTo, hideHud } from '../flow.js?v=2';
+import { buildScore, downLine, EARLY_END_LINE } from '../logic.js?v=2';
+import { apocalypseOf } from '../rumors.js?v=2';
+import { lossHintFor, winLinesFor } from '../data/survival.js?v=2';
+import { makeTyper } from './type.js?v=2';
+import { achById, onRunEnd } from '../achievements.js?v=2';
+import { readMeta } from '../meta.js?v=2';
+import { hasPendingCards, showPendingCards } from './achcard.js?v=2';
 
 export class EndingScene extends Phaser.Scene {
   constructor() {
@@ -226,10 +226,10 @@ export class EndingScene extends Phaser.Scene {
         w: 250, h: 54, primary: index === 0, depth: 30,
       });
     });
-    if (readMeta().achCardPending) {
+    if (hasPendingCards()) {
       this.time.delayedCall(instant ? 300 : 1600, () => {
         if (!this.sys?.isActive() || this.left) return;
-        showAchUnlockCard(this, { depth: 400 });
+        showPendingCards(this, { depth: 400 });
       });
     }
   }

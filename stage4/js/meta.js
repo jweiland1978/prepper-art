@@ -1,4 +1,5 @@
-import { CONFIG } from './config.js?v=1';
+import { CONFIG } from './config.js?v=2';
+import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=2';
 
 /**
  * Stage 4 meta store (prepper_s4_meta). Survives DELETE SAVE and new runs.
@@ -10,6 +11,9 @@ import { CONFIG } from './config.js?v=1';
  *   wonApocs       apocalypses beaten across runs
  *   achUnlocked    the achievements feature is unlocked (after 2 finished runs)
  *   achCardPending the UNLOCKED card still has to be shown (cleared on tap)
+ *   unlocks        Part A track ids granted so far (data/unlocks.js), one step per finished run
+ *   announced      unlock ids whose card was shown (unbuilt ids wait here until Part B/C)
+ *   lastPerk       the perk picked last run (pre-highlighted in the picker)
  * Stage 3 meta (prepper_s3_meta) is read once on first load. It is never written or deleted.
  */
 
@@ -30,6 +34,9 @@ export function emptyMeta() {
     wonApocs: [],
     achUnlocked: false,
     achCardPending: false,
+    unlocks: [],
+    announced: [],
+    lastPerk: '',
     migratedFrom: '',
   };
 }
@@ -65,6 +72,24 @@ export function repairMeta(raw) {
   meta.achUnlocked = !!raw.achUnlocked;
   meta.achCardPending = !!raw.achCardPending && meta.achUnlocked;
   meta.migratedFrom = typeof raw.migratedFrom === 'string' ? raw.migratedFrom : '';
+  const idList = (list) => [...new Set(list.filter((id) => UNLOCK_IDS.includes(id)))];
+  if (Array.isArray(raw.unlocks)) {
+    meta.unlocks = idList(raw.unlocks);
+    meta.announced = Array.isArray(raw.announced) ? idList(raw.announced) : [];
+  } else {
+    // Metas written before Part A: grant what the finished runs already earned.
+    // Their cards still show once (announced stays empty), except the achievements card
+    // which keeps its own pending flag.
+    meta.unlocks = unlocksForFinished(meta.finishedRuns);
+    meta.announced = [];
+  }
+  // Every finished run's step is always owned, even if the list was hand-edited.
+  unlocksForFinished(meta.finishedRuns).forEach((id) => {
+    if (!meta.unlocks.includes(id)) meta.unlocks.push(id);
+  });
+  if (meta.achUnlocked && !meta.unlocks.includes('achievements')) meta.unlocks.push('achievements');
+  if (meta.unlocks.includes('achievements')) meta.achUnlocked = true;
+  meta.lastPerk = PERK_IDS.includes(raw.lastPerk) ? raw.lastPerk : '';
   return meta;
 }
 
@@ -143,7 +168,7 @@ export function reloadMeta() {
   return readMeta();
 }
 
-/** Dev RESET META: clears achievements, progress and run counts. Stage 3 keys untouched. */
+/** RESET PROGRESS (Settings) and dev RESET META: clears achievements, unlocks, perks, progress and run counts. Stage 3 keys untouched. */
 export function resetMeta() {
   const meta = emptyMeta();
   meta.migratedFrom = 'reset';

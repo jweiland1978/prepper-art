@@ -1,19 +1,20 @@
-import Phaser from '../phaser.js?v=1';
-import { CONFIG } from '../config.js?v=1';
-import { Game, bus, newRun, replaceState } from '../state.js?v=1';
-import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=1';
-import { claimLegacyRun } from '../meta.js?v=1';
-import { Save } from '../save.js?v=1';
-import { Audio } from '../audio.js?v=1';
-import { addButton, addDialog, addText } from '../ui.js?v=1';
-import { attachAtmosphere } from '../fx.js?v=1';
-import { beginScene, goTo } from '../flow.js?v=1';
-import { addCornerDial } from '../widgets.js?v=1';
-import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=1';
-import { readMeta, resetMeta } from '../meta.js?v=1';
-import { showAchUnlockCard } from './achcard.js?v=1';
+import Phaser from '../phaser.js?v=2';
+import { CONFIG } from '../config.js?v=2';
+import { Game, bus, newRun, replaceState } from '../state.js?v=2';
+import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=2';
+import { claimLegacyRun } from '../meta.js?v=2';
+import { Save } from '../save.js?v=2';
+import { Audio } from '../audio.js?v=2';
+import { addButton, addDialog, addText } from '../ui.js?v=2';
+import { attachAtmosphere } from '../fx.js?v=2';
+import { beginScene, goTo } from '../flow.js?v=2';
+import { addCornerDial } from '../widgets.js?v=2';
+import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=2';
+import { readMeta, resetMeta } from '../meta.js?v=2';
+import { devUnlockAll } from '../unlocks.js?v=2';
+import { hasPendingCards, showPendingCards } from './achcard.js?v=2';
 
-const DEV_RUNS = [1, 2, 3, 6];
+const DEV_RUNS = [1, 2, 3, 4, 6, 7, 8, 9, 10];
 
 const GAMEPLAY = new Set([
   'Radio', 'Map', 'Scavenge', 'Bunker', 'NightSummary', 'Apocalypse', 'Survival', 'Ending',
@@ -128,9 +129,9 @@ export class TitleScene extends Phaser.Scene {
       },
     });
     this.mountAchDev();
-    if (readMeta().achCardPending) {
+    if (hasPendingCards()) {
       this.time.delayedCall(500, () => {
-        if (this.sys?.isActive()) showAchUnlockCard(this, { depth: 3000 });
+        if (this.sys?.isActive()) showPendingCards(this, { depth: 3000 });
       });
     }
   }
@@ -146,7 +147,7 @@ export class TitleScene extends Phaser.Scene {
       this.tweens.add({ targets: t, alpha: 0, delay: 2200, duration: 400, onComplete: () => t.destroy() });
     };
     const meta = readMeta();
-    addText(this, 120, 318, `DEV  runs ${meta.runCount}  done ${meta.finishedRuns}  ach ${achUnlocked() ? 'on' : 'off'}`, {
+    addText(this, 120, 318, `DEV  runs ${meta.runCount}  done ${meta.finishedRuns}  ach ${achUnlocked() ? 'on' : 'off'}  unl ${meta.unlocks.length}`, {
       fontFamily: CONFIG.FONTS.heading, fontSize: '14px', color: CONFIG.COLORS.orangeCss, originX: 0.5, originY: 0.5,
     }).setDepth(80);
     addButton(this, 120, 360, 'GRANT ACH', () => {
@@ -161,6 +162,10 @@ export class TitleScene extends Phaser.Scene {
     const nextPick = DEV_RUNS.find((n) => n > now) || DEV_RUNS[0];
     addButton(this, 120, 460, `SET RUN # ${nextPick}`, () => {
       devSetRun(nextPick);
+      this.scene.restart();
+    }, { w: 170, h: 40, fontSize: '15px', depth: 80 });
+    addButton(this, 120, 510, 'UNLOCK ALL', () => {
+      devUnlockAll();
       this.scene.restart();
     }, { w: 170, h: 40, fontSize: '15px', depth: 80 });
   }
