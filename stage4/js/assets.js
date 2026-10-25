@@ -148,6 +148,13 @@ export const ASSETS = {
     url: `${BASE}bg-tower-voice.jpg`,
     kind: 'background',
   },
+  // Stage 4 Part C: the Field Guide (a beat-up spiral notebook on a workbench).
+  // The guide draws its own backdrop if this one fails to load.
+  bgFieldguide: {
+    key: 'bg-fieldguide',
+    url: `${BASE}bg-fieldguide.jpg`,
+    kind: 'background',
+  },
 };
 
 export const ASSET_LIST = Object.values(ASSETS);

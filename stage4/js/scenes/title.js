@@ -1,18 +1,19 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG } from '../config.js?v=3';
-import { Game, bus, newRun, replaceState } from '../state.js?v=3';
-import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=3';
-import { claimLegacyRun } from '../meta.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addDialog, addText } from '../ui.js?v=3';
-import { attachAtmosphere } from '../fx.js?v=3';
-import { beginScene, goTo } from '../flow.js?v=3';
-import { addCornerDial } from '../widgets.js?v=3';
-import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=3';
-import { readMeta, resetMeta } from '../meta.js?v=3';
-import { devUnlockAll } from '../unlocks.js?v=3';
-import { hasPendingCards, showPendingCards } from './achcard.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG } from '../config.js?v=4';
+import { Game, bus, newRun, replaceState } from '../state.js?v=4';
+import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=4';
+import { claimLegacyRun } from '../meta.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addDialog, addText } from '../ui.js?v=4';
+import { attachAtmosphere } from '../fx.js?v=4';
+import { beginScene, goTo } from '../flow.js?v=4';
+import { addCornerDial } from '../widgets.js?v=4';
+import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=4';
+import { readMeta, resetMeta } from '../meta.js?v=4';
+import { devUnlockAll } from '../unlocks.js?v=4';
+import { guideUnlocked } from '../guide.js?v=4';
+import { hasPendingCards, showPendingCards } from './achcard.js?v=4';
 
 const DEV_RUNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -196,9 +197,11 @@ export class TitleScene extends Phaser.Scene {
         action: () => this.onContinue(),
       });
     }
-    if (achUnlocked()) {
-      items.push({ label: 'ACHIEVEMENTS', primary: false, action: () => goTo(this, 'Achievements') });
-    }
+    const ach = achUnlocked() ? { label: 'ACHIEVEMENTS', primary: false, action: () => goTo(this, 'Achievements') } : null;
+    const guide = guideUnlocked() ? { label: 'FIELD GUIDE', primary: false, action: () => goTo(this, 'FieldGuide', { from: 'Title' }) } : null;
+    // Part C: with both unlocked they share one row, so the menu still fits above the credit line.
+    if (ach && guide) items.push({ pair: [ach, guide] });
+    else if (ach || guide) items.push(ach || guide);
     items.push(
       { label: 'SETTINGS', primary: false, action: () => goTo(this, 'Settings', { from: 'Title' }) },
       { label: 'CREDITS', primary: false, action: () => goTo(this, 'Credits', { from: 'Title' }) },
@@ -206,6 +209,15 @@ export class TitleScene extends Phaser.Scene {
     const tight = items.length >= 5;
     let y = 318;
     items.forEach((item) => {
+      if (item.pair) {
+        item.pair.forEach((half, i) => {
+          addButton(this, 640 + (i ? 82 : -82), y, half.label, half.action, {
+            w: 156, h: tight ? 50 : 56, primary: false, fontSize: '20px', depth: 60,
+          });
+        });
+        y += tight ? 60 : 70;
+        return;
+      }
       addButton(this, 640, y, item.label, item.action, {
         w: 320,
         h: item.subtitle ? (tight ? 60 : 64) : (tight ? 50 : 56),

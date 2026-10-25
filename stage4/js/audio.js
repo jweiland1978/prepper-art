@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=3';
-import { bus } from './state.js?v=3';
+import { CONFIG } from './config.js?v=4';
+import { bus } from './state.js?v=4';
 
 const CHORDS = [
   [110, 130.81, 164.81, 196],
@@ -46,6 +46,14 @@ class AudioManager {
     this.step = 0;
     this.nextTime = 0;
     this.nodes = [];
+    // Part C: true while the page is hidden, backgrounded, or the rotate prompt is up.
+    this.hidden = false;
+  }
+
+  /** Part C: no sound may start (or wake the context) while the page can't be seen. */
+  isHidden() {
+    if (this.hidden) return true;
+    try { return typeof document !== 'undefined' && document.visibilityState === 'hidden'; } catch (error) { return false; }
   }
 
   applySettings(settings) {
@@ -60,6 +68,9 @@ class AudioManager {
   unlock() {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return this;
+    // Never build or resume the context from a hidden page: a radio jingle or a line
+    // burst fired by a timer must not wake audio in a background tab.
+    if (this.isHidden()) return this;
     try {
       if (!this.ctx) this.build(new AudioCtx());
       if (this.ctx.state === 'suspended' || this.ctx.state === 'interrupted') {
@@ -114,7 +125,7 @@ class AudioManager {
   }
 
   tone({ time, freq, dur, type, gain, dest, detune = 0, attack = 0.01, wobble = false, slideTo = null }) {
-    if (!this.ctx || gain <= 0) return;
+    if (!this.ctx || gain <= 0 || this.isHidden()) return;
     const osc = this.ctx.createOscillator();
     const amp = this.ctx.createGain();
     osc.type = type || 'sine';
@@ -138,7 +149,7 @@ class AudioManager {
   }
 
   noiseHit(time, dur, gain, freq, q, dest) {
-    if (!this.ctx) return;
+    if (!this.ctx || this.isHidden()) return;
     const src = this.ctx.createBufferSource();
     src.buffer = this.noise;
     const filter = this.ctx.createBiquadFilter();
@@ -221,7 +232,7 @@ class AudioManager {
 
   groan() {
     this.unlock();
-    if (!this.ctx) return;
+    if (!this.ctx || this.isHidden()) return;
     const t = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const filter = this.ctx.createBiquadFilter();
@@ -421,6 +432,7 @@ class AudioManager {
 
   /** Page hidden, app backgrounded, or rotate overlay up: park all audio. */
   setHidden(hidden) {
+    this.hidden = !!hidden;
     if (!this.ctx) return;
     try {
       if (hidden) {
@@ -447,6 +459,16 @@ class AudioManager {
     this.unlock();
     this.stopJingle();
     if (!this.ctx) return Promise.resolve();
+    if (this.isHidden()) {
+      // Hidden page: keep the radio's timing, make no sound.
+      return new Promise((resolve) => {
+        this.jingleResolve = resolve;
+        this.jingleTimer = window.setTimeout(() => {
+          this.jingleTimer = null;
+          if (this.jingleResolve) { this.jingleResolve = null; resolve(); }
+        }, 900);
+      });
+    }
     const amount = wearFor(day);
     const ctx = this.ctx;
     const start = ctx.currentTime + 0.05;

@@ -1,6 +1,6 @@
-import { CONFIG } from './config.js?v=3';
-import { readMeta, writeMeta } from './meta.js?v=3';
-import { PERKS, PERK_IDS, UNLOCK_TRACK, UNLOCK_INFO, UNLOCK_IDS, perkById } from './data/unlocks.js?v=3';
+import { CONFIG } from './config.js?v=4';
+import { readMeta, writeMeta } from './meta.js?v=4';
+import { PERKS, PERK_IDS, UNLOCK_TRACK, UNLOCK_INFO, UNLOCK_IDS, perkById } from './data/unlocks.js?v=4';
 
 /** Stage 4 Part A: unlocks between runs and the five starting perks. */
 

@@ -78,7 +78,13 @@ export const UNLOCK_INFO = {
     title: 'GARDEN HOSE',
     body: 'New starting perk.\n\nGarden Hose: +4 water on Day 1. It is green, it is kinked, and it is yours.',
   },
-  guide: { built: false, card: true, title: 'FIELD GUIDE', body: 'The Field Guide is on the title screen now.' },
+  // Part C: built. Pages are tracked from run 1; the guide opens from the title and the notebook.
+  guide: {
+    built: true,
+    card: true,
+    title: 'FIELD GUIDE',
+    body: 'The Field Guide is on the title screen now, and in the notebook during a run.\n\nPages fill in as you meet people, build rooms, hear the radio and see the end. Some of them, you already have.',
+  },
   gary: { built: true, card: true, title: 'GARY', body: "Gary has an opinion about your bunker. He will tell you in person.\n\nVisit Gary's Place. Build a Water Tank first. He checks." },
   'clue:1': { built: true, card: false },
   hamshack: { built: true, card: true, title: 'HAM SHACK', body: 'You can dig a Ham Shack in the bunker now.\n\nA bigger antenna. Better company. At level 3 it checks one rumor a day.' },

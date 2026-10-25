@@ -1,15 +1,16 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG } from '../config.js?v=3';
-import { Game } from '../state.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addText } from '../ui.js?v=3';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
-import { hideHud, leave } from '../flow.js?v=3';
-import { readMeta } from '../meta.js?v=3';
-import { chooseTowerEnding } from '../tower.js?v=3';
-import { CHOICES, CLIMB_AGAIN, CLIMB_LINES, MONOLOGUE, STUDIO_LINES } from '../data/tower.js?v=3';
-import { makeTyper } from './type.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG } from '../config.js?v=4';
+import { Game } from '../state.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addText } from '../ui.js?v=4';
+import { attachAtmosphere, fadeIn, shake } from '../fx.js?v=4';
+import { hideHud, leave } from '../flow.js?v=4';
+import { readMeta } from '../meta.js?v=4';
+import { chooseTowerEnding } from '../tower.js?v=4';
+import { markTower } from '../guide.js?v=4';
+import { CHOICES, CLIMB_AGAIN, CLIMB_LINES, MONOLOGUE, STUDIO_LINES } from '../data/tower.js?v=4';
+import { makeTyper } from './type.js?v=4';
 
 /**
  * Stage 4 Part B: the Radio Tower. Climb card, then the studio, then the voice, then the choice.
@@ -127,6 +128,9 @@ export class TowerScene extends Phaser.Scene {
     }
     if (state.flags.towerStep === 'studio') {
       this.setBackdrop('bg-studio');
+      // Part C: the top of the tower hums. A gentle shake (off with Reduce effects).
+      shake(this, 450, 0.004);
+      markTower(); // Part C: the Field Guide's Radio page notes the tower
       this.kicker.setText('88.3 FM  ·  ON AIR');
       Audio.stopStatic();
       Audio.startStatic(0.05);
@@ -176,6 +180,7 @@ export class TowerScene extends Phaser.Scene {
     if (this.left || this.time.now < (this.choiceReadyAt || 0)) return;
     this.left = true;
     try { Audio.unlock(); Audio.staticBurst(0.4, 0.2); } catch (error) { console.warn('[PREPPER] Audio hiccup.', error); }
+    shake(this, 380, 0.005);
     const state = Game.state;
     chooseTowerEnding(state, choice);
     Save.write(state);

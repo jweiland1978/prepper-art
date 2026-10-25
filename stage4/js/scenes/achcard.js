@@ -1,9 +1,10 @@
-import { CONFIG } from '../config.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addPanel, addText, runTypewriter } from '../ui.js?v=3';
-import { ACHIEVEMENTS, clearCardPending } from '../achievements.js?v=3';
-import { readMeta } from '../meta.js?v=3';
-import { pendingCards, markAnnounced } from '../unlocks.js?v=3';
+import { CONFIG } from '../config.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addPanel, addText, runTypewriter } from '../ui.js?v=4';
+import { flipIn } from '../fx.js?v=4';
+import { ACHIEVEMENTS, clearCardPending } from '../achievements.js?v=4';
+import { readMeta } from '../meta.js?v=4';
+import { pendingCards, markAnnounced } from '../unlocks.js?v=4';
 
 /**
  * The "UNLOCKED: Achievements" card. Typewriter at the normal 70 ms per character,
@@ -62,7 +63,17 @@ function showCard(scene, { kicker = 'UNLOCKED', title, full, depth, handle, onFi
     const hint = addText(scene, 640, 566, '', {
       fontFamily: CONFIG.FONTS.body, fontSize: '16px', color: CONFIG.COLORS.textMuted, originX: 0.5, originY: 0.5,
     });
-    root.add([blocker, backing, panel, kick, head, body, hint]);
+    // Part C: the card itself sits in a centered container so it can flip open
+    // (Reduce effects: no flip). The reused unlock fanfare plays as it turns.
+    const card = scene.add.container(640, 360);
+    [backing, panel, kick, head, body, hint].forEach((node) => {
+      node.x -= 640;
+      node.y -= 360;
+    });
+    card.add([backing, panel, kick, head, body, hint]);
+    root.add([blocker, card]);
+    try { Audio.playFanfare(); } catch (error) { /* audio is optional */ }
+    flipIn(scene, card, 440);
     let typed = false;
     let done = false;
     const typer = runTypewriter(scene, body, full, () => {

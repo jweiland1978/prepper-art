@@ -1,8 +1,8 @@
-import Phaser from '../phaser.js?v=3';
-import { onRoomBuilt } from '../achievements.js?v=3';
-import { CONFIG } from '../config.js?v=3';
-import { NEIGHBORS } from '../data/neighbors.js?v=3';
-import { MARKERS } from '../data/map.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { onRoomBuilt } from '../achievements.js?v=4';
+import { CONFIG } from '../config.js?v=4';
+import { NEIGHBORS } from '../data/neighbors.js?v=4';
+import { MARKERS } from '../data/map.js?v=4';
 import {
   cotCount,
   generatorOn,
@@ -19,17 +19,17 @@ import {
   spotStatus,
   wearingCoat,
   workRoom,
-} from '../crew.js?v=3';
-import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addText } from '../ui.js?v=3';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=3';
-import { leave, showHud } from '../flow.js?v=3';
-import { maybeGaryVisit, memorialCopy } from '../logic.js?v=3';
-import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js?v=3';
-import { showNotice } from './cards.js?v=3';
-import { hasUnlock, loyaltyDiscount, noteDig } from '../unlocks.js?v=3';
+} from '../crew.js?v=4';
+import { Game, bus, changeStat, foodCap, roomLevel, touchState, waterCap } from '../state.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addText } from '../ui.js?v=4';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=4';
+import { leave, showHud } from '../flow.js?v=4';
+import { maybeGaryVisit, memorialCopy } from '../logic.js?v=4';
+import { larryKnocking, maybeJulyBox, noteWaterBuilt, repairScorch } from '../trade.js?v=4';
+import { showNotice } from './cards.js?v=4';
+import { hasUnlock, loyaltyDiscount, noteDig } from '../unlocks.js?v=4';
 import {
   canDistress,
   distressWord,
@@ -37,7 +37,7 @@ import {
   followDistress,
   openTrade,
   presentLaunch,
-} from './trade.js?v=3';
+} from './trade.js?v=4';
 
 const COLS = [48, 300, 736, 988];
 const ROWS = [268, 468];
@@ -107,7 +107,7 @@ export class BunkerScene extends Phaser.Scene {
       originX: 0.5,
       originY: 0.5,
     }).setDepth(8);
-    const memorialZone = this.add.zone(SHAFT.x + SHAFT.w / 2, 236, 150, 36).setOrigin(0.5).setDepth(9);
+    const memorialZone = this.add.zone(SHAFT.x + SHAFT.w / 2, 236, 150, 48).setOrigin(0.5).setDepth(9);
     memorialZone.setInteractive({ useHandCursor: true });
     memorialZone.on('pointerup', () => this.openMemorial());
 
@@ -126,7 +126,7 @@ export class BunkerScene extends Phaser.Scene {
     }, { w: 140, h: 48, depth: 12 });
     this.distressBtn = addButton(this, 980, 680, 'DISTRESS', () => this.askDistress(), { w: 200, h: 44, depth: 12 });
     this.larryBtn = addButton(this, 740, 680, 'HATCH', () => this.openLarry(), { w: 160, h: 44, depth: 12 });
-    const board = this.add.zone(SHAFT.x + 41, SHAFT.y + 32, 54, 36).setOrigin(0.5).setDepth(11);
+    const board = this.add.zone(SHAFT.x + 41, SHAFT.y + 32, 60, 48).setOrigin(0.5).setDepth(11);
     board.setInteractive({ useHandCursor: true });
     board.on('pointerup', () => this.openBoard());
     addButton(this, 680, 124, 'CALL IT A NIGHT', () => {
@@ -705,7 +705,7 @@ export class BunkerScene extends Phaser.Scene {
     recruited(state).forEach((row) => {
       const spot = this.personPoints[row.id];
       if (!spot) return;
-      const zone = this.add.zone(spot.x, spot.y, 36, 48).setOrigin(0.5).setDepth(11);
+      const zone = this.add.zone(spot.x, spot.y, 48, 52).setOrigin(0.5).setDepth(11);
       zone.setInteractive({ useHandCursor: true });
       zone.on('pointerup', () => this.openPerson(row.id));
       this.personZones.push(zone);

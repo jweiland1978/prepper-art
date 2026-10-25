@@ -1,7 +1,51 @@
-import Phaser from './phaser.js?v=3';
-import { CONFIG } from './config.js?v=3';
-import { Audio } from './audio.js?v=3';
-import { Game } from './state.js?v=3';
+import Phaser from './phaser.js?v=4';
+import { CONFIG } from './config.js?v=4';
+import { Audio } from './audio.js?v=4';
+import { Game } from './state.js?v=4';
+
+/** Part C: effects counters for tests (squash, pop). fx.js adds shake, flip, fade. */
+export function fxLog(kind, ran) {
+  const log = (globalThis.__PREPPER_FX = globalThis.__PREPPER_FX || { ran: {}, skipped: {} });
+  const bucket = ran ? log.ran : log.skipped;
+  bucket[kind] = (bucket[kind] || 0) + 1;
+}
+
+/** Reduce effects off? (fx.js has the same check; kept local so ui.js has no fx import.) */
+function juiceOn() {
+  return !Game.settings?.reduceEffects;
+}
+
+let phoneCache = null;
+/**
+ * Part C: a phone (small touch screen). Phones get slightly bigger small text.
+ * Tablets and desktops are unchanged. ?phone=1 / ?phone=0 forces it for testing.
+ */
+export function isPhone() {
+  if (phoneCache !== null) return phoneCache;
+  try {
+    const force = new URLSearchParams(globalThis.location?.search || '').get('phone');
+    if (force === '1' || force === '0') {
+      phoneCache = force === '1';
+      return phoneCache;
+    }
+    const coarse = !!globalThis.matchMedia?.('(pointer: coarse)')?.matches;
+    const short = Math.min(globalThis.screen?.width || 9999, globalThis.screen?.height || 9999);
+    phoneCache = coarse && short <= 500;
+  } catch (error) {
+    phoneCache = false;
+  }
+  return phoneCache;
+}
+
+/** Small text grows a little on phones (11 -> 13, 14 -> 16). 16 px and up stay as designed. */
+function phoneFont(size) {
+  if (!isPhone() || typeof size !== 'string') return size;
+  const m = /^(\d+(?:\.\d+)?)px$/.exec(size);
+  if (!m) return size;
+  const px = Number(m[1]);
+  if (px >= 16) return size;
+  return `${Math.min(16, Math.round(px * 1.2))}px`;
+}
 
 export function textResolution() {
   const dpr = globalThis.devicePixelRatio || 1;
@@ -20,6 +64,7 @@ export function addText(scene, x, y, content, style = {}) {
     color: CONFIG.COLORS.text,
     resolution: textResolution(),
     ...rest,
+    fontSize: phoneFont(rest.fontSize || '18px'),
   });
   text.setOrigin(originX, originY);
   return text;
@@ -105,19 +150,38 @@ export function addButton(scene, x, y, label, onClick, opts = {}) {
   root.on('pointerover', () => draw(true));
   // Press feedback scales the visuals only. Scaling the container also shrank its hit area,
   // so a tap near the edge lost its finger-up and did nothing (Stage 4 Part A fix).
-  const press = (k) => parts.forEach((part) => part.setScale(k));
+  // Part C: a small squash on press and a springy release (Reduce effects: no squash).
+  const press = (k) => {
+    parts.forEach((part) => scene.tweens?.killTweensOf?.(part));
+    parts.forEach((part) => part.setScale(k));
+  };
+  const squash = () => {
+    if (!juiceOn()) { fxLog('squash', false); return; }
+    fxLog('squash', true);
+    parts.forEach((part) => {
+      scene.tweens.killTweensOf(part);
+      part.setScale(1.04, 0.9);
+    });
+  };
+  const release = () => {
+    if (!juiceOn()) { press(1); return; }
+    parts.forEach((part) => {
+      scene.tweens.killTweensOf(part);
+      scene.tweens.add({ targets: part, scaleX: 1, scaleY: 1, duration: 180, ease: 'Back.easeOut' });
+    });
+  };
   root.on('pointerout', () => {
     press(1);
     draw(false);
   });
   root.on('pointerdown', () => {
     if (opts.swallowTap) scene.swallowTap = true;
-    press(0.96);
+    squash();
     Audio.unlock();
     Audio.click();
   });
   root.on('pointerup', () => {
-    press(1);
+    release();
     onClick();
   });
   if (opts.depth != null) root.setDepth(opts.depth);
@@ -127,6 +191,8 @@ export function addButton(scene, x, y, label, onClick, opts = {}) {
 
 export function floatDelta(scene, x, y, delta) {
   if (!delta) return;
+  if (!juiceOn()) { fxLog('pop', false); return; }
+  fxLog('pop', true);
   const positive = delta > 0;
   const body = Math.abs(delta - Math.round(delta)) > 0.05
     ? Math.abs(delta).toFixed(1)
@@ -151,6 +217,12 @@ export function floatDelta(scene, x, y, delta) {
 export function tweenNumber(scene, textObj, from, to, format) {
   const counter = { v: from };
   const base = textObj.style.color;
+  if (!juiceOn()) {
+    // Reduce effects: the number just changes. No count-up, no color flash, no pop-up.
+    textObj.setText(format ? format(to) : String(Math.round(to)));
+    fxLog('pop', false);
+    return;
+  }
   if (to > from) textObj.setColor(CONFIG.COLORS.good);
   else if (to < from) textObj.setColor(CONFIG.COLORS.bad);
   const render = (value) => textObj.setText(format ? format(value) : String(Math.round(value)));

@@ -2,17 +2,17 @@
  * Stash, trade overlay, swap meet, rocket cards, and the Mackinaw moment.
  * The scene list stays as it was. These are overlays.
  */
-import { CONFIG } from '../config.js?v=3';
-import { ITEMS, itemById } from '../data/items.js?v=3';
-import { COAT_LINES, GARY_COAT } from '../data/traders.js?v=3';
-import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js?v=3';
-import { applyDeltas, oddsWord, resolveDanger } from '../logic.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Game, touchState } from '../state.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addText } from '../ui.js?v=3';
-import { offerTip, showDanger, showNotice } from './cards.js?v=3';
-import { larryPanicDue, presentLarryPanic } from '../heist.js?v=3';
+import { CONFIG } from '../config.js?v=4';
+import { ITEMS, itemById } from '../data/items.js?v=4';
+import { COAT_LINES, GARY_COAT } from '../data/traders.js?v=4';
+import { drinkCoffee, nickCrew, recruited, resolveNotice } from '../crew.js?v=4';
+import { applyDeltas, oddsWord, resolveDanger } from '../logic.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Game, touchState } from '../state.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addText } from '../ui.js?v=4';
+import { offerTip, showDanger, showNotice } from './cards.js?v=4';
+import { larryPanicDue, presentLarryPanic } from '../heist.js?v=4';
 import {
   beginMeet,
   crackBeer,
@@ -30,7 +30,7 @@ import {
   moveGood,
   priceArrow,
   priceOf,
-} from '../trade.js?v=3';
+} from '../trade.js?v=4';
 
 const NAMES = { tip: 'A tip', dock: 'Sewer map' };
 
@@ -276,7 +276,12 @@ function bindSlot(scene, node, onTap, onStack) {
   let timer = null;
   let held = false;
   node.setSize(76, 86);
-  node.setInteractive({ useHandCursor: true });
+  // Part C touch pass: cover the name and price under the icon too (local y -36..60).
+  node.setInteractive({
+    hitArea: new Phaser.Geom.Rectangle(0, 7, 76, 96),
+    hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+    useHandCursor: true,
+  });
   node.on('pointerdown', () => {
     held = false;
     timer = scene.time.delayedCall(450, () => {
@@ -350,7 +355,12 @@ export function openStash(scene, onClose) {
       originX: 0.5, originY: 0,
     }));
     node.setSize(90, 100);
-    node.setInteractive({ useHandCursor: true });
+    // Part C touch pass: the whole icon + name + count (local y -40..86).
+    node.setInteractive({
+      hitArea: new Phaser.Geom.Rectangle(0, 10, 90, 126),
+      hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+      useHandCursor: true,
+    });
     node.on('pointerup', () => openItemCard(scene, item.id, refresh));
     root.add(node);
   });

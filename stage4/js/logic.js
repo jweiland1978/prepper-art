@@ -1,11 +1,11 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=3';
-import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=3';
-import { neighborlyMorning } from './crew.js?v=3';
-import { clueForMorning, hamTagMorning, ownSignoffLine, strangerGreeting, strangerSignoff } from './tower.js?v=3';
-import { EVENTS, eventById } from './data/events.js?v=3';
-import { markerById, phaseProfile } from './data/map.js?v=3';
-import { NIGHT_EVENTS } from './data/night.js?v=3';
-import { phaseCopy } from './data/phases.js?v=3';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=4';
+import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=4';
+import { neighborlyMorning } from './crew.js?v=4';
+import { clueForMorning, hamTagMorning, ownSignoffLine, strangerGreeting, strangerSignoff } from './tower.js?v=4';
+import { EVENTS, eventById } from './data/events.js?v=4';
+import { markerById, phaseProfile } from './data/map.js?v=4';
+import { NIGHT_EVENTS } from './data/night.js?v=4';
+import { phaseCopy } from './data/phases.js?v=4';
 import {
   BEER_LINES,
   COAT_BRAGS,
@@ -20,13 +20,13 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js?v=3';
+} from './data/radio.js?v=4';
 import {
   hatchById,
   SURVIVAL_COLD,
   survivalDeck,
   survivalOpener,
-} from './data/survival.js?v=3';
+} from './data/survival.js?v=4';
 import {
   applyCold,
   applyCrewNight,
@@ -48,17 +48,17 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js?v=3';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=3';
-import { heistMorning } from './heist.js?v=3';
-import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=3';
+} from './crew.js?v=4';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=4';
+import { heistMorning } from './heist.js?v=4';
+import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=4';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js?v=3';
+} from './state.js?v=4';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {

@@ -1,16 +1,16 @@
-import Phaser from '../phaser.js?v=3';
-import { onReveal } from '../achievements.js?v=3';
-import { Save } from '../save.js?v=3';
-import { CONFIG } from '../config.js?v=3';
-import { Game, roomLevel, syncDerived } from '../state.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addButton, addPanel, addText } from '../ui.js?v=3';
-import { attachAtmosphere, coverEnd, fadeIn, paintApocSky, shake } from '../fx.js?v=3';
-import { hideHud, leave } from '../flow.js?v=3';
-import { fillLine } from '../logic.js?v=3';
-import { apocalypseName, apocalypseOf } from '../rumors.js?v=3';
-import { apocalypseLinesFor, revealNoteFor } from '../data/survival.js?v=3';
-import { makeTyper } from './type.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { onReveal } from '../achievements.js?v=4';
+import { Save } from '../save.js?v=4';
+import { CONFIG } from '../config.js?v=4';
+import { Game, roomLevel, syncDerived } from '../state.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addButton, addPanel, addText } from '../ui.js?v=4';
+import { attachAtmosphere, coverEnd, fadeIn, paintApocSky, shake, slowFade } from '../fx.js?v=4';
+import { hideHud, leave } from '../flow.js?v=4';
+import { fillLine } from '../logic.js?v=4';
+import { apocalypseName, apocalypseOf } from '../rumors.js?v=4';
+import { apocalypseLinesFor, revealNoteFor } from '../data/survival.js?v=4';
+import { makeTyper } from './type.js?v=4';
 
 function cueApocAudio(kind) {
   Audio.stopMusic();
@@ -105,14 +105,15 @@ export class ApocalypseScene extends Phaser.Scene {
     for (let i = 0; i < this.lines.length; i += 1) {
       if (this.done()) return;
       Audio.staticBurst(0.4);
-      const n = this.kind === 'meteor' || this.kind === 'solarflare' ? 0.006 : 0.004;
+      // Part C: gentler shake (was 0.006 / 0.004). Off with Reduce effects.
+      const n = this.kind === 'meteor' || this.kind === 'solarflare' ? 0.004 : 0.0025;
       shake(this, this.kind === 'meteor' ? 320 : 220, n);
       await this.typer.say(this.line, this.lines[i], true);
       if (this.done()) return;
       await this.typer.wait(200);
     }
     if (this.done()) return;
-    shake(this, this.kind === 'meteor' ? 1100 : 900, this.kind === 'meteor' ? 0.016 : 0.012);
+    shake(this, this.kind === 'meteor' ? 1000 : 800, this.kind === 'meteor' ? 0.009 : 0.007);
     this.showReveal();
   }
 
@@ -121,7 +122,7 @@ export class ApocalypseScene extends Phaser.Scene {
     this.revealed = true;
     Audio.stopJingle();
     Audio.groan();
-    shake(this, 700, 0.01);
+    shake(this, 600, 0.006);
     this.skipButton?.destroy();
     this.line?.setText('');
     const state = Game.state;
@@ -162,6 +163,10 @@ export class ApocalypseScene extends Phaser.Scene {
     root.add(addButton(this, 640, called ? 500 : 480, 'INTO THE BUNKER', () => this.goUnder(), {
       w: 360, h: 58, primary: true, depth: 32,
     }));
+    // Part C: the reveal panel fades up slowly (Reduce effects: shown at once).
+    this.revealRoot = root;
+    globalThis.__PREPPER_REVEAL = { fading: true };
+    slowFade(this, root, 1800, () => { globalThis.__PREPPER_REVEAL = { fading: false }; });
   }
 
   goUnder() {

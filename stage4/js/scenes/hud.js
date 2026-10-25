@@ -1,14 +1,15 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG, countdownPhrase } from '../config.js?v=3';
-import { moraleWord } from '../crew.js?v=3';
-import { apocalypseName, canGuess, notebookEntries, setGuess } from '../rumors.js?v=3';
-import { Game, bus, formatStat } from '../state.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addPanel, addText, tweenNumber } from '../ui.js?v=3';
-import { openStash } from './trade.js?v=3';
-import { itemBlurb } from '../trade.js?v=3';
-import { devGrant, devSkip, mountDevTools } from '../dev.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG, countdownPhrase } from '../config.js?v=4';
+import { moraleWord } from '../crew.js?v=4';
+import { apocalypseName, canGuess, notebookEntries, setGuess } from '../rumors.js?v=4';
+import { Game, bus, formatStat } from '../state.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addPanel, addText, tweenNumber } from '../ui.js?v=4';
+import { openStash } from './trade.js?v=4';
+import { itemBlurb } from '../trade.js?v=4';
+import { devGrant, devSkip, mountDevTools } from '../dev.js?v=4';
+import { guideUnlocked } from '../guide.js?v=4';
 
 const STATS = [
   { key: 'food', x: 548, icon: 'can' },
@@ -66,7 +67,8 @@ export class HudScene extends Phaser.Scene {
       this.toggleNote('actions');
     });
 
-    const duffel = this.add.zone(1084, 30, 36, 36).setOrigin(0.5).setDepth(4);
+    // Part C touch pass: the four right-hand icons get side-by-side hit boxes, 56 tall, no overlaps.
+    const duffel = this.add.zone(1071, 34, 62, 56).setOrigin(0.5).setDepth(4);
     duffel.setInteractive({ useHandCursor: true });
     duffel.on('pointerup', () => {
       if (this.note) this.closeNote();
@@ -74,14 +76,14 @@ export class HudScene extends Phaser.Scene {
       this.stash?.close?.();
       this.stash = openStash(this, () => this.sync());
     });
-    const coat = this.add.zone(1124, 30, 32, 36).setOrigin(0.5).setDepth(4);
+    const coat = this.add.zone(1126, 34, 48, 56).setOrigin(0.5).setDepth(4);
     coat.setInteractive({ useHandCursor: true });
     coat.on('pointerup', () => {
       Audio.click();
       this.toggleCoat();
     });
 
-    const book = this.add.zone(1164, 40, 86, 70).setOrigin(0.5).setDepth(4);
+    const book = this.add.zone(1177, 38, 54, 64).setOrigin(0.5).setDepth(4);
     this.bookLabel = addText(this, 1164, 70, 'NOTEBOOK', {
       fontFamily: CONFIG.FONTS.heading, fontSize: '10px', color: CONFIG.COLORS.orangeCss, originX: 0.5, originY: 1,
     }).setDepth(3);
@@ -91,7 +93,7 @@ export class HudScene extends Phaser.Scene {
       this.toggleNote('notebook');
     });
 
-    const radio = this.add.zone(1232, 36, 52, 52).setOrigin(0.5).setDepth(4);
+    const radio = this.add.zone(1232, 36, 56, 56).setOrigin(0.5).setDepth(4);
     radio.setInteractive({ useHandCursor: true });
     radio.on('pointerup', () => {
       Audio.click();
@@ -221,6 +223,24 @@ export class HudScene extends Phaser.Scene {
         fontFamily: CONFIG.FONTS.body, fontSize: '14px', color: CONFIG.COLORS.textMuted, originX: 0.5, originY: 0.5,
       });
       root.add(pageLabel);
+      // Part C: the page is a swipe target (left/right or up/down turns the rumor page),
+      // and a tap on the page no longer falls through to the close-on-tap backdrop.
+      const swipeZone = this.add.zone(640, 368, 980, 560).setOrigin(0.5).setInteractive();
+      let swipeFrom = null;
+      swipeZone.on('pointerdown', (pointer) => { swipeFrom = { x: pointer.x, y: pointer.y }; });
+      swipeZone.on('pointerup', (pointer) => {
+        if (!swipeFrom) return;
+        const dx = pointer.x - swipeFrom.x;
+        const dy = pointer.y - swipeFrom.y;
+        swipeFrom = null;
+        const big = Math.max(Math.abs(dx), Math.abs(dy));
+        if (big < 50) return;
+        const dir = Math.abs(dx) >= Math.abs(dy) ? (dx < 0 ? 1 : -1) : (dy < 0 ? 1 : -1);
+        this.rumorPage += dir;
+        render();
+        globalThis.__PREPPER_NOTEBOOK = { page: this.rumorPage, swiped: (globalThis.__PREPPER_NOTEBOOK?.swiped || 0) + 1 };
+      });
+      root.add(swipeZone);
       const guessNodes = [];
       const render = () => {
         const rumors = notebookEntries(state);
@@ -283,6 +303,9 @@ export class HudScene extends Phaser.Scene {
         render();
       }));
       root.add(noteButton(this, 640, 442, 'CLOSE', () => this.closeNote()));
+      if (guideUnlocked()) {
+        root.add(noteButton(this, 1020, 122, 'FIELD GUIDE', () => this.openGuide(), { w: 180, fontSize: '16px' }));
+      }
     } else {
       const left = state?.actionsLeft ?? 0;
       root.add(addPanel(this, 300, 92, 420, 180));
@@ -295,6 +318,14 @@ export class HudScene extends Phaser.Scene {
     this.note = { kind, root };
     Game.hudLock = true;
     this.sync();
+  }
+
+  /** Part C: the Field Guide over the current screen (it pauses what is underneath). */
+  openGuide() {
+    this.closeNote();
+    if (this.scene.isActive('FieldGuide')) return;
+    this.scene.launch('FieldGuide', { overlay: true });
+    this.scene.bringToTop('FieldGuide');
   }
 
   toggleCoat() {
@@ -372,7 +403,7 @@ function iconCup(g, x, y, on) {
 
 function noteButton(scene, x, y, label, onClick, opts = {}) {
   const w = opts.w || 140;
-  const h = opts.h || 36;
+  const h = Math.max(48, opts.h || 48); // Part C: 48 px minimum touch target
   const root = scene.add.container(x, y);
   const g = scene.add.graphics();
   g.fillStyle(opts.selected ? CONFIG.COLORS.orange : CONFIG.COLORS.navy, 1);

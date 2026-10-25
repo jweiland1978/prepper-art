@@ -1,16 +1,64 @@
-import Phaser from './phaser.js?v=3';
-import { CONFIG } from './config.js?v=3';
-import { Game, bus } from './state.js?v=3';
-import { apocalypseOf, endArtKey } from './rumors.js?v=3';
-import { scratchGrain } from './textures.js?v=3';
+import Phaser from './phaser.js?v=4';
+import { CONFIG } from './config.js?v=4';
+import { Game, bus } from './state.js?v=4';
+import { apocalypseOf, endArtKey } from './rumors.js?v=4';
+import { scratchGrain } from './textures.js?v=4';
 
 export function effectsOn() {
   return !Game.settings?.reduceEffects;
 }
 
+function fxLog(kind, ran) {
+  const log = (globalThis.__PREPPER_FX = globalThis.__PREPPER_FX || { ran: {}, skipped: {} });
+  const bucket = ran ? log.ran : log.skipped;
+  bucket[kind] = (bucket[kind] || 0) + 1;
+}
+
 export function shake(scene, ms = 160, intensity = 0.004) {
-  if (!effectsOn()) return;
+  if (!effectsOn()) { fxLog('shake', false); return; }
+  fxLog('shake', true);
   scene.cameras.main.shake(ms, intensity);
+}
+
+/**
+ * Part C: card flip. `target` is a container centered on its pivot. It turns edge-on
+ * (scaleX 0), then opens to full width. Reduce effects: it just appears.
+ */
+export function flipIn(scene, target, ms = 420, onDone) {
+  if (!effectsOn() || !scene.tweens) {
+    fxLog('flip', false);
+    target.setScale(1);
+    onDone?.();
+    return null;
+  }
+  fxLog('flip', true);
+  target.setScale(0.02, 0.96);
+  globalThis.__PREPPER_FLIP = { running: true, startedAt: Date.now() };
+  return scene.tweens.add({
+    targets: target,
+    scaleX: 1,
+    scaleY: 1,
+    duration: ms,
+    ease: 'Back.easeOut',
+    onComplete: () => {
+      globalThis.__PREPPER_FLIP = { running: false };
+      onDone?.();
+    },
+  });
+}
+
+/** Part C: slow fade in (the Day 30 reveal). Reduce effects: shown at once. */
+export function slowFade(scene, targets, ms = 1600, onDone) {
+  const list = Array.isArray(targets) ? targets : [targets];
+  if (!effectsOn() || !scene.tweens) {
+    fxLog('fade', false);
+    list.forEach((t) => t.setAlpha(1));
+    onDone?.();
+    return null;
+  }
+  fxLog('fade', true);
+  list.forEach((t) => t.setAlpha(0));
+  return scene.tweens.add({ targets: list, alpha: 1, duration: ms, ease: 'Sine.easeInOut', onComplete: () => onDone?.() });
 }
 
 export function attachAtmosphere(scene, opts = {}) {

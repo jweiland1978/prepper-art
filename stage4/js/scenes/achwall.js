@@ -1,10 +1,10 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG } from '../config.js?v=3';
-import { addButton, addPanel, addText } from '../ui.js?v=3';
-import { attachAtmosphere } from '../fx.js?v=3';
-import { beginScene, goTo, hideHud } from '../flow.js?v=3';
-import { ACHIEVEMENTS, earnedCount, progressOf } from '../achievements.js?v=3';
-import { readMeta } from '../meta.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG } from '../config.js?v=4';
+import { addButton, addPanel, addText } from '../ui.js?v=4';
+import { attachAtmosphere } from '../fx.js?v=4';
+import { beginScene, goTo, hideHud } from '../flow.js?v=4';
+import { ACHIEVEMENTS, earnedCount, progressOf } from '../achievements.js?v=4';
+import { readMeta } from '../meta.js?v=4';
 
 /** The achievement wall, from the title menu. Locked ones read ??? (progress ones show n of 5). */
 export class AchievementsScene extends Phaser.Scene {

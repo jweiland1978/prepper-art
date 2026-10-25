@@ -4,12 +4,13 @@
  * Tower endings are their own tier: they live in meta.tower, never in achievements.
  * No scene imports here. Logic, crew, map and the tower scene call in.
  */
-import { CONFIG } from './config.js?v=3';
-import { readMeta, writeMeta } from './meta.js?v=3';
-import { hasUnlock } from './unlocks.js?v=3';
+import { CONFIG } from './config.js?v=4';
+import { readMeta, writeMeta } from './meta.js?v=4';
+import { hasUnlock } from './unlocks.js?v=4';
+import { markClue } from './guide.js?v=4';
 import {
   CLUE_DAYS, CLUE_LINES, GARY_TIPS, HAM_LINES, OWN_SIGNOFF, STRANGER_GREETINGS, STRANGER_SIGNOFF,
-} from './data/tower.js?v=3';
+} from './data/tower.js?v=4';
 
 export const TOWER_OPEN_DAY = 20;
 export const PROTECTED_IDS = ['tina', 'biscuit', 'gary'];
@@ -37,6 +38,7 @@ export function clueForMorning(state) {
   state.flags.clueHeard = Array.isArray(state.flags.clueHeard) ? state.flags.clueHeard : [];
   if (!state.flags.clueHeard.includes(state.day)) state.flags.clueHeard.push(state.day);
   state.flags.clueStage = stage;
+  markClue(stage); // Part C: the Field Guide's Radio page fills in
   return line.replaceAll('{name}', nameOf(state));
 }
 

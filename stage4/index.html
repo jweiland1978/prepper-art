@@ -16,11 +16,27 @@
       background: #05070c;
       overflow: hidden;
       touch-action: manipulation;
+      overscroll-behavior: none;
+      /* Part C touch pass: no long-press callout, no text selection, no grey tap flash. */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-text-size-adjust: 100%;
     }
+    /* Inside the notch / home-bar safe area, so Phaser's FIT never puts a button under it. */
     #game {
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
+      position: fixed;
+      top: env(safe-area-inset-top, 0px);
+      right: env(safe-area-inset-right, 0px);
+      bottom: env(safe-area-inset-bottom, 0px);
+      left: env(safe-area-inset-left, 0px);
+    }
+    #game canvas {
+      touch-action: none;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
     #dom-layer {
       position: fixed;
@@ -40,6 +56,9 @@
       padding: 2px 6px;
       outline: none;
       border-radius: 0;
+      -webkit-user-select: text;
+      user-select: text;
+      -webkit-touch-callout: default;
     }
     #rotate-overlay {
       display: none;
@@ -94,11 +113,31 @@
         box.style.display = 'block';
         box.textContent += (box.textContent ? '\n' : 'Something broke. Screenshot this for Jeff\'s builder, then reload (or add ?reset=1 to the address).\n') + msg;
       }
+      // Part C touch pass: no pinch/double-tap zoom (iOS ignores user-scalable=no),
+      // no long-press menu on the game.
+      try {
+        ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (name) {
+          document.addEventListener(name, function (e) { e.preventDefault(); }, { passive: false });
+        });
+        document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('contextmenu', function (e) {
+          if (!(e.target && e.target.tagName === 'INPUT')) e.preventDefault();
+        });
+        var lastTouchEnd = 0;
+        document.addEventListener('touchend', function (e) {
+          var now = Date.now();
+          if (now - lastTouchEnd < 320 && !(e.target && e.target.tagName === 'INPUT')) e.preventDefault();
+          lastTouchEnd = now;
+        }, { passive: false });
+        document.addEventListener('touchmove', function (e) {
+          if (e.touches && e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+      } catch (e) {}
       window.addEventListener('error', function (e) { show(String(e.message || e) + (e.filename ? ' @ ' + e.filename.split('/').pop() + ':' + e.lineno : '')); });
       window.addEventListener('unhandledrejection', function (e) { show('Promise: ' + String((e.reason && (e.reason.stack || e.reason.message)) || e.reason).slice(0, 300)); });
     })();
   </script>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
-  <script type="module" src="js/main.js?v=3"></script>
+  <script type="module" src="js/main.js?v=4"></script>
 </body>
 </html>

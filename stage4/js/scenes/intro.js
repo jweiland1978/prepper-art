@@ -1,13 +1,13 @@
-import Phaser from '../phaser.js?v=3';
-import { CONFIG } from '../config.js?v=3';
-import { Game, changeStat, cleanName, newRun } from '../state.js?v=3';
-import { applyStartPerk } from '../unlocks.js?v=3';
-import { Save } from '../save.js?v=3';
-import { Audio } from '../audio.js?v=3';
-import { addText, runTypewriter, readHold } from '../ui.js?v=3';
-import { attachAtmosphere } from '../fx.js?v=3';
-import { beginScene, goTo } from '../flow.js?v=3';
-import { addStudioRadio } from '../widgets.js?v=3';
+import Phaser from '../phaser.js?v=4';
+import { CONFIG } from '../config.js?v=4';
+import { Game, changeStat, cleanName, newRun } from '../state.js?v=4';
+import { applyStartPerk } from '../unlocks.js?v=4';
+import { Save } from '../save.js?v=4';
+import { Audio } from '../audio.js?v=4';
+import { addText, runTypewriter, readHold } from '../ui.js?v=4';
+import { attachAtmosphere } from '../fx.js?v=4';
+import { beginScene, goTo } from '../flow.js?v=4';
+import { addStudioRadio } from '../widgets.js?v=4';
 
 const OFFICIAL = 'This is an official message for the residents of Lake Orwell. In thirty days, the world will end. Officials are confident it will be caused by—';
 

@@ -2,17 +2,17 @@
  * Neighbors, morale wording, cots, phase spots, and the hooks Parts 2 and 3 call.
  * Does not import scenes or logic. Logic may import this.
  */
-import { onNoticeFiled, onRecruit } from './achievements.js?v=3';
-import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=3';
-import { MARKERS, markerById, phaseProfile } from './data/map.js?v=3';
-import { neighborById, NEIGHBORS } from './data/neighbors.js?v=3';
-import { LARRY_STAMP_LINES } from './data/radio.js?v=3';
-import { apocalypseOf, maybeStampEntry } from './rumors.js?v=3';
-import { NOTICE_FORMS } from './data/traders.js?v=3';
-import { changeStat, roomLevel, touchState } from './state.js?v=3';
-import { garyTip, PROTECTED_IDS, towerPinState } from './tower.js?v=3';
-import { TOWER_PIN } from './data/tower.js?v=3';
-import { hasUnlock } from './unlocks.js?v=3';
+import { onNoticeFiled, onRecruit } from './achievements.js?v=4';
+import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=4';
+import { MARKERS, markerById, phaseProfile } from './data/map.js?v=4';
+import { neighborById, NEIGHBORS } from './data/neighbors.js?v=4';
+import { LARRY_STAMP_LINES } from './data/radio.js?v=4';
+import { apocalypseOf, maybeStampEntry } from './rumors.js?v=4';
+import { NOTICE_FORMS } from './data/traders.js?v=4';
+import { changeStat, roomLevel, touchState } from './state.js?v=4';
+import { garyTip, PROTECTED_IDS, towerPinState } from './tower.js?v=4';
+import { TOWER_PIN } from './data/tower.js?v=4';
+import { hasUnlock } from './unlocks.js?v=4';
 
 export const STASH_KEYS = ['tinfoil', 'battery', 'coffee', 'snacks', 'rockets', 'coat', 'gas', 'cigarettes', 'ammo', 'tp', 'beer'];
 
@@ -310,7 +310,10 @@ export function tickRoads(state) {
     state.flags.road = null;
     return;
   }
-  const index = Math.floor(hashDay(state.day, 3) * list.length);
+  // Stage 4 Part C (carry-over fix 2): salted with the run number, so Day 21's closure
+  // is not the same road every run.
+  const run = Number(state.runNumber) || 0;
+  const index = Math.floor(hashDay(state.day, 3 + run * 7.31) * list.length);
   state.flags.road = { id: list[index].id, untilDay: state.day + info.roadEvery };
 }
 

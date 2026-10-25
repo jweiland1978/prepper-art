@@ -31,7 +31,7 @@ export const CONFIG = {
   SHOW_BANNER: 'THE LAST SHIFT ON 88.3',
   TOWN: 'Lake Orwell',
   TAGLINE: 'The world ends in 30 days. Nobody knows how. Prep anyway.',
-  AI_CREDIT: 'Made with AI: code and art by Grok, design and tuning by Jeff (BlueWater78).',
+  AI_CREDIT: 'Made with AI: Grok Build / Grok Imagine. Design and tuning by Jeff (BlueWater78).',
   RADIO_JINGLE_SPONSOR: "Big Lou's Lumber",
 
   START: {

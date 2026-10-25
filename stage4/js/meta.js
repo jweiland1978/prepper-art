@@ -1,5 +1,5 @@
-import { CONFIG } from './config.js?v=3';
-import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=3';
+import { CONFIG } from './config.js?v=4';
+import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=4';
 
 /**
  * Stage 4 meta store (prepper_s4_meta). Survives DELETE SAVE and new runs.
@@ -17,6 +17,8 @@ import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=3'
  *   tower          Part B tower endings (their own tier, not achievements):
  *                  { break: n, voice: n, last: 'break'|'voice'|'', lastRun, voiceName, echo: 'break'|'voice'|'', echoRun }
  *                  echo is the next run's radio change; it is claimed by the next new run (echoRun).
+ *   guide          Part C Field Guide pages opened outside seenApocs/wonApocs:
+ *                  { nbrs: [neighbor ids recruited], rooms: [room ids built], clues: 0..3 heard, tower: bool }
  * Stage 3 meta (prepper_s3_meta) is read once on first load. It is never written or deleted.
  */
 
@@ -42,7 +44,25 @@ export function emptyMeta() {
     lastPerk: '',
     migratedFrom: '',
     tower: emptyTower(),
+    guide: emptyGuide(),
   };
+}
+
+export function emptyGuide() {
+  return { nbrs: [], rooms: [], clues: 0, tower: false };
+}
+
+const GUIDE_NBRS = ['larry', 'kowalski', 'dale', 'tina', 'kevin', 'gary'];
+
+function repairGuide(raw) {
+  const guide = emptyGuide();
+  if (!raw || typeof raw !== 'object') return guide;
+  const ids = (list, ok) => (Array.isArray(list) ? [...new Set(list.filter((id) => typeof id === 'string' && ok(id)))] : []);
+  guide.nbrs = ids(raw.nbrs, (id) => GUIDE_NBRS.includes(id));
+  guide.rooms = ids(raw.rooms, (id) => !!CONFIG.ROOMS?.[id]);
+  guide.clues = int(raw.clues, 0, 0, 3);
+  guide.tower = !!raw.tower;
+  return guide;
 }
 
 export function emptyTower() {
@@ -114,6 +134,7 @@ export function repairMeta(raw) {
   if (meta.unlocks.includes('achievements')) meta.achUnlocked = true;
   meta.lastPerk = PERK_IDS.includes(raw.lastPerk) ? raw.lastPerk : '';
   meta.tower = repairTower(raw.tower);
+  meta.guide = repairGuide(raw.guide);
   return meta;
 }
 

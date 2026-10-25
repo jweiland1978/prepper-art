@@ -5,11 +5,12 @@
  * (after CONFIG.ACH_UNLOCK_AFTER finished runs) an earn is recorded silently: no toast,
  * no ending line. The UNLOCKED card then shows what was already earned.
  */
-import { CONFIG } from './config.js?v=3';
-import { Game, bus } from './state.js?v=3';
-import { readMeta, writeMeta } from './meta.js?v=3';
-import { grantStepFor } from './unlocks.js?v=3';
-import { unlocksForFinished } from './data/unlocks.js?v=3';
+import { CONFIG } from './config.js?v=4';
+import { Game, bus } from './state.js?v=4';
+import { readMeta, writeMeta } from './meta.js?v=4';
+import { grantStepFor } from './unlocks.js?v=4';
+import { markNeighbor, markRoom } from './guide.js?v=4';
+import { unlocksForFinished } from './data/unlocks.js?v=4';
 
 export const ACHIEVEMENTS = [
   { id: 'creamed-corn', name: 'Survived on creamed corn alone', desc: 'No garden. No hope. Just corn.' },
@@ -119,6 +120,7 @@ function noteGrow(state) {
 
 /** bunker build: any room. */
 export function onRoomBuilt(state, roomId) {
+  markRoom(roomId); // Part C: Field Guide room page (tracked from run 1)
   const ach = runAch(state);
   if (ach && roomId === 'grow') ach.growEver = true;
 }
@@ -155,6 +157,7 @@ export function onHeistEnd(state, caught) {
 
 /** Someone joined the crew. Gary is recruitable from Part B; the hook is live already. */
 export function onRecruit(state, id) {
+  markNeighbor(id); // Part C: Field Guide neighbor page (tracked from run 1)
   if (id === 'gary') earn('gary-approves', state);
 }
 
