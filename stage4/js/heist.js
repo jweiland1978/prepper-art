@@ -3,11 +3,11 @@
  * globalThis.__PREPPER_HEIST: open, openRun2, force, forceTrap, forceDougie,
  * forceSearch, larry, state.
  */
-import { CONFIG } from './config.js?v=5';
-import { onHeistEnd } from './achievements.js?v=5';
-import { Game, changeStat, touchState } from './state.js?v=5';
-import { Save } from './save.js?v=5';
-import { addButton, addPanel, addText } from './ui.js?v=5';
+import { CONFIG } from './config.js?v=6';
+import { onHeistEnd } from './achievements.js?v=6';
+import { Game, changeStat, touchState } from './state.js?v=6';
+import { Save } from './save.js?v=6';
+import { addButton, addPanel, addText } from './ui.js?v=6';
 
 const BOARDS = [
   { name: 'The dock', creaky: false },

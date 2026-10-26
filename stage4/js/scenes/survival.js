@@ -1,12 +1,12 @@
-import Phaser from '../phaser.js?v=5';
-import { onSurvivalFoodCheck } from '../achievements.js?v=5';
-import { CONFIG } from '../config.js?v=5';
-import { Game, touchState } from '../state.js?v=5';
-import { Save } from '../save.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addButton, addPanel, addText } from '../ui.js?v=5';
-import { attachAtmosphere, coverEnd, fadeIn, paintApocSky } from '../fx.js?v=5';
-import { leave, showHud } from '../flow.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { onSurvivalFoodCheck } from '../achievements.js?v=6';
+import { CONFIG } from '../config.js?v=6';
+import { Game, touchState } from '../state.js?v=6';
+import { Save } from '../save.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addButton, addPanel, addText } from '../ui.js?v=6';
+import { attachAtmosphere, coverEnd, fadeIn, paintApocSky } from '../fx.js?v=6';
+import { leave, showHud } from '../flow.js?v=6';
 import {
   beginSurvivalDay,
   buildScore,
@@ -14,11 +14,11 @@ import {
   survivalGarage,
   survivalRation,
   survivalRepair,
-} from '../logic.js?v=5';
-import { hatchById } from '../data/survival.js?v=5';
-import { apocalypseOf } from '../rumors.js?v=5';
-import { showDanger, showNotice } from './cards.js?v=5';
-import { canDistress, distressWord, followDistress, presentLaunch } from './trade.js?v=5';
+} from '../logic.js?v=6';
+import { hatchById } from '../data/survival.js?v=6';
+import { apocalypseOf } from '../rumors.js?v=6';
+import { showDanger, showNotice } from './cards.js?v=6';
+import { canDistress, distressWord, followDistress, presentLaunch } from './trade.js?v=6';
 
 function addSurface(scene, kind) {
   const ground = scene.add.graphics().setDepth(5);

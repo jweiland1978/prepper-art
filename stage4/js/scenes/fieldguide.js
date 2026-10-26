@@ -1,11 +1,11 @@
-import Phaser from '../phaser.js?v=5';
-import { CONFIG } from '../config.js?v=5';
-import { Game } from '../state.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addButton, addPaper, addText, runTypewriter } from '../ui.js?v=5';
-import { attachAtmosphere, effectsOn } from '../fx.js?v=5';
-import { beginScene, goTo, hideHud } from '../flow.js?v=5';
-import { guidePages, guideTabs, syncGuideFromRun } from '../guide.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { CONFIG } from '../config.js?v=6';
+import { Game } from '../state.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addButton, addPaper, addText, runTypewriter } from '../ui.js?v=6';
+import { attachAtmosphere, effectsOn } from '../fx.js?v=6';
+import { beginScene, goTo, hideHud } from '../flow.js?v=6';
+import { guidePages, guideTabs, syncGuideFromRun } from '../guide.js?v=6';
 
 const PAGE = { x: 230, y: 92, w: 820, h: 520 };
 const BODY = { x: 266, y: 214, w: 748, h: 352 };

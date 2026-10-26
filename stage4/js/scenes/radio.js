@@ -1,14 +1,14 @@
-import Phaser from '../phaser.js?v=5';
-import { CONFIG, phaseForDay, phaseInfo } from '../config.js?v=5';
-import { Game, syncDerived } from '../state.js?v=5';
-import { Save } from '../save.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addButton, addText } from '../ui.js?v=5';
-import { attachAtmosphere, fadeIn } from '../fx.js?v=5';
-import { leave, showHud } from '../flow.js?v=5';
-import { addStudioRadio } from '../widgets.js?v=5';
-import { ensureMorning, staticLevel } from '../logic.js?v=5';
-import { makeTyper } from './type.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { CONFIG, phaseForDay, phaseInfo } from '../config.js?v=6';
+import { Game, syncDerived } from '../state.js?v=6';
+import { Save } from '../save.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addButton, addText } from '../ui.js?v=6';
+import { attachAtmosphere, fadeIn } from '../fx.js?v=6';
+import { leave, showHud } from '../flow.js?v=6';
+import { addStudioRadio } from '../widgets.js?v=6';
+import { ensureMorning, staticLevel } from '../logic.js?v=6';
+import { makeTyper } from './type.js?v=6';
 
 const BANNERS = new Set([1, 11, 21, 30]);
 
@@ -20,6 +20,10 @@ export class RadioScene extends Phaser.Scene {
   create() {
     this.left = false;
     this.actionButton = null;
+    this.skipButton = null;
+    this.skipAll = false;
+    this.skipResolve = null;
+    this.skipPromise = new Promise((resolve) => { this.skipResolve = resolve; });
     const state = Game.state;
     if (!state) {
       this.scene.start('Title');
@@ -96,29 +100,36 @@ export class RadioScene extends Phaser.Scene {
     }
     const heard = state.flags.radioHeard === state.day;
     if (!heard) {
+      this.addSkipButton();
       const jingle = Audio.playJingle(state.day);
       this.typer.skipWait = () => {
         Audio.stopJingle();
         Audio.stopSponsor();
       };
-      await jingle;
+      await this.orSkip(jingle);
       if (this.typer.dead) return;
       const lines = this.script?.lines || state.lastBroadcast || [];
-      const cleaned = [];
-      for (let i = 0; i < lines.length; i += 1) {
+      const strip = (line) => String(line || '').replace(/^\{\{JINGLE\}\}\s*/, '');
+      const cleaned = lines.map(strip);
+      for (let i = 0; i < lines.length && !this.skipAll; i += 1) {
         if (this.typer.dead) return;
-        let line = String(lines[i] || '');
+        const line = String(lines[i] || '');
         if (line.startsWith('{{JINGLE}}')) {
-          await Audio.playSponsor(state.day);
+          await this.orSkip(Audio.playSponsor(state.day));
           if (this.typer.dead) return;
-          line = line.replace(/^\{\{JINGLE\}\}\s*/, '');
+          if (this.skipAll) break;
         }
-        cleaned.push(line);
         Audio.staticBurst(phase.id === 'calm' ? 0.12 : phase.id === 'panic' ? 0.28 : 0.48);
-        await this.typer.say(this.line, line, true);
+        await this.orSkip(this.typer.say(this.line, strip(line), true));
         if (this.typer.dead) return;
-        await this.typer.wait(180);
+        if (this.skipAll) break;
+        await this.orSkip(this.typer.wait(180));
       }
+      if (this.typer.dead) return;
+      // SKIP BROADCAST: the whole transcript at once. The HUD's LAST BROADCAST note keeps it too.
+      if (this.skipAll) this.line.setText(cleaned.join('\n\n'));
+      this.skipButton?.destroy();
+      this.skipButton = null;
       state.flags.radioHeard = state.day;
       state.lastBroadcast = cleaned;
       Save.write(state);
@@ -130,11 +141,39 @@ export class RadioScene extends Phaser.Scene {
     this.showButton();
   }
 
+  /** Oct 25 radio pacing: SKIP BROADCAST shows the whole broadcast at once. */
+  addSkipButton() {
+    if (this.skipButton) return;
+    this.skipButton = addButton(this, 1030, 640, 'SKIP BROADCAST', () => this.skipBroadcast(), {
+      w: 250, h: 52, fontSize: '20px', depth: 30, swallowTap: true,
+    });
+  }
+
+  skipBroadcast() {
+    if (this.skipAll || this.left) return;
+    this.skipAll = true;
+    globalThis.__PREPPER_RADIOSKIP = (globalThis.__PREPPER_RADIOSKIP || 0) + 1;
+    this.typer.typer?.cancel();
+    this.typer.skipWait = null;
+    Audio.stopJingle();
+    Audio.stopSponsor();
+    this.skipButton?.destroy();
+    this.skipButton = null;
+    this.skipResolve?.();
+  }
+
+  /** Waits for p, or for SKIP BROADCAST, whichever comes first. */
+  orSkip(p) {
+    return Promise.race([Promise.resolve(p), this.skipPromise]);
+  }
+
   showButton() {
     const status = this.sys?.settings?.status;
     if (this.left || this.actionButton) return;
     if (status === undefined || status > Phaser.Scenes.RUNNING) return;
     this.hint.setText('');
+    this.skipButton?.destroy();
+    this.skipButton = null;
     Audio.stopStatic(); // broadcast over: the hiss ends with it
     const state = Game.state;
     let label = 'START THE DAY';

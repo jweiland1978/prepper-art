@@ -2,8 +2,9 @@
  * Stage 3 secret: which apocalypse this run is, and the rumor plan that hints at it.
  * Read state.apocalypse only through apocalypseOf(). Day 30, survival, and score should too.
  */
-import { CONFIG, phaseForDay } from './config.js?v=5';
-import { LARRY_STAMP, RUMORS, rumorById } from './data/radio.js?v=5';
+import { CONFIG, phaseForDay } from './config.js?v=6';
+import { LARRY_STAMP, RUMORS, rumorById } from './data/radio.js?v=6';
+import { markHeard, unheardFirst } from './radiobag.js?v=6';
 
 const TRUTH_MARGIN = 3;
 
@@ -176,8 +177,8 @@ function assignIds(days, rng) {
   apocalypseIds().forEach((kind) => {
     const all = RUMORS.filter((rumor) => rumor.kind === kind);
     const sig = all.find((rumor) => rumor.signature) || null;
-    const rest = all.filter((rumor) => rumor !== sig);
-    shuffle(rest, rng);
+    // Oct 25 radio pacing: rumors never heard on earlier runs go first (shuffled), then the rest.
+    const rest = unheardFirst('rumor', shuffle(all.filter((rumor) => rumor !== sig), rng), (rumor) => rumor.id);
     pools[kind] = { sig, rest, cursor: 0 };
   });
   days.forEach((row) => {
@@ -282,6 +283,7 @@ export function recordMorningRumor(state) {
     stamp: '',
   };
   state.rumors.push(entry);
+  markHeard('rumor', rumor.id, state);
   return entry;
 }
 

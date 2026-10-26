@@ -1,20 +1,20 @@
-import Phaser from '../phaser.js?v=5';
-import { CONFIG } from '../config.js?v=5';
-import { Game } from '../state.js?v=5';
-import { Save } from '../save.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addButton, addText } from '../ui.js?v=5';
-import { attachAtmosphere, coverEnd, drawScoreCard, fadeIn, paintApocSky } from '../fx.js?v=5';
-import { goTo, hideHud } from '../flow.js?v=5';
-import { buildScore, downLine, EARLY_END_LINE } from '../logic.js?v=5';
-import { apocalypseOf } from '../rumors.js?v=5';
-import { lossHintFor, winLinesFor } from '../data/survival.js?v=5';
-import { makeTyper } from './type.js?v=5';
-import { achById, onRunEnd } from '../achievements.js?v=5';
-import { readMeta } from '../meta.js?v=5';
-import { hasPendingCards, showPendingCards } from './achcard.js?v=5';
-import { isTowerEnding } from '../tower.js?v=5';
-import { ENDINGS } from '../data/tower.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { CONFIG } from '../config.js?v=6';
+import { Game } from '../state.js?v=6';
+import { Save } from '../save.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addButton, addText } from '../ui.js?v=6';
+import { attachAtmosphere, coverEnd, drawScoreCard, fadeIn, paintApocSky } from '../fx.js?v=6';
+import { goTo, hideHud } from '../flow.js?v=6';
+import { buildScore, downLine, EARLY_END_LINE } from '../logic.js?v=6';
+import { apocalypseOf } from '../rumors.js?v=6';
+import { lossHintFor, winLinesFor } from '../data/survival.js?v=6';
+import { makeTyper } from './type.js?v=6';
+import { achById, onRunEnd } from '../achievements.js?v=6';
+import { readMeta } from '../meta.js?v=6';
+import { hasPendingCards, showPendingCards } from './achcard.js?v=6';
+import { isTowerEnding } from '../tower.js?v=6';
+import { ENDINGS } from '../data/tower.js?v=6';
 
 export class EndingScene extends Phaser.Scene {
   constructor() {

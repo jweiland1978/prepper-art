@@ -1,15 +1,15 @@
-import Phaser from '../phaser.js?v=5';
-import { CONFIG, countdownPhrase } from '../config.js?v=5';
-import { moraleWord } from '../crew.js?v=5';
-import { apocalypseName, canGuess, notebookEntries, setGuess } from '../rumors.js?v=5';
-import { Game, bus, formatStat } from '../state.js?v=5';
-import { Save } from '../save.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addPanel, addText, tweenNumber } from '../ui.js?v=5';
-import { openStash } from './trade.js?v=5';
-import { itemBlurb } from '../trade.js?v=5';
-import { devGrant, devSkip, mountDevTools } from '../dev.js?v=5';
-import { guideUnlocked } from '../guide.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { CONFIG, countdownPhrase } from '../config.js?v=6';
+import { moraleWord } from '../crew.js?v=6';
+import { apocalypseName, canGuess, notebookEntries, setGuess } from '../rumors.js?v=6';
+import { Game, bus, formatStat } from '../state.js?v=6';
+import { Save } from '../save.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addPanel, addText, tweenNumber } from '../ui.js?v=6';
+import { openStash } from './trade.js?v=6';
+import { itemBlurb } from '../trade.js?v=6';
+import { devGrant, devSkip, mountDevTools } from '../dev.js?v=6';
+import { guideUnlocked } from '../guide.js?v=6';
 
 const STATS = [
   { key: 'food', x: 548, icon: 'can' },

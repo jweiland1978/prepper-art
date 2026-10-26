@@ -2,17 +2,18 @@
  * Neighbors, morale wording, cots, phase spots, and the hooks Parts 2 and 3 call.
  * Does not import scenes or logic. Logic may import this.
  */
-import { onNoticeFiled, onRecruit } from './achievements.js?v=5';
-import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=5';
-import { MARKERS, markerById, phaseProfile } from './data/map.js?v=5';
-import { neighborById, NEIGHBORS } from './data/neighbors.js?v=5';
-import { LARRY_STAMP_LINES } from './data/radio.js?v=5';
-import { apocalypseOf, maybeStampEntry } from './rumors.js?v=5';
-import { NOTICE_FORMS } from './data/traders.js?v=5';
-import { changeStat, roomLevel, touchState } from './state.js?v=5';
-import { garyTip, PROTECTED_IDS, towerPinState } from './tower.js?v=5';
-import { TOWER_PIN } from './data/tower.js?v=5';
-import { hasUnlock } from './unlocks.js?v=5';
+import { onNoticeFiled, onRecruit } from './achievements.js?v=6';
+import { CONFIG, phaseForDay, phaseInfo } from './config.js?v=6';
+import { MARKERS, markerById, phaseProfile } from './data/map.js?v=6';
+import { neighborById, NEIGHBORS } from './data/neighbors.js?v=6';
+import { LARRY_STAMP_LINES } from './data/radio.js?v=6';
+import { drawLine } from './radiobag.js?v=6';
+import { apocalypseOf, maybeStampEntry } from './rumors.js?v=6';
+import { NOTICE_FORMS } from './data/traders.js?v=6';
+import { changeStat, roomLevel, touchState } from './state.js?v=6';
+import { garyTip, PROTECTED_IDS, towerPinState } from './tower.js?v=6';
+import { TOWER_PIN } from './data/tower.js?v=6';
+import { hasUnlock } from './unlocks.js?v=6';
 
 export const STASH_KEYS = ['tinfoil', 'battery', 'coffee', 'snacks', 'rockets', 'coat', 'gas', 'cigarettes', 'ammo', 'tp', 'beer'];
 
@@ -524,7 +525,7 @@ export function stampMorning(state) {
   if (!isHere(state, 'larry')) return '';
   const entry = (state.rumors || []).find((row) => row?.morning && row.day === state.day);
   if (!maybeStampEntry(state, entry)) return '';
-  const line = LARRY_STAMP_LINES[Math.floor(Math.random() * LARRY_STAMP_LINES.length)];
+  const line = drawLine('stamp', LARRY_STAMP_LINES, state);
   return line || 'Larry stamps the page. LARRY SAYS: FAKE.';
 }
 

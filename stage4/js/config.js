@@ -7,6 +7,8 @@ export const CONFIG = {
   SAVE_KEY: 'prepper_s4_save',
   SETTINGS_KEY: 'prepper_s4_settings',
   META_KEY: 'prepper_s4_meta',
+  // Radio no-repeat bags (radiobag.js). Cleared by RESET PROGRESS.
+  RADIO_KEY: 'prepper_s4_radio',
   // Stage 3 keys are read once when the stage 4 key is missing. Never written. Never deleted.
   LEGACY_SAVE_KEY: 'prepper_s3_save',
   LEGACY_SETTINGS_KEY: 'prepper_s3_settings',
@@ -110,6 +112,12 @@ export const CONFIG = {
 
   // Larry only rolls this on a real lie. A true clue is never stamped.
   LARRY_STAMP_CHANCE: 0.5,
+
+  // Oct 25 radio pacing: one flavor line a morning (or none on a quiet morning), weighted by pool.
+  RADIO_QUIET_CHANCE: 0.25,
+  RADIO_FLAVOR_WEIGHTS: { joke: 35, sponsor: 15, town: 15, market: 15, neighbor: 10, coat: 7, pancake: 7, beer: 5 },
+  // A Radio Tower clue plays on at most this many clue days per run.
+  RADIO_CLUES_PER_RUN: 2,
 
   // Notebook guess, added in buildScore. The ending card can show it after Day 30.
   SCORE_GUESS_BONUS: 24,

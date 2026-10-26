@@ -9,6 +9,11 @@ export const GREETINGS = {
     "This is The Last Shift on 88.3. One listener, by the sound of it. Hi. {daysPhrase} left.",
     "Morning. The water tower still says Class of '96. It has outlasted my last three plans. {daysPhrase} left.",
     "I slept in a chair again. The chair is the reliable one in this relationship. Day {day}.",
+    "Good morning, Lake Orwell. {daysPhrase} left. The coffee is weak and so is my resolve. We match.",
+    "Day {day}. I organized the basement by fear level. The canned peaches are at the top. Don't ask.",
+    "This is The Last Shift on 88.3. If you're the one listener, blink twice. I'll assume you did.",
+    "Morning. Pine Lake is flat as a plate. Nature is acting normal, which is somehow the suspicious part. {daysPhrase} left.",
+    "Rise and shine, or just rise. Shining is optional this late in the calendar. Day {day}.",
   ],
   panic: [
     "Good morning. {daysPhrase} left. The town is shopping like the receipt is a will.",
@@ -18,6 +23,11 @@ export const GREETINGS = {
     "Lake Orwell, day {day}. I still don't know the cause. I know the date. The date is the rude part.",
     "Coffee's up. Patience is down. I am broadcasting both, badly. {daysPhrase} left.",
     "If you can hear the jingle in your head, that is not the signal. That is 1987, still billing me.",
+    "Day {day}. The supercenter has a line to get into the line. I stood in it to feel something.",
+    "Good morning, if that's the word. {daysPhrase} left. The dog is calm. I am taking notes from the dog.",
+    "Lake Orwell, I have news and I have feelings. Today they are the same thing. {daysPhrase} left.",
+    "Morning. Somebody honked on Main for ten straight minutes. I think it was a statement. I agreed with it.",
+    "This is 88.3, coming to you from under a house, on a chair, against medical advice. Day {day}.",
   ],
   collapse: [
     "Lake Orwell, if you're still there. {daysPhrase}. I'm under the house. The house is thinking about it.",
@@ -26,10 +36,17 @@ export const GREETINGS = {
     "I'm talking to one person and a dog. The dog is the professional. {daysPhrase}.",
     "The roads are picking favorites. I am not on the list. Day {day}.",
     "Static, then me, then static. We are co-hosting. {daysPhrase}.",
+    "Still here. {daysPhrase}. The chair creaks when I lie to it. It creaked all night.",
+    "Day {day}. The basement light flickers in morse. I don't know morse. It's probably rude.",
+    "Morning, Lake Orwell. Whoever is left. I counted you on one hand. I used the hand anyway.",
+    "Static's thick today. Talk loud, think quiet. {daysPhrase}.",
+    "This is The Last Shift. Short shift. Long night. {daysPhrase}, give or take the sky.",
   ],
   end: [
     "Day 30. Today. Probably. I'm still here. That's either loyalty or a scheduling error.",
     "This is the last Last Shift on 88.3. I still don't know how. I know when. That's the whole bit.",
+    "Day 30. I put on the good shirt. Nobody can see it. I can. That counts.",
+    "Last morning on the calendar. I'm going to say good morning anyway. It's a habit. Good morning.",
   ],
 };
 
@@ -42,6 +59,11 @@ export const LARRY_STAMP_LINES = [
   'Larry heard it and was done. LARRY SAYS: FAKE. He does not offer a second opinion.',
   'Larry writes it in block letters. LARRY SAYS: FAKE. The letters are disappointed in the rumor.',
   'Larry nods like the rumor owed him money. LARRY SAYS: FAKE. He keeps the pen.',
+  'Larry reads the rumor twice and caps his pen. LARRY SAYS: FAKE. He seems almost disappointed it was easy.',
+  'Larry underlines the rumor and writes beside it. LARRY SAYS: FAKE. Then he underlines that too.',
+  'Larry sighs at the rumor like it tracked mud in. LARRY SAYS: FAKE. He goes back to his crossword.',
+  'Larry stamps it hard enough to dent the table. LARRY SAYS: FAKE. The table has been through worse.',
+  'Larry does not even look up. LARRY SAYS: FAKE. He has heard better lies from a weather vane.',
 ];
 
 export const RUMORS = [
@@ -61,6 +83,14 @@ export const RUMORS = [
   { id: 'good-shirt', kind: 'zombies', text: "Somebody's uncle is in the yard in his good shirt, standing. Just standing. The shirt is doing its best." },
   { id: 'slow-parade', kind: 'zombies', text: "There is a parade on Main with no banner and no band. They are all walking the same speed. I changed the station. The station came back." },
   { id: 'porch-sway', kind: 'zombies', text: "A man on Pine Road has been waving at his own porch for an hour. The porch has not waved back. He has not noticed. I have." },
+  { id: 'bowling-lane', kind: 'zombies', text: "The bowling alley has one lane going all night. Nobody's keeping score. Something keeps knocking the pins down by hand." },
+  { id: 'lawn-chair', kind: 'zombies', text: "A man on Oak Street has been in his lawn chair since Thursday. He's not resting. He's leaning toward the sidewalk, the way you lean toward a sandwich." },
+  { id: 'deli-counter', kind: 'zombies', text: "The deli counter took a number. The customer took a bite out of the number. The line moved fast after that." },
+  { id: 'choir-low', kind: 'zombies', text: "St. Casimir's choir rehearsed with no hymnal and one note. Low. Long. Nobody up there sings bass. Nobody used to." },
+  { id: 'mud-tracks', kind: 'zombies', text: "Muddy footprints go up to the bait shop window and stop. They don't turn around. They just stand there, in footprint form." },
+  { id: 'paper-route', kind: 'zombies', text: "The paperboy finished his route at 3 a.m., on foot, without papers. He knocked on every door. He's still doing the second lap." },
+  { id: 'cold-hands', kind: 'zombies', text: "Tina says the clinic waiting room is full of folks with cold hands and no complaints. Folks up here always have complaints." },
+  { id: 'hedge-gap', kind: 'zombies', text: "Dale's hedge has a person-shaped gap in it. Dale has written up the gap. The gap kept walking." },
 
   { id: 'ohio-lights', kind: 'solarflare', signature: true, text: "Rumor from the wire: northern lights are visible in Ohio. I checked twice, which is my whole scientific method." },
   { id: 'hoa-letter', kind: 'solarflare', text: "The HOA sent a letter about the end of the world. Three pages. Single-spaced. Dale sounded proud. The streetlights read along and then gave up." },
@@ -78,6 +108,14 @@ export const RUMORS = [
   { id: 'microwave-clock', kind: 'solarflare', text: "The microwave clock is blinking in a color clocks should not know. Mine has blinked 12:00 since a Tuesday. Today it picked a side." },
   { id: 'spark-pole', kind: 'solarflare', text: "The pole by the water tower threw a spark and then acted innocent. I know that move. I invented that move. In 1989." },
   { id: 'radio-needle', kind: 'solarflare', text: "The needle on this dial keeps walking off 88.3 like it has somewhere better to be. It does not. I checked the whole band. It was me, all the way across." },
+  { id: 'hearing-aid', kind: 'solarflare', text: "Mrs. Kowalski's hearing aid picked up a ballgame from 1978. She says the home team is looking good. The sun is doing that." },
+  { id: 'fence-buzz', kind: 'solarflare', text: "The electric fence out on the county road buzzes with the power off. The cows have filed a grievance. I'm co-signing." },
+  { id: 'atm-receipt', kind: 'solarflare', text: "The ATM at the party store printed a receipt in a language made of lightning. My balance is the same in any language. Low." },
+  { id: 'red-dawn', kind: 'solarflare', text: "Sunrise came up the color of a stop sign and stayed there. The sun looks busy today. I'd rather it was lazy." },
+  { id: 'streetlight-flicker', kind: 'solarflare', text: "Every streetlight on Main blinked at the same second. Like they were told something. Nobody told me. I have a radio show." },
+  { id: 'scoreboard', kind: 'solarflare', text: "The high school scoreboard lit up at midnight. Home 88, Visitors 3. Nobody was playing. Something was keeping score." },
+  { id: 'warm-wires', kind: 'solarflare', text: "Gary touched a phone line and said it was warm, like it was nervous. Gary does not use the word nervous. Gary uses the word fine." },
+  { id: 'pacemaker', kind: 'solarflare', text: "The clinic is asking anyone with a pacemaker to stay indoors and stay calm. I don't have one. I'm still doing both, badly." },
 
   { id: 'toaster', kind: 'robots', signature: true, text: "Your toaster has started asking questions. Mine just burns bread. I almost miss that." },
   { id: 'butter-cult', kind: 'robots', text: "There's a coupon club at the supercenter waiting for butter to go on sale. Polite. Unblinking. The self-checkout started a conversation. Nobody had scanned a thing." },
@@ -95,6 +133,14 @@ export const RUMORS = [
   { id: 'dishwasher', kind: 'robots', text: "The dishwasher ran a cycle with nothing in it and seemed pleased. I have had days like that. I did not beep about them." },
   { id: 'box-fan', kind: 'robots', text: "A box fan turned itself to oscillate and then refused to stop tracking the doorway. I unplugged it. It thought about that for a while." },
   { id: 'alarm-clock', kind: 'robots', text: "Alarm clocks went off at 4:12, all over town, including clocks that were not set. Mine was one of them. I was already awake. That's not the point. The point is the clock knew." },
+  { id: 'garage-opener', kind: 'robots', text: "Garage doors are opening for people they like. Mine stayed shut. I'm told that's a review." },
+  { id: 'scale', kind: 'robots', text: "My bathroom scale gave me a number and then a suggestion. I didn't ask for the suggestion. I'm not taking it. It's watching." },
+  { id: 'gps-voice', kind: 'robots', text: "The GPS in Kevin's car said, Recalculating. Then, Why. Then nothing. Kevin walked home. The car followed him to the driveway." },
+  { id: 'cash-register', kind: 'robots', text: "Self-checkout at the supercenter is asking about your weekend. Then it's asking about your neighbors. It wants names." },
+  { id: 'christmas-lights', kind: 'robots', text: "Somebody's Christmas lights came on in October and started blinking in sync with the stoplight. Two machines, flirting. I've seen worse." },
+  { id: 'calculator', kind: 'robots', text: "Larry's calculator gave him the right answer before he finished typing. Larry's furious. He likes being right first." },
+  { id: 'baby-monitor', kind: 'robots', text: "A baby monitor on Pine Road is narrating. Calmly. The baby's asleep. The monitor isn't talking about the baby." },
+  { id: 'lawnmowers-line', kind: 'robots', text: "Three riding mowers are parked in a row at the end of Oak Street, facing town. No riders. Engines warm. Waiting for a word." },
 
   { id: 'astronomers', kind: 'meteor', signature: true, text: "Astronomers have stopped answering their phones. I tried twice. The second time was just me and a lot of ring." },
   { id: 'tax-audit', kind: 'meteor', text: "Alternate theory: this is a tax audit with lake-effect weather and a rock. The forms would explain the rattling. The sky can have the rest." },
@@ -112,6 +158,14 @@ export const RUMORS = [
   { id: 'gravel-roof', kind: 'meteor', text: "Gravel on the bait shop roof that was not there at close. Gary swept it into a pile and is not discussing the pile. The pile is small. Gary is not." },
   { id: 'chimney', kind: 'meteor', text: "A chimney on Pine Road is a little more diagonal than a chimney should be. The house is fine. The chimney is making a point. I heard the point." },
   { id: 'quiet-sky', kind: 'meteor', text: "The sky has been too quiet, the way a room goes quiet when it is about to say the thing. I muted myself. The sky did not return the favor." },
+  { id: 'telescope-sale', kind: 'meteor', text: "The fellow selling the telescope in the classifieds pulled the ad and moved to his cellar. He didn't say why. He took the telescope." },
+  { id: 'hot-rock', kind: 'meteor', text: "Kevin found a rock in his yard that's warm to the touch and smells like a burnt match. He's naming it. Please stop him." },
+  { id: 'crater-field', kind: 'meteor', text: "A dent in the soybean field out past the county road. Perfect circle. Farmer says it wasn't there at supper. It's there now, smoking politely." },
+  { id: 'news-anchor', kind: 'meteor', text: "The TV weather guy pointed at the sky map and then just kept pointing. Up. For a long time. They went to commercial." },
+  { id: 'tremor', kind: 'meteor', text: "The pickle jars at the party store all slid an inch west. Together. The pickles know something. They aren't saying." },
+  { id: 'sky-lines', kind: 'meteor', text: "Three thin lines across the sky at dusk, like scratches on a record. The record is the sky. I don't like the next song." },
+  { id: 'observatory', kind: 'meteor', text: "The college observatory put up a sign: CLOSED. NOT FOR THE REASON YOU THINK. Nobody asked them. That makes it worse." },
+  { id: 'hard-hats', kind: 'meteor', text: "Lake Orwell Hardware sold out of hard hats. People are wearing them to church. The pastor is wearing two." },
 
   { id: 'moon-close', kind: 'bigmoon', signature: true, text: "The moon looks closer tonight. I checked with a thumb. The thumb is not a scientist. The tide on Pine Lake is up the dock, which is also not normal." },
   { id: 'lake-cult', kind: 'bigmoon', text: "Theory of the day: Pine Lake is in a mood and the geese are middle management. The tide is up the dock. I refuse to elaborate." },
@@ -128,15 +182,20 @@ export const RUMORS = [
   { id: 'moon-puddle', kind: 'bigmoon', text: "The county road was wet and the sky was not. The puddles had a moon in them that was too big for the puddle. I did not step in it. Growth." },
   { id: 'boat-high', kind: 'bigmoon', text: "Gary's boat is riding higher on the trailer than it did yesterday, and the trailer has not moved. Gary blames the hitch. The hitch blames the moon. I am staying out of it." },
   { id: 'long-shadow', kind: 'bigmoon', text: "Shadows at night are too long for the porch light. I measured one with a shoe. The shoe was not long enough. The moon seemed to know that." },
+  { id: 'moon-noon', kind: 'bigmoon', text: "You can see the moon at noon now, plain as a dinner plate. It used to have the decency to show up after supper." },
+  { id: 'well-rising', kind: 'bigmoon', text: "The old well behind the church is filling itself. Gary says groundwater. The water looks up at the moon like it's waiting to be called." },
+  { id: 'werewolf-jokes', kind: 'bigmoon', text: "Kevin made a werewolf joke on his livestream. All three viewers left. Nobody's laughing about the moon anymore. It's too big to be a bit." },
+  { id: 'bobbers', kind: 'bigmoon', text: "Fishing bobbers on Pine Lake float sideways now, all pointed the same way. Up and to the east. Toward the big round problem." },
+  { id: 'jumping', kind: 'bigmoon', text: "Kids on Pine Road are jumping a little higher. Just a little. Enough to notice. Their mothers noticed. The moon noticed them noticing." },
+  { id: 'cereal-tide', kind: 'bigmoon', text: "My cereal has a tide. I watched the milk climb the side of the bowl and come back. I ate it anyway. I'm not a coward, I'm a host." },
+  { id: 'moonburn', kind: 'bigmoon', text: "Dale claims he got a moonburn. That's not a thing. He showed me his neck. I'm adding it to the list of things." },
+  { id: 'dock-float', kind: 'bigmoon', text: "The swimming dock pulled its anchor overnight and drifted to the middle of Pine Lake. Gary rowed out to get it. The lake didn't want to give it back." },
   { id: 'calendar-tide', kind: 'bigmoon', text: "The lake came up over the bait-shop step and then went back, like it had checked the calendar and was embarrassed. I have had that calendar. It was not this bright." },
 ];
 
 export const JOKES = [
-  { id: 'kale', text: "Grocery update: the bread aisle is gone. The kale is still there. Even the end of the world has standards.", calmOnly: true },
   { id: 'mixtape', text: "I made a mixtape for the apocalypse. It's forty minutes of me missing the record button." },
   { id: 'lawndarts', text: "My generation survived lawn darts, no seatbelts, and drinking from the garden hose. And look how great we turned out. I'm broadcasting from a basement and talking to a dog." },
-  { id: 'plan', text: "I don't have a plan. I have a plan to make a plan. That's very on-brand for me." },
-  { id: 'hoard', text: "Reminder: it's not hoarding if you're nervous about it. That's just shopping with feelings.", calmOnly: true },
   { id: 'meditate', text: "I tried to meditate. I made a list of worries in a calmer voice. The list filed a complaint." },
   { id: 'kettle', text: "The kettle is on. The kettle has been on since a Tuesday I won't name. We don't talk about it." },
   { id: 'flashlights', text: "I own seven flashlights. None of them have agreed to work on the same night. Union job.", calmOnly: true },
@@ -150,12 +209,21 @@ export const JOKES = [
   { id: 'sigh', text: "The dog sighed at me. I accepted the note. He has a bandana and a work ethic." },
   { id: 'pencil', text: "I rewound a cassette with a pencil. The pencil got promoted. I remain hourly." },
   { id: 'pothole-joke', text: "I used to complain about potholes. Now I complain near them. Growth, of a kind." },
-  { id: 'coat-sad', text: "Someone asked if I'm cold down here. I have the Mackinaw. I'm never cold. I'm just sad, in wool." },
-  { id: 'coat-deer', text: "I'd like to say a few words about my coat. Red and black wool, older than my car. It's survived three deer seasons, two divorces and a bonfire. It'll survive this. I'm less sure about me." },
-  { id: 'eyebrow', text: "When I was a kid we launched bottle rockets out of a pop bottle and called it a science fair. Nobody won. We all lost the same eyebrow." },
   { id: 'rent-free', text: "Some songs leave. The lumber jingle signed a lease. I am the landlord with no say. Very on-brand." },
-  { id: 'maple', text: "Can't see the fire hall from here, but I swear I can smell the pancakes. Either that's real maple syrup or I'm having a stroke. I'll take either." },
-  { id: 'viewers', text: "Kevin's livestream has three viewers. That's three more than this show. I'm not jealous. I'm just doing the math in the dark." },
+  { id: 'crossword', text: "I did the crossword in pen. Then I ran out of crossword. Now I'm doing the obituaries in pen. Just correcting the spelling." },
+  { id: 'jar-lid', text: "I couldn't open a jar of pickles. Biscuit watched. He didn't offer. He's management." },
+  { id: 'smoke-alarm', text: "My smoke alarm chirps every forty seconds. I've given it a name. It's Gerald. Gerald needs a battery. I need Gerald.", calmOnly: true },
+  { id: 'casserole-ranking', text: "I've ranked every casserole I've ever eaten. Number one is still the one I dropped. Some things you never get over." },
+  { id: 'map-folding', text: "I refolded a road map. It took an hour. It's in the shape of a map now, technically. Very abstract. Very me." },
+  { id: 'lids', text: "I matched every leftovers-container lid to its bottom. It's the only thing I've finished this year. I'd like a parade. Small one." },
+  { id: 'sock', text: "I found the other sock. Not the one I was looking for. A different other sock. The mystery deepens." },
+  { id: 'exercise', text: "I did one push-up. I'm counting it as a set. The dog counted it as a nap invitation." },
+  { id: 'mail', text: "The mail still comes. Mostly catalogs. Patio furniture. Optimistic people, catalog people." },
+  { id: 'remote', text: "I lost the TV remote. I don't have a working TV. I'm still looking for it. It's a principle thing." },
+  { id: 'recipe', text: "I tried a new recipe. Canned beans, but warm. The critics are divided. The critic is the dog." },
+  { id: 'nap', text: "I took a nap and dreamed I was taking a nap. I woke up tired from the commute." },
+  { id: 'voicemail', text: "My voicemail is full. All of it is Mrs. Kowalski, asking about the dish. I never had the dish. Nobody believes me." },
+  { id: 'reading', text: "I'm reading a book about staying calm in a crisis. Chapter one is just a picture of a lake. I've been on chapter one for a week." },
 ];
 
 export const SIGNOFFS = [
@@ -169,6 +237,16 @@ export const SIGNOFFS = [
   "I'm going to stop talking before the station does it for me. Sleep if you can.",
   "This has been The Last Shift on 88.3. Wear a coat. Wear a good coat. You know the one.",
   "That's the show. Count your cans, hug your dog, and don't light anything near Dale's hedge.",
+  "That's the shift. Lock the hatch, check the cans, pet the dog. In that order or any order. {daysPhrase}.",
+  "88.3 is going quiet now. If you hear humming later, that's the furnace. Don't sing along. It encourages it.",
+  "Signing off. The coffee's cold, the chair's warm and the countdown is rude. Good night, Lake Orwell.",
+  "This has been The Last Shift. Thanks for listening. Thanks for being down there. It helps more than it should.",
+  "Good night. If you can't sleep, count cans. If you run out of cans, that's a different show.",
+  "That's all I've got. Tomorrow I'll have more, or the same, but louder. {daysPhrase} left.",
+  "End of shift. Biscuit has the night watch. He's never once fallen asleep on it. That's a lie. He's still the best we've got.",
+  "This has been 88.3. Keep a light on. Keep a plank handy. Keep your sense of humor somewhere dry.",
+  "I'm hanging up the headphones. They don't hang well. Nothing down here hangs well. Good night.",
+  "That's the show. If the static asks for me, tell it I'm in a meeting. With a chair.",
 ];
 
 /** Lines that play the cheesy lumber jingle first. {SPONSOR} comes from CONFIG. */
@@ -177,12 +255,21 @@ export const SPONSOR_LINES = [
   "♪ {SPONSOR}... for all your lumber needs ♪ That's the whole jingle. It has lived in my head rent-free for thirty years. That's more than I can say for me.",
   "Building a bunker? You'll need lumber. And you know who has lumber? ♪ {SPONSOR}... ♪ Sorry. They've been closed for a week. My brain didn't get the memo.",
   "When the end comes, I won't see my life flash before my eyes. I'll hear the {SPONSOR} jingle. Both feel about right.",
+  "This next stretch of nothing is brought to you by {SPONSOR}. Lumber: still wood. Still the best idea anybody had.",
+  "♪ {SPONSOR}... ♪ I hummed that in the shower this morning. I don't have a shower. I hummed it at a bucket.",
+  "{SPONSOR} reminds you: measure twice, cut once, panic never. They didn't say that. I'm putting words in a closed store's mouth.",
+  "If {SPONSOR} were open, I'd buy a two-by-four just to hold it. Something solid. That's the whole ad.",
+  "A word from {SPONSOR}. The word is lumber. It's been the word since 1987. They're not big on new words.",
+  "♪ {SPONSOR}... ♪ My doctor told me to get it out of my head. My doctor moved. The jingle stayed.",
 ];
 
 export const PANCAKE_LINES = [
   "The Fireman's Pancake Breakfast is still on for Saturday. The world is ending. The pancakes are not. Some things are bigger than the apocalypse.",
   "Update on the Fireman's Pancake Breakfast: it's moved indoors. And underground. And it's down to one fireman. He's still flipping. Respect.",
   "Can't see the fire hall from here, but I swear I can smell the pancakes. Either that's real maple syrup or I'm having a stroke. I'll take either.",
+  "The Fireman's Pancake Breakfast is down to pancakes and one flapjack theory. The theory is syrup fixes things. The theory's holding.",
+  "Pancake update: the batter's real, the syrup's maple, the fire is under control. First time all week I can say that.",
+  "They're flipping pancakes at the fire hall by lantern light. It looks like a painting. A painting that smells like butter.",
 ];
 
 export const COAT_BRAGS = [
@@ -190,6 +277,15 @@ export const COAT_BRAGS = [
   "Someone asked if I'm cold down here. I have the Mackinaw. I'm never cold. I'm just sad, in wool.",
   "Lake-effect snow off Pine Lake tonight. If you have a wool cruiser jacket, wear it. If you don't, I'm sorry. I'm not lending you mine.",
   "Word is somebody in town found a Mackinaw. Welcome to the club. We don't have meetings. We just stand in the cold and feel smug.",
+];
+
+/** The Mackinaw-found line (COAT_BRAGS[3]) stays fixed. These are the random coat brags. */
+export const COAT_FOUND_LINE = COAT_BRAGS[3];
+export const COAT_BRAGS_RANDOM = [
+  ...COAT_BRAGS.slice(0, 3),
+  "Coat report: the Mackinaw is buttoned to the top. That's not a fashion choice. It's a weather opinion.",
+  "Somebody said plaid is a pattern. The Mackinaw is not a pattern. It's a lifestyle. One I can't afford to change.",
+  "My coat has a pocket I've never found the bottom of. I keep a mint in there from 2003. It's for emergencies. This might be one.",
 ];
 
 export const ROCKET_NEWS = [
@@ -200,6 +296,10 @@ export const ROCKET_NEWS = [
 
 export const BEER_LINES = [
   "Pine Lake Light. Silver can. Tastes like a cold lake. That's not an ad. They don't pay me. Nobody pays me.",
+  "Pine Lake Light. If you shake it, it gets angry. Same as me. Same as most of town.",
+  "Somebody left a Pine Lake Light on my step. Warm. Dented. Perfect. I didn't ask who. Some gifts you don't question.",
+  "Pine Lake Light is best enjoyed cold, on a dock, in July. It's October, there's no dock, and it's warm. Still good. That's the brand.",
+  "Pine Lake Light: ninety-five calories, zero opinions. The only thing in town that doesn't have an opinion about the end of the world.",
 ];
 
 export const MARKET_LINES = [
@@ -207,6 +307,14 @@ export const MARKET_LINES = [
   "Rusty's is a swap meet now. The jukebox takes batteries. Of course it does.",
   "At the swap meet tonight, a man traded his truck for a can of coffee. I've made worse deals. I've made worse deals this week.",
   "Gary says he trades fair. Gary's idea of fair is that you leave knowing exactly what you did wrong.",
+  "Market report: batteries are the new currency. A double-A gets you a sandwich. A nine-volt gets you a sandwich and a hug.",
+  "Prices at the swap meet: one can of soup, two planks. One can of good soup, nobody's selling.",
+  "Coffee futures are up. Coffee present is down. Coffee past is on my shirt.",
+  "Gas is worth more than gold. Gold is worth about what a shiny rock is worth. Gary has been saying that for years. Gary's insufferable now.",
+  "Toilet paper is stable. Toilet paper has found its level. Good for toilet paper. It's doing better than me.",
+  "Someone at Rusty's traded a canoe for three jars of peanut butter. The canoe guy is smiling. So is the peanut butter guy. Nobody's smiling about the lake.",
+  "Market tip: a bag of salt goes a long way. A long way to where, I don't know. Salt doesn't tell you.",
+  "Day {day} market report: everything is up except morale and the ceiling. The ceiling is lower. I'm checking it with my head.",
 ];
 
 export const TOWN_LINES = [
@@ -216,6 +324,12 @@ export const TOWN_LINES = [
   "St. Casimir's rummage sale is open. Everything's a quarter. The end of the world, and the church ladies still won't haggle.",
   "Somebody painted 'Class of '96' on the water tower thirty years ago, and nobody ever painted over it. That's the longest anything in this town has stayed finished. Including me.",
   "Dale's hedge caught fire last night. Dale has issued a violation to the fire. The fire has not responded.",
+  "The Bait & Brew put out a sign: OPEN WHEN WE FEEL LIKE IT. That's the most honest business plan in Lake Orwell.",
+  "The library's overdue fines are suspended until further notice. The librarian is still writing them down. For later. For the record.",
+  "The Dairy Shack's soft-serve machine is running on nobody's power. It's making something. Don't eat it.",
+  "The town council met in the park. Four people and a goose. The goose had the floor. The goose was right.",
+  "Lake Orwell Hardware is out of padlocks, chain and duct tape. They still have birdseed. Even the end of the world needs birds.",
+  "Somebody's been ringing the fire hall bell at noon every day. Nobody knows who. Everybody checks their watch. It's nice. Day {day}.",
 ];
 
 export const NEIGHBOR_LINES = [
@@ -223,6 +337,12 @@ export const NEIGHBOR_LINES = [
   "Mrs. Kowalski asked me to announce that the casserole dish she lent somebody in 2014 is still out there. She'd like it back before the world ends. She's been very patient.",
   "Larry checked in on a frequency that is mostly him. I told him the show is fine. He told me the show is a tell. We left it there.",
   "Tina worked a double and still answered the radio. I have not worked a double since a Tuesday I will not name.",
+  "Dale filed a noise complaint against the countdown. The countdown did not respond. Dale took that as an admission.",
+  "Kevin is asking his viewers to like and subscribe before the end. Two of them did. He cried a little. Good for Kevin.",
+  "Mrs. Kowalski says she's not worried about the end of the world. She's worried about the state of everyone's casserole dishes. Return them.",
+  "Larry says the radio's being too honest lately. Says it makes him suspicious. Larry, it's a morning show. Sit down.",
+  "Tina checked my blood pressure over the radio. She can't do that. She said it's high. She's probably right. She usually is.",
+  "Gary stopped by the hatch to say the wind's out of the west. That was the whole visit. Gary is a weather report with boots.",
 ];
 
 export const MEMORIAL_SIGNOFFS = [
@@ -245,7 +365,7 @@ export function radioInventory() {
     signoffs: SIGNOFFS.length,
     sponsor: SPONSOR_LINES.length,
     pancake: PANCAKE_LINES.length,
-    coats: COAT_BRAGS.length,
+    coats: COAT_BRAGS_RANDOM.length,
     rockets: ROCKET_NEWS.length,
     beer: BEER_LINES.length,
     market: MARKET_LINES.length,

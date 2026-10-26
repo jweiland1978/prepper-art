@@ -5,12 +5,12 @@
  * (after CONFIG.ACH_UNLOCK_AFTER finished runs) an earn is recorded silently: no toast,
  * no ending line. The UNLOCKED card then shows what was already earned.
  */
-import { CONFIG } from './config.js?v=5';
-import { Game, bus } from './state.js?v=5';
-import { readMeta, writeMeta } from './meta.js?v=5';
-import { grantStepFor } from './unlocks.js?v=5';
-import { markNeighbor, markRoom } from './guide.js?v=5';
-import { unlocksForFinished } from './data/unlocks.js?v=5';
+import { CONFIG } from './config.js?v=6';
+import { Game, bus } from './state.js?v=6';
+import { readMeta, writeMeta } from './meta.js?v=6';
+import { grantStepFor } from './unlocks.js?v=6';
+import { markNeighbor, markRoom } from './guide.js?v=6';
+import { unlocksForFinished } from './data/unlocks.js?v=6';
 
 export const ACHIEVEMENTS = [
   { id: 'creamed-corn', name: 'Survived on creamed corn alone', desc: 'No garden. No hope. Just corn.' },

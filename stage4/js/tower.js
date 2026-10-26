@@ -4,13 +4,13 @@
  * Tower endings are their own tier: they live in meta.tower, never in achievements.
  * No scene imports here. Logic, crew, map and the tower scene call in.
  */
-import { CONFIG } from './config.js?v=5';
-import { readMeta, writeMeta } from './meta.js?v=5';
-import { hasUnlock } from './unlocks.js?v=5';
-import { markClue } from './guide.js?v=5';
+import { CONFIG } from './config.js?v=6';
+import { readMeta, writeMeta } from './meta.js?v=6';
+import { hasUnlock } from './unlocks.js?v=6';
+import { markClue } from './guide.js?v=6';
 import {
   CLUE_DAYS, CLUE_LINES, GARY_TIPS, HAM_LINES, OWN_SIGNOFF, STRANGER_GREETINGS, STRANGER_SIGNOFF,
-} from './data/tower.js?v=5';
+} from './data/tower.js?v=6';
 
 export const TOWER_OPEN_DAY = 20;
 export const PROTECTED_IDS = ['tina', 'biscuit', 'gary'];
@@ -36,6 +36,9 @@ export function clueForMorning(state) {
   if (!stage || (!CLUE_DAYS.includes(state.day) && !forced)) return '';
   const line = CLUE_LINES[stage] || '';
   state.flags.clueHeard = Array.isArray(state.flags.clueHeard) ? state.flags.clueHeard : [];
+  // Oct 25 radio pacing: at most RADIO_CLUES_PER_RUN clue mornings a run (dev NEXT CLUE still forces one).
+  const cap = Number(CONFIG.RADIO_CLUES_PER_RUN) || 2;
+  if (!forced && !state.flags.clueHeard.includes(state.day) && state.flags.clueHeard.length >= cap) return '';
   if (!state.flags.clueHeard.includes(state.day)) state.flags.clueHeard.push(state.day);
   state.flags.clueStage = stage;
   markClue(stage); // Part C: the Field Guide's Radio page fills in

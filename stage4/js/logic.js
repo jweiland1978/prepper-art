@@ -1,14 +1,15 @@
-import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=5';
-import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=5';
-import { neighborlyMorning } from './crew.js?v=5';
-import { clueForMorning, hamTagMorning, ownSignoffLine, strangerGreeting, strangerSignoff } from './tower.js?v=5';
-import { EVENTS, eventById } from './data/events.js?v=5';
-import { markerById, phaseProfile } from './data/map.js?v=5';
-import { NIGHT_EVENTS } from './data/night.js?v=5';
-import { phaseCopy } from './data/phases.js?v=5';
+import { CONFIG, countdownPhrase, daysLeft, phaseForDay, phaseInfo } from './config.js?v=6';
+import { onHatchRoll, onNightStart, onSurvivalFoodCheck } from './achievements.js?v=6';
+import { neighborlyMorning } from './crew.js?v=6';
+import { clueForMorning, hamTagMorning, ownSignoffLine, strangerGreeting, strangerSignoff } from './tower.js?v=6';
+import { EVENTS, eventById } from './data/events.js?v=6';
+import { markerById, phaseProfile } from './data/map.js?v=6';
+import { NIGHT_EVENTS } from './data/night.js?v=6';
+import { phaseCopy } from './data/phases.js?v=6';
 import {
   BEER_LINES,
-  COAT_BRAGS,
+  COAT_BRAGS_RANDOM,
+  COAT_FOUND_LINE,
   GREETINGS,
   JOKES,
   MARKET_LINES,
@@ -20,13 +21,13 @@ import {
   SPONSOR_LINES,
   TOWN_LINES,
   rumorById,
-} from './data/radio.js?v=5';
+} from './data/radio.js?v=6';
 import {
   hatchById,
   SURVIVAL_COLD,
   survivalDeck,
   survivalOpener,
-} from './data/survival.js?v=5';
+} from './data/survival.js?v=6';
 import {
   applyCold,
   applyCrewNight,
@@ -48,17 +49,18 @@ import {
   tickRoads,
   tripExtras,
   wearingCoat,
-} from './crew.js?v=5';
-import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=5';
-import { heistMorning } from './heist.js?v=5';
-import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=5';
+} from './crew.js?v=6';
+import { maybeJulyBox, morningRadio, resolveSputter } from './trade.js?v=6';
+import { heistMorning } from './heist.js?v=6';
+import { drawLine, markHeard } from './radiobag.js?v=6';
+import { apocalypseName, apocalypseOf, recordMorningRumor, rememberRumor } from './rumors.js?v=6';
 import {
   changeStat,
   nightlyUpkeep,
   roomLevel,
   syncDerived,
   touchState,
-} from './state.js?v=5';
+} from './state.js?v=6';
 
 const STAT_KEYS = ['food', 'water', 'materials', 'medicine', 'health', 'morale'];
 const STAT_LABELS = {
@@ -165,6 +167,39 @@ export function weightedPick(list, phase) {
 
 export { rememberRumor };
 
+/** Oct 25 radio pacing: one flavor line (or a quiet morning), each pool a no-repeat bag. */
+function flavorLine(state, phase, rng = Math.random) {
+  if (rng() < (CONFIG.RADIO_QUIET_CHANCE ?? 0.25)) return '';
+  const w = CONFIG.RADIO_FLAVOR_WEIGHTS || {};
+  const cats = ['joke', 'sponsor', 'town', 'coat', 'pancake', 'beer'];
+  if (phase === 'panic' || phase === 'collapse') cats.push('market');
+  if (recruited(state).length) cats.push('neighbor');
+  const rows = cats.map((id) => [id, Math.max(0, Number(w[id]) || 0)]).filter((row) => row[1] > 0);
+  const total = rows.reduce((sum, row) => sum + row[1], 0);
+  if (!total) return '';
+  let roll = rng() * total;
+  let cat = rows[rows.length - 1][0];
+  for (const [id, weight] of rows) {
+    roll -= weight;
+    if (roll <= 0) { cat = id; break; }
+  }
+  if (cat === 'joke') {
+    const jokes = JOKES.filter((joke) => phaseAllows(joke, phase));
+    const joke = drawLine('joke', jokes.length ? jokes : JOKES, state);
+    return joke ? degradeLine(joke.text, phase) : '';
+  }
+  if (cat === 'sponsor') {
+    const sponsor = drawLine('sponsor', SPONSOR_LINES, state);
+    return sponsor ? degradeLine(fillLine(`{{JINGLE}} ${sponsor}`, state), phase) : '';
+  }
+  const pools = {
+    // TOWN_LINES[3] (church, Day 6) and MARKET_LINES[1] (swap meet) are story lines, never random.
+    town: TOWN_LINES.filter((_, i) => i !== 3), market: MARKET_LINES.filter((_, i) => i !== 1), coat: COAT_BRAGS_RANDOM, pancake: PANCAKE_LINES, beer: BEER_LINES, neighbor: NEIGHBOR_LINES,
+  };
+  const line = drawLine(cat, pools[cat], state);
+  return line ? degradeLine(fillLine(line, state), phase) : '';
+}
+
 export function ensureMorning(state) {
   syncDerived(state);
   tickRoads(state);
@@ -175,11 +210,10 @@ export function ensureMorning(state) {
   const phase = phaseForDay(state.day);
   const greetings = GREETINGS[phase] || GREETINGS.collapse;
   // Part B: the run after BREAK THE LOOP has a stranger on the mic.
-  const greeting = strangerGreeting(state) || fillLine(pickOne(greetings), state);
+  const greeting = strangerGreeting(state) || fillLine(drawLine(`greet-${phase}`, greetings, state), state);
   const rumor = recordMorningRumor(state);
-  const jokes = JOKES.filter((joke) => phaseAllows(joke, phase));
-  const joke = (pickOne(jokes.length ? jokes : JOKES)).text;
-  const heard = [greeting, rumor?.text || '', joke].filter((line) => line).map((line) => degradeLine(line, phase));
+  // Oct 25 radio pacing: greeting + rumor, the story lines, and at most one flavor line.
+  const heard = [greeting, rumor?.text || ''].filter((line) => line).map((line) => degradeLine(line, phase));
   const stamp = stampMorning(state);
   if (stamp) heard.push(degradeLine(stamp, phase));
   // Part B Ham Shack level 3: one rumor a day gets CHECKED or STATIC. Not degraded; it is the point.
@@ -196,32 +230,28 @@ export function ensureMorning(state) {
   }
   if (state.flags.coatRadio) {
     heard.push(degradeLine('You found the Mackinaw. The town noticed. Try not to let that go to the wool.', phase));
-    heard.push(degradeLine(COAT_BRAGS[3], phase));
+    heard.push(degradeLine(COAT_FOUND_LINE, phase));
     state.flags.coatRadio = false;
   }
-  if (Math.random() < 0.55) {
-    const sponsor = pickOne(SPONSOR_LINES);
-    if (sponsor) heard.push(degradeLine(fillLine(`{{JINGLE}} ${sponsor}`, state), phase));
-  }
-  if (phase === 'panic' || phase === 'collapse') {
-    const market = state.flags.marketLine || pickOne(MARKET_LINES);
-    if (market) heard.push(degradeLine(fillLine(market, state), phase));
-    state.flags.marketLine = '';
-  } else if (state.flags.marketLine) {
+  // Story lines set by the day (swap meet, rockets, church, a surge). These always play.
+  if (state.flags.marketLine) {
+    markHeard('market', state.flags.marketLine, state);
     heard.push(degradeLine(fillLine(state.flags.marketLine, state), phase));
     state.flags.marketLine = '';
   }
   if (state.day >= 6 && !state.flags.churchRadio) {
     state.flags.churchRadio = true;
+    markHeard('town', TOWN_LINES[3], state);
     heard.push(degradeLine(TOWN_LINES[3], phase));
   }
   if (state.flags.swapRadio) {
+    markHeard('market', MARKET_LINES[1], state);
     heard.push(degradeLine(MARKET_LINES[1], phase));
     state.flags.swapRadio = false;
     state.flags.swapHeard = true;
   }
   if (state.flags.rocketRadio) {
-    heard.push(degradeLine(pickOne(ROCKET_NEWS), phase));
+    heard.push(degradeLine(drawLine('rocket', ROCKET_NEWS, state), phase));
     state.flags.rocketRadio = false;
     state.flags.rocketHeard = true;
   }
@@ -229,13 +259,8 @@ export function ensureMorning(state) {
     heard.push(degradeLine('The morning broadcast is mostly static and a few words. A surge did that.', phase));
     state.flags.radioFried = false;
   }
-  if (Math.random() < 0.4) heard.push(degradeLine(fillLine(pickOne(TOWN_LINES), state), phase));
-  if (Math.random() < 0.28) heard.push(degradeLine(pickOne(PANCAKE_LINES), phase));
-  if (Math.random() < 0.22) heard.push(degradeLine(pickOne(BEER_LINES), phase));
-  if (Math.random() < 0.3) heard.push(degradeLine(pickOne(COAT_BRAGS.slice(0, 3)), phase));
-  if (recruited(state).length && Math.random() < 0.35) {
-    heard.push(degradeLine(pickOne(NEIGHBOR_LINES), phase));
-  }
+  const flavor = flavorLine(state, phase);
+  if (flavor) heard.push(flavor);
   if (fresh) {
     const neighborly = neighborlyMorning(state);
     if (neighborly) heard.unshift(neighborly);
@@ -265,13 +290,17 @@ export function pickSignoff(state) {
   const phase = phaseForDay(state.day);
   const names = memorialEntries(state).map((entry) => entry.name).filter(Boolean);
   if (names.length) {
-    const line = pickOne(MEMORIAL_SIGNOFFS) || MEMORIAL_SIGNOFFS[0];
+    const line = drawLine('memorial', MEMORIAL_SIGNOFFS, state) || MEMORIAL_SIGNOFFS[0];
     return degradeLine(fillLine(line.replaceAll('{NAMES}', names.join('. ')), state), phase);
   }
   const stranger = strangerSignoff(state);
   if (stranger) return stranger;
-  if ((phase === 'calm' || phase === 'panic') && Math.random() < 0.6) return SIGNOFFS[0];
-  return degradeLine(fillLine(pickOne(SIGNOFFS) || SIGNOFFS[0], state), phase);
+  // Oct 25 radio pacing: the classic sign-off is Day 1 only; the rest is a no-repeat bag.
+  if ((state.day || 1) <= 1) {
+    markHeard('signoff', SIGNOFFS[0], state);
+    return SIGNOFFS[0];
+  }
+  return degradeLine(fillLine(drawLine('signoff', SIGNOFFS, state) || SIGNOFFS[0], state), phase);
 }
 
 export function rollLoot(bias, phase, state) {

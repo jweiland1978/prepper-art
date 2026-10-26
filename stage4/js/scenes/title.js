@@ -1,19 +1,19 @@
-import Phaser from '../phaser.js?v=5';
-import { CONFIG } from '../config.js?v=5';
-import { Game, bus, newRun, replaceState } from '../state.js?v=5';
-import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=5';
-import { claimLegacyRun } from '../meta.js?v=5';
-import { Save } from '../save.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addButton, addDialog, addText } from '../ui.js?v=5';
-import { attachAtmosphere } from '../fx.js?v=5';
-import { beginScene, goTo } from '../flow.js?v=5';
-import { addCornerDial } from '../widgets.js?v=5';
-import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=5';
-import { readMeta, resetMeta } from '../meta.js?v=5';
-import { devUnlockAll } from '../unlocks.js?v=5';
-import { guideUnlocked } from '../guide.js?v=5';
-import { hasPendingCards, showPendingCards } from './achcard.js?v=5';
+import Phaser from '../phaser.js?v=6';
+import { CONFIG } from '../config.js?v=6';
+import { Game, bus, newRun, replaceState } from '../state.js?v=6';
+import { devBootRun, devGrant, mountDevTools } from '../dev.js?v=6';
+import { claimLegacyRun } from '../meta.js?v=6';
+import { Save } from '../save.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addButton, addDialog, addText } from '../ui.js?v=6';
+import { attachAtmosphere } from '../fx.js?v=6';
+import { beginScene, goTo } from '../flow.js?v=6';
+import { addCornerDial } from '../widgets.js?v=6';
+import { achUnlocked, devGrantAch, devSetRun } from '../achievements.js?v=6';
+import { readMeta, resetMeta } from '../meta.js?v=6';
+import { devUnlockAll } from '../unlocks.js?v=6';
+import { guideUnlocked } from '../guide.js?v=6';
+import { hasPendingCards, showPendingCards } from './achcard.js?v=6';
 
 const DEV_RUNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 

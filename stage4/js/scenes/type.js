@@ -1,6 +1,6 @@
-import { CONFIG } from '../config.js?v=5';
-import { Audio } from '../audio.js?v=5';
-import { addText, runTypewriter, readHold } from '../ui.js?v=5';
+import { CONFIG } from '../config.js?v=6';
+import { Audio } from '../audio.js?v=6';
+import { addText, runTypewriter, readHold } from '../ui.js?v=6';
 
 /** Shared tap-to-skip typewriter. A button can always be shown if the promise rejects. */
 export function makeTyper(scene) {
@@ -12,9 +12,9 @@ export function makeTyper(scene) {
       Audio.unlock();
       api.skipWait?.();
     },
-    say(textObj, text, blips = true) {
+    say(textObj, text, blips = true, start = 0) {
       if (api.dead) return Promise.resolve();
-      textObj.setText('');
+      textObj.setText(start > 0 ? String(text).slice(0, start) : '');
       return new Promise((resolve) => {
         api.typer = runTypewriter(scene, textObj, text, () => {
           if (api.dead) { api.skipWait = null; resolve(); return; }
@@ -27,7 +27,7 @@ export function makeTyper(scene) {
             api.skipWait = null;
             resolve();
           };
-        }, blips);
+        }, blips, start);
         api.skipWait = () => api.typer?.skip();
       });
     },

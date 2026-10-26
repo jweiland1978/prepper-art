@@ -1,7 +1,7 @@
-import Phaser from './phaser.js?v=5';
-import { CONFIG } from './config.js?v=5';
-import { Audio } from './audio.js?v=5';
-import { Game } from './state.js?v=5';
+import Phaser from './phaser.js?v=6';
+import { CONFIG } from './config.js?v=6';
+import { Audio } from './audio.js?v=6';
+import { Game } from './state.js?v=6';
 
 /** Part C: effects counters for tests (squash, pop). fx.js adds shake, flip, fade. */
 export function fxLog(kind, ran) {
@@ -387,8 +387,9 @@ export function readHold(text, waitForTap) {
 }
 
 /** Types `full` into `textObj`. `skip()` finishes the line. Calls `onDone` once. */
-export function runTypewriter(scene, textObj, full, onDone, withBlips) {
-  let index = 0;
+export function runTypewriter(scene, textObj, full, onDone, withBlips, start = 0) {
+  // start: characters already on screen (the night report adds its sign-off without retyping).
+  let index = Math.max(0, Math.min(String(full).length, Math.floor(Number(start) || 0)));
   let finished = false;
   const speed = Math.max(25, 70 / (Game.settings?.textSpeed || 1));
   const finish = () => {

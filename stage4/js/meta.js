@@ -1,5 +1,6 @@
-import { CONFIG } from './config.js?v=5';
-import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=5';
+import { CONFIG } from './config.js?v=6';
+import { clearRadioBag } from './radiobag.js?v=6';
+import { UNLOCK_IDS, PERK_IDS, unlocksForFinished } from './data/unlocks.js?v=6';
 
 /**
  * Stage 4 meta store (prepper_s4_meta). Survives DELETE SAVE and new runs.
@@ -218,6 +219,7 @@ export function resetMeta() {
   const meta = emptyMeta();
   meta.migratedFrom = 'reset';
   writeMeta(meta);
+  clearRadioBag(); // Oct 25: the radio no-repeat bags reset with progress
   return meta;
 }
 
